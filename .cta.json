@@ -1,0 +1,30 @@
+{
+  "projectName": "vaheyeremyan",
+  "mode": "file-router",
+  "typescript": true,
+  "packageManager": "bun",
+  "includeExamples": false,
+  "tailwind": true,
+  "addOnOptions": {
+    "shopify": {
+      "customerAccount": "disabled"
+    }
+  },
+  "envVarValues": {
+    "SHOPIFY_STORE_DOMAIN": "jt1vet-00.myshopify.com",
+    "SHOPIFY_STOREFRONT_API_VERSION": "2026-01",
+    "SHOPIFY_PUBLIC_STOREFRONT_TOKEN": "93555f91ef6cc4ef241f70a61868aacd"
+  },
+  "git": true,
+  "install": true,
+  "routerOnly": false,
+  "version": 1,
+  "framework": "react",
+  "chosenAddOns": [
+    "eslint",
+    "cloudflare",
+    "shopify",
+    "shadcn",
+    "tanstack-query"
+  ]
+}

@@ -1,0 +1,594 @@
+import type {
+  CartCreateMutation,
+  CartDiscountCodesUpdateMutation,
+  CartLinesAddMutation,
+  CartLinesRemoveMutation,
+  CartLinesUpdateMutation,
+  CartQuery,
+  CollectionQuery,
+  CollectionsQuery,
+  PageQuery,
+  ProductQuery,
+  ProductsQuery,
+  SearchQuery,
+  ShopPoliciesQuery,
+  ShopQuery,
+} from './generated/storefront.generated'
+import type { ProductSortKeys } from './generated/storefront.types'
+
+/**
+ * GraphQL queries for the Shopify Storefront API.
+ *
+ * Result types are derived from generated Storefront API operation types.
+ * Keep the app-facing aliases in this file so route/components stay stable
+ * when query details or generated type names change.
+ */
+
+/* ─── Shop info ─────────────────────────────────────────────────────────── */
+
+export const SHOP_QUERY = /* GraphQL */ `
+  query Shop {
+    shop {
+      name
+      description
+      primaryDomain {
+        url
+      }
+    }
+  }
+`
+
+export type ShopQueryResult = ShopQuery
+
+/* ─── Product card fragment + product list ──────────────────────────────── */
+
+const PRODUCT_CARD_FRAGMENT = /* GraphQL */ `
+  fragment ProductCard on Product {
+    id
+    handle
+    title
+    productType
+    tags
+    publishedAt
+    options {
+      name
+      values
+    }
+    featuredImage {
+      url
+      altText
+      width
+      height
+    }
+    variants(first: 1) {
+      nodes {
+        id
+        availableForSale
+      }
+    }
+    priceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+      maxVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+    compareAtPriceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+  }
+`
+
+export const PRODUCTS_QUERY = /* GraphQL */ `
+  ${PRODUCT_CARD_FRAGMENT}
+  query Products(
+    $first: Int!
+    $after: String
+    $sortKey: ProductSortKeys
+    $reverse: Boolean
+  ) {
+    products(
+      first: $first
+      after: $after
+      sortKey: $sortKey
+      reverse: $reverse
+    ) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      nodes {
+        ...ProductCard
+      }
+    }
+  }
+`
+
+export type ProductListPage = ProductsQuery['products']
+export type ProductListItem = ProductListPage['nodes'][number]
+
+export type ProductsQueryVariables = {
+  first: number
+  after?: string | null
+  sortKey?: ProductSortKeys | null
+  reverse?: boolean | null
+}
+
+export type ProductsQueryResult = {
+  products: ProductListPage
+}
+
+/* ─── Single product (PDP) ──────────────────────────────────────────────── */
+
+export const PRODUCT_QUERY = /* GraphQL */ `
+  query Product($handle: String!) {
+    product(handle: $handle) {
+      id
+      handle
+      title
+      descriptionHtml
+      options {
+        id
+        name
+        values
+      }
+      images(first: 10) {
+        nodes {
+          url
+          altText
+          width
+          height
+        }
+      }
+      variants(first: 100) {
+        nodes {
+          id
+          title
+          availableForSale
+          selectedOptions {
+            name
+            value
+          }
+          price {
+            amount
+            currencyCode
+          }
+          image {
+            url
+            altText
+            width
+            height
+          }
+        }
+      }
+      seo {
+        title
+        description
+      }
+    }
+  }
+`
+
+export type ProductDetail = NonNullable<ProductQuery['product']>
+export type ProductDetailVariant = ProductDetail['variants']['nodes'][number]
+
+export type ProductQueryResult = {
+  product: ProductDetail | null
+}
+
+/* ─── Collections list ──────────────────────────────────────────────────── */
+
+export const COLLECTIONS_QUERY = /* GraphQL */ `
+  query Collections($first: Int!) {
+    collections(first: $first, sortKey: TITLE) {
+      nodes {
+        id
+        handle
+        title
+        description
+        image {
+          url
+          altText
+          width
+          height
+        }
+      }
+    }
+  }
+`
+
+export type CollectionListItem =
+  CollectionsQuery['collections']['nodes'][number]
+
+export type CollectionsQueryResult = {
+  collections: { nodes: Array<CollectionListItem> }
+}
+
+/* ─── Collection by handle ──────────────────────────────────────────────── */
+
+export const COLLECTION_QUERY = /* GraphQL */ `
+  ${PRODUCT_CARD_FRAGMENT}
+  query Collection(
+    $handle: String!
+    $first: Int!
+    $after: String
+    $sortKey: ProductCollectionSortKeys
+    $reverse: Boolean
+  ) {
+    collection(handle: $handle) {
+      id
+      handle
+      title
+      description
+      descriptionHtml
+      image {
+        url
+        altText
+        width
+        height
+      }
+      seo {
+        title
+        description
+      }
+      products(
+        first: $first
+        after: $after
+        sortKey: $sortKey
+        reverse: $reverse
+      ) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        nodes {
+          ...ProductCard
+        }
+      }
+    }
+  }
+`
+
+export type CollectionDetail = NonNullable<CollectionQuery['collection']>
+
+export type CollectionQueryResult = {
+  collection: CollectionDetail | null
+}
+
+/* ─── Cart fragment + queries + mutations ───────────────────────────────── */
+
+const CART_FRAGMENT = /* GraphQL */ `
+  fragment CartFields on Cart {
+    id
+    checkoutUrl
+    totalQuantity
+    cost {
+      totalAmount {
+        amount
+        currencyCode
+      }
+      subtotalAmount {
+        amount
+        currencyCode
+      }
+      totalTaxAmount {
+        amount
+        currencyCode
+      }
+    }
+    lines(first: 100) {
+      nodes {
+        id
+        quantity
+        merchandise {
+          ... on ProductVariant {
+            id
+            title
+            availableForSale
+            selectedOptions {
+              name
+              value
+            }
+            price {
+              amount
+              currencyCode
+            }
+            image {
+              url
+              altText
+              width
+              height
+            }
+            product {
+              handle
+              title
+            }
+          }
+        }
+        cost {
+          totalAmount {
+            amount
+            currencyCode
+          }
+        }
+      }
+    }
+    discountCodes {
+      code
+      applicable
+    }
+  }
+`
+
+export const CART_QUERY = /* GraphQL */ `
+  ${CART_FRAGMENT}
+  query Cart($cartId: ID!) {
+    cart(id: $cartId) {
+      ...CartFields
+    }
+  }
+`
+
+export const CART_CREATE_MUTATION = /* GraphQL */ `
+  ${CART_FRAGMENT}
+  mutation CartCreate($input: CartInput!) {
+    cartCreate(input: $input) {
+      cart {
+        ...CartFields
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`
+
+export const CART_LINES_ADD_MUTATION = /* GraphQL */ `
+  ${CART_FRAGMENT}
+  mutation CartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
+    cartLinesAdd(cartId: $cartId, lines: $lines) {
+      cart {
+        ...CartFields
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`
+
+export const CART_LINES_UPDATE_MUTATION = /* GraphQL */ `
+  ${CART_FRAGMENT}
+  mutation CartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+    cartLinesUpdate(cartId: $cartId, lines: $lines) {
+      cart {
+        ...CartFields
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`
+
+export const CART_LINES_REMOVE_MUTATION = /* GraphQL */ `
+  ${CART_FRAGMENT}
+  mutation CartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
+    cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+      cart {
+        ...CartFields
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`
+
+export const CART_DISCOUNT_CODES_UPDATE_MUTATION = /* GraphQL */ `
+  ${CART_FRAGMENT}
+  mutation CartDiscountCodesUpdate($cartId: ID!, $discountCodes: [String!]!) {
+    cartDiscountCodesUpdate(cartId: $cartId, discountCodes: $discountCodes) {
+      cart {
+        ...CartFields
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`
+
+export type CartDetail = NonNullable<CartQuery['cart']>
+export type CartLineDetail = CartDetail['lines']['nodes'][number]
+export type CartLineMerchandise = CartLineDetail['merchandise']
+
+export type CartQueryResult = { cart: CartDetail | null }
+export type CartUserError = NonNullable<
+  CartCreateMutation['cartCreate']
+>['userErrors'][number]
+
+export type CartCreateResult = {
+  cartCreate: NonNullable<CartCreateMutation['cartCreate']>
+}
+export type CartLinesAddResult = {
+  cartLinesAdd: NonNullable<CartLinesAddMutation['cartLinesAdd']>
+}
+export type CartLinesUpdateResult = {
+  cartLinesUpdate: NonNullable<CartLinesUpdateMutation['cartLinesUpdate']>
+}
+export type CartLinesRemoveResult = {
+  cartLinesRemove: NonNullable<CartLinesRemoveMutation['cartLinesRemove']>
+}
+export type CartDiscountCodesUpdateResult = {
+  cartDiscountCodesUpdate: NonNullable<
+    CartDiscountCodesUpdateMutation['cartDiscountCodesUpdate']
+  >
+}
+
+/* ─── Sort options ──────────────────────────────────────────────────────── */
+
+export const SORT_OPTIONS = [
+  { key: 'BEST_SELLING', reverse: false, label: 'Best selling' },
+  { key: 'CREATED_AT', reverse: true, label: 'Newest' },
+  { key: 'PRICE', reverse: false, label: 'Price: low to high' },
+  { key: 'PRICE', reverse: true, label: 'Price: high to low' },
+  { key: 'TITLE', reverse: false, label: 'Title: A–Z' },
+] as const satisfies ReadonlyArray<{
+  key: ProductSortKeys
+  reverse: boolean
+  label: string
+}>
+
+export type SortOption = (typeof SORT_OPTIONS)[number]
+export type SortOptionId = `${SortOption['key']}${'' | ':rev'}`
+
+export function sortOptionId(opt: SortOption): SortOptionId {
+  return opt.reverse ? `${opt.key}:rev` : opt.key
+}
+
+export function resolveSortOption(id: string | undefined): SortOption {
+  if (!id) return SORT_OPTIONS[0]
+  for (const opt of SORT_OPTIONS) {
+    if (sortOptionId(opt) === id) return opt
+  }
+  return SORT_OPTIONS[0]
+}
+
+export const COLLECTION_SORT_OPTIONS = [
+  { key: 'COLLECTION_DEFAULT', reverse: false, label: 'Featured' },
+  { key: 'BEST_SELLING', reverse: false, label: 'Best selling' },
+  { key: 'CREATED', reverse: true, label: 'Newest' },
+  { key: 'PRICE', reverse: false, label: 'Price: low to high' },
+  { key: 'PRICE', reverse: true, label: 'Price: high to low' },
+  { key: 'TITLE', reverse: false, label: 'Title: A–Z' },
+] as const satisfies ReadonlyArray<{
+  key: string
+  reverse: boolean
+  label: string
+}>
+
+export type CollectionSortOption = (typeof COLLECTION_SORT_OPTIONS)[number]
+
+export function resolveCollectionSortOption(
+  id: string | undefined,
+): CollectionSortOption {
+  if (!id) return COLLECTION_SORT_OPTIONS[0]
+  const expected = (opt: CollectionSortOption) =>
+    opt.reverse ? `${opt.key}:rev` : opt.key
+  for (const opt of COLLECTION_SORT_OPTIONS) {
+    if (expected(opt) === id) return opt
+  }
+  return COLLECTION_SORT_OPTIONS[0]
+}
+
+/* ─── Pages + policies ──────────────────────────────────────────────────── */
+
+export const PAGE_QUERY = /* GraphQL */ `
+  query Page($handle: String!) {
+    page(handle: $handle) {
+      id
+      handle
+      title
+      body
+      bodySummary
+      seo {
+        title
+        description
+      }
+    }
+  }
+`
+
+export type PageDetail = NonNullable<PageQuery['page']>
+
+export type PageQueryResult = { page: PageDetail | null }
+
+export const SHOP_POLICIES_QUERY = /* GraphQL */ `
+  query ShopPolicies {
+    shop {
+      privacyPolicy {
+        handle
+        title
+        body
+      }
+      refundPolicy {
+        handle
+        title
+        body
+      }
+      termsOfService {
+        handle
+        title
+        body
+      }
+      shippingPolicy {
+        handle
+        title
+        body
+      }
+    }
+  }
+`
+
+export type ShopPolicy = NonNullable<
+  ShopPoliciesQuery['shop']['privacyPolicy']
+> | null
+
+export type ShopPoliciesQueryResult = ShopPoliciesQuery
+
+export type PolicySummary = { handle: string; title: string }
+
+export function flattenPolicies(
+  shop: ShopPoliciesQueryResult['shop'],
+): Array<PolicySummary> {
+  const keys = [
+    'shippingPolicy',
+    'refundPolicy',
+    'privacyPolicy',
+    'termsOfService',
+  ] as const
+  return keys.flatMap((k) => {
+    const p = shop[k]
+    return p ? [{ handle: p.handle, title: p.title }] : []
+  })
+}
+
+/* ─── Search ────────────────────────────────────────────────────────────── */
+
+export const SEARCH_QUERY = /* GraphQL */ `
+  ${PRODUCT_CARD_FRAGMENT}
+  query Search($query: String!, $first: Int!, $after: String) {
+    search(
+      query: $query
+      first: $first
+      after: $after
+      types: [PRODUCT]
+      productFilters: [{ available: true }]
+    ) {
+      totalCount
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      nodes {
+        ... on Product {
+          ...ProductCard
+        }
+      }
+    }
+  }
+`
+
+export type SearchQueryResult = SearchQuery

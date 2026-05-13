@@ -1,0 +1,33 @@
+//  @ts-check
+
+/** @type {import('prettier').Config} */
+const config = {
+  importOrder: [
+    '<TYPES>',
+    '',
+    '^react$',
+    '^react-dom$',
+    '',
+    '^@tanstack',
+    '',
+    '<THIRD_PARTY_MODULES>',
+    '',
+    '^@/(.*)$',
+    '',
+    '^[.]/',
+    '/src/',
+    '',
+    '\\.css$',
+    '',
+  ],
+  importOrderCaseSensitive: false,
+  plugins: [
+    '@ianvs/prettier-plugin-sort-imports',
+    'prettier-plugin-tailwindcss',
+  ],
+  semi: false,
+  singleQuote: true,
+  trailingComma: 'all',
+}
+
+export default config
