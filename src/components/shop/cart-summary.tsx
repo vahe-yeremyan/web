@@ -1,9 +1,9 @@
-import type { CartDetail } from '#/lib/shopify/queries'
+import type { CartDetail } from '@/lib/shopify/queries'
 
 import { useState } from 'react'
 
-import { Money } from '#/components/shop/money'
-import { useApplyDiscountCode, useRemoveDiscountCode } from '#/hooks/use-cart'
+import { Money } from '@/components/shop/money'
+import { useApplyDiscountCode, useRemoveDiscountCode } from '@/hooks/use-cart'
 
 type CartSummaryProps = {
   cart: CartDetail

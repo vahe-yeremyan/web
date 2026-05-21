@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import { ProductGrid } from '#/components/shop/product-grid'
-import { getProducts, getShop } from '#/server/shopify/catalog.functions'
+import { ProductGrid } from '@/components/shop/product-grid'
+import { getProducts, getShop } from '@/server/shopify/catalog.functions'
 
 export const Route = createFileRoute('/shop/')({
   loader: async () => {

@@ -2,15 +2,15 @@ import { useState } from 'react'
 
 import { createFileRoute, notFound } from '@tanstack/react-router'
 
-import { AddToCartButton } from '#/components/shop/add-to-cart-button'
-import { Money } from '#/components/shop/money'
-import { ShopImage } from '#/components/shop/shop-image'
+import { AddToCartButton } from '@/components/shop/add-to-cart-button'
+import { Money } from '@/components/shop/money'
+import { ShopImage } from '@/components/shop/shop-image'
 import {
   VariantSelector,
   defaultSelectedOptions,
   findVariant,
-} from '#/components/shop/variant-selector'
-import { getProduct } from '#/server/shopify/catalog.functions'
+} from '@/components/shop/variant-selector'
+import { getProduct } from '@/server/shopify/catalog.functions'
 
 export const Route = createFileRoute('/shop/products/$handle')({
   loader: async ({ params }) => {

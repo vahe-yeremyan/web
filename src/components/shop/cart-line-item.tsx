@@ -1,10 +1,10 @@
-import type { CartLineDetail } from '#/lib/shopify/queries'
+import type { CartLineDetail } from '@/lib/shopify/queries'
 
 import { Link } from '@tanstack/react-router'
 
-import { Money } from '#/components/shop/money'
-import { ShopImage } from '#/components/shop/shop-image'
-import { useRemoveCartLine, useUpdateCartLine } from '#/hooks/use-cart'
+import { Money } from '@/components/shop/money'
+import { ShopImage } from '@/components/shop/shop-image'
+import { useRemoveCartLine, useUpdateCartLine } from '@/hooks/use-cart'
 
 type CartLineItemProps = {
   line: CartLineDetail

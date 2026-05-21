@@ -1,8 +1,8 @@
 import type {
   MoneyV2,
   Image as StorefrontImage,
-} from '#/lib/shopify/generated/storefront.types'
-import type { CartDetail, CartLineDetail } from '#/lib/shopify/queries'
+} from '@/lib/shopify/generated/storefront.types'
+import type { CartDetail, CartLineDetail } from '@/lib/shopify/queries'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
@@ -13,7 +13,7 @@ import {
   removeCartLine,
   removeDiscountCode,
   updateCartLine,
-} from '#/server/shopify/cart.functions'
+} from '@/server/shopify/cart.functions'
 
 /**
  * Shared React Query key for the current user's cart.

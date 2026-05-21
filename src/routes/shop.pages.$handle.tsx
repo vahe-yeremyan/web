@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
 
-import { getPage } from '#/server/shopify/catalog.functions'
+import { getPage } from '@/server/shopify/catalog.functions'
 
 export const Route = createFileRoute('/shop/pages/$handle')({
   loader: async ({ params }) => {

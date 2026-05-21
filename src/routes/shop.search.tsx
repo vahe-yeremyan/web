@@ -4,8 +4,8 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
 import * as v from 'valibot'
 
-import { ProductGrid } from '#/components/shop/product-grid'
-import { searchProducts } from '#/server/shopify/catalog.functions'
+import { ProductGrid } from '@/components/shop/product-grid'
+import { searchProducts } from '@/server/shopify/catalog.functions'
 
 const SearchSchema = v.object({
   q: v.optional(v.string(), ''),

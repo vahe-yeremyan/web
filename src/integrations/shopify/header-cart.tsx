@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 
-import { useCart } from '#/hooks/use-cart'
+import { useCart } from '@/hooks/use-cart'
 
 export default function ShopifyHeaderCart() {
   const { totalQuantity } = useCart()

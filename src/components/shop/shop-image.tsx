@@ -1,4 +1,4 @@
-import { shopifyImageUrl } from '#/lib/shopify/format'
+import { shopifyImageUrl } from '@/lib/shopify/format'
 
 type ShopImageProps = {
   src: string | null | undefined

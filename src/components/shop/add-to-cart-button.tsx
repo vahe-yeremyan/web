@@ -1,6 +1,6 @@
-import type { ProductDetail, ProductDetailVariant } from '#/lib/shopify/queries'
+import type { ProductDetail, ProductDetailVariant } from '@/lib/shopify/queries'
 
-import { useAddToCart } from '#/hooks/use-cart'
+import { useAddToCart } from '@/hooks/use-cart'
 
 type AddToCartButtonProps = {
   product: ProductDetail

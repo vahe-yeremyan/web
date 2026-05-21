@@ -1,6 +1,6 @@
-import type { ProductListItem } from '#/lib/shopify/queries'
+import type { ProductListItem } from '@/lib/shopify/queries'
 
-import { ProductCard } from '#/components/shop/product-card'
+import { ProductCard } from '@/components/shop/product-card'
 
 type ProductGridProps = {
   products: ReadonlyArray<ProductListItem>

@@ -1,8 +1,8 @@
 import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
 
-import '#/components/shop/shop.css'
+import '@/components/shop/shop.css'
 
-import { getCollections } from '#/server/shopify/catalog.functions'
+import { getCollections } from '@/server/shopify/catalog.functions'
 
 export const Route = createFileRoute('/shop')({
   loader: () => getCollections(),
@@ -15,10 +15,10 @@ function ShopLayout() {
   return (
     <div className="shop-root min-h-screen">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8 flex flex-wrap items-center gap-4 border-b border-[var(--storefront-line)] pb-6">
+        <div className="mb-8 flex flex-wrap items-center gap-4 border-b border-[--storefront-line] pb-6">
           <Link
             to="/shop"
-            className="text-2xl font-medium tracking-tight text-[var(--storefront-fg)] no-underline"
+            className="text-2xl font-medium tracking-tight text-[--storefront-fg] no-underline"
           >
             Shop
           </Link>
@@ -42,16 +42,16 @@ function ShopLayout() {
         <div className="grid gap-8 lg:grid-cols-[200px_1fr]">
           <aside className="hidden lg:block">
             <nav className="sticky top-8 flex flex-col gap-1 text-sm">
-              <p className="mb-2 text-xs font-semibold tracking-wider text-[var(--storefront-fg-muted)] uppercase">
+              <p className="mb-2 text-xs font-semibold tracking-wider text-[--storefront-fg-muted] uppercase">
                 Collections
               </p>
               <Link
                 to="/shop"
-                className="rounded-md px-2 py-1.5 text-[var(--storefront-fg-muted)] hover:bg-[var(--storefront-line)]/40 hover:text-[var(--storefront-fg)]"
+                className="rounded-md px-2 py-1.5 text-[--storefront-fg-muted] hover:bg-[--storefront-line]/40 hover:text-[--storefront-fg]"
                 activeOptions={{ exact: true }}
                 activeProps={{
                   className:
-                    'rounded-md px-2 py-1.5 bg-[var(--storefront-line)]/60 text-[var(--storefront-fg)] font-medium',
+                    'rounded-md px-2 py-1.5 bg-[--storefront-line]/60 text-[--storefront-fg] font-medium',
                 }}
               >
                 All products
@@ -61,7 +61,7 @@ function ShopLayout() {
                   key={collection.id}
                   to="/shop/collections/$handle"
                   params={{ handle: collection.handle }}
-                  className="rounded-md px-2 py-1.5 text-[var(--storefront-fg-muted)] hover:bg-[var(--storefront-line)]/40 hover:text-[var(--storefront-fg)]"
+                  className="rounded-md px-2 py-1.5 text-[--storefront-fg-muted] hover:bg-[--storefront-line]/40 hover:text-[--storefront-fg]"
                   activeProps={{
                     className:
                       'rounded-md px-2 py-1.5 bg-[var(--storefront-line)]/60 text-[var(--storefront-fg)] font-medium',

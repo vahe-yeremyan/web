@@ -1,8 +1,8 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
 
-import { ProductGrid } from '#/components/shop/product-grid'
-import { ShopImage } from '#/components/shop/shop-image'
-import { getCollection } from '#/server/shopify/catalog.functions'
+import { ProductGrid } from '@/components/shop/product-grid'
+import { ShopImage } from '@/components/shop/shop-image'
+import { getCollection } from '@/server/shopify/catalog.functions'
 
 export const Route = createFileRoute('/shop/collections/$handle')({
   loader: async ({ params }) => {

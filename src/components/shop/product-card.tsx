@@ -1,9 +1,9 @@
-import type { ProductListItem } from '#/lib/shopify/queries'
+import type { ProductListItem } from '@/lib/shopify/queries'
 
 import { Link } from '@tanstack/react-router'
 
-import { Money } from '#/components/shop/money'
-import { ShopImage } from '#/components/shop/shop-image'
+import { Money } from '@/components/shop/money'
+import { ShopImage } from '@/components/shop/shop-image'
 
 type ProductCardProps = {
   product: ProductListItem

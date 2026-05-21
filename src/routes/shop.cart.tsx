@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import { CartLineItem } from '#/components/shop/cart-line-item'
-import { CartSummary } from '#/components/shop/cart-summary'
-import { EmptyState } from '#/components/shop/empty-state'
-import { CART_QUERY_KEY, useCart } from '#/hooks/use-cart'
-import { getCart } from '#/server/shopify/cart.functions'
+import { CartLineItem } from '@/components/shop/cart-line-item'
+import { CartSummary } from '@/components/shop/cart-summary'
+import { EmptyState } from '@/components/shop/empty-state'
+import { CART_QUERY_KEY, useCart } from '@/hooks/use-cart'
+import { getCart } from '@/server/shopify/cart.functions'
 
 export const Route = createFileRoute('/shop/cart')({
   // QueryClient is always in context — the shopify add-on dependsOn tanstack-query.

@@ -15,7 +15,7 @@ import type {
   ShopPoliciesQueryResult,
   ShopPolicy,
   ShopQueryResult,
-} from '#/lib/shopify/queries'
+} from '@/lib/shopify/queries'
 
 import { createServerFn } from '@tanstack/react-start'
 import { setResponseHeaders } from '@tanstack/react-start/server'
@@ -32,8 +32,8 @@ import {
   SHOP_POLICIES_QUERY,
   SHOP_QUERY,
   flattenPolicies,
-} from '#/lib/shopify/queries'
-import { shopifyServerFetch } from '#/server/shopify/storefront-client'
+} from '@/lib/shopify/queries'
+import { shopifyServerFetch } from '@/server/shopify/storefront-client'
 
 /**
  * Edge-cache catalog responses for a few minutes. Catalog data doesn't change

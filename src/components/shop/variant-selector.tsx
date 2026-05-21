@@ -1,4 +1,4 @@
-import type { ProductDetail, ProductDetailVariant } from '#/lib/shopify/queries'
+import type { ProductDetail, ProductDetailVariant } from '@/lib/shopify/queries'
 
 type VariantSelectorProps = {
   product: ProductDetail

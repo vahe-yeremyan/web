@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
 
-import { getShopPolicy } from '#/server/shopify/catalog.functions'
+import { getShopPolicy } from '@/server/shopify/catalog.functions'
 
 export const Route = createFileRoute('/shop/policies/$handle')({
   loader: async ({ params }) => {

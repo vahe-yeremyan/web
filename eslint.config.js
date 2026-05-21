@@ -36,7 +36,6 @@ export default [
               group: 'external',
               position: 'before',
             },
-            { pattern: '#/**', group: 'internal' },
             { pattern: '@/**', group: 'internal' },
             { pattern: '**/*.css', group: 'index', position: 'after' },
           ],
