@@ -2,9 +2,10 @@ import { useState } from 'react'
 
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
+import * as v from 'valibot'
+
 import { ProductGrid } from '#/components/shop/product-grid'
 import { searchProducts } from '#/server/shopify/catalog.functions'
-import * as v from 'valibot'
 
 const SearchSchema = v.object({
   q: v.optional(v.string(), ''),

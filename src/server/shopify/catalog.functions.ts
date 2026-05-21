@@ -20,19 +20,20 @@ import type {
 import { createServerFn } from '@tanstack/react-start'
 import { setResponseHeaders } from '@tanstack/react-start/server'
 
+import * as v from 'valibot'
+
 import {
-  COLLECTION_QUERY,
   COLLECTIONS_QUERY,
-  flattenPolicies,
+  COLLECTION_QUERY,
   PAGE_QUERY,
-  PRODUCT_QUERY,
   PRODUCTS_QUERY,
+  PRODUCT_QUERY,
   SEARCH_QUERY,
   SHOP_POLICIES_QUERY,
   SHOP_QUERY,
+  flattenPolicies,
 } from '#/lib/shopify/queries'
 import { shopifyServerFetch } from '#/server/shopify/storefront-client'
-import * as v from 'valibot'
 
 /**
  * Edge-cache catalog responses for a few minutes. Catalog data doesn't change

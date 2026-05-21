@@ -1,4 +1,6 @@
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
+CLAUDE.md
 src/lib/shopify/generated/
+src/routeTree.gen.ts

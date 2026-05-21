@@ -8,17 +8,16 @@
   "scripts": {
     "codegen": "graphql-codegen",
     "dev": "bun run codegen && vite dev --port 3000",
-    "build": "bun run codegen && vite build",
+    "build": "bun run verify && bun run codegen && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "lint": "eslint",
+    "lint": "prettier --check . && eslint",
     "format": "prettier --write . && eslint --fix",
-    "check": "prettier --check .",
+    "verify": "bun run lint && bun run test",
     "deploy": "bun run build && wrangler deploy"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.26.0",
-    "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "latest",
     "@tanstack/react-query": "latest",
@@ -62,10 +61,8 @@
     "vitest": "^4.1.5",
     "wrangler": "^4.70.0"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "lightningcss"
-    ]
-  }
+  "trustedDependencies": [
+    "esbuild",
+    "lightningcss"
+  ]
 }

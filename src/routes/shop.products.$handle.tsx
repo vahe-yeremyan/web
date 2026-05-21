@@ -6,9 +6,9 @@ import { AddToCartButton } from '#/components/shop/add-to-cart-button'
 import { Money } from '#/components/shop/money'
 import { ShopImage } from '#/components/shop/shop-image'
 import {
+  VariantSelector,
   defaultSelectedOptions,
   findVariant,
-  VariantSelector,
 } from '#/components/shop/variant-selector'
 import { getProduct } from '#/server/shopify/catalog.functions'
 

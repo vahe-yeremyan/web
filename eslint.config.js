@@ -1,17 +1,50 @@
 //  @ts-check
 
 import { tanstackConfig } from '@tanstack/eslint-config'
+import importPlugin from 'eslint-plugin-import-x'
 
 export default [
   ...tanstackConfig,
   {
+    plugins: { import: importPlugin },
     rules: {
-      'import/no-cycle': 'off',
-      'import/order': 'off',
-      'sort-imports': 'off',
       '@typescript-eslint/array-type': 'off',
       '@typescript-eslint/require-await': 'off',
-      'pnpm/json-enforce-catalog': 'off',
+      'sort-imports': ['error', { ignoreDeclarationSort: true }],
+      'import/order': [
+        'error',
+        {
+          groups: [
+            'type',
+            'builtin',
+            'external',
+            'internal',
+            'parent',
+            'sibling',
+            'index',
+          ],
+          pathGroups: [
+            { pattern: 'react', group: 'external', position: 'before' },
+            { pattern: 'react-dom', group: 'external', position: 'before' },
+            {
+              pattern: 'react-dom/**',
+              group: 'external',
+              position: 'before',
+            },
+            {
+              pattern: '@tanstack/**',
+              group: 'external',
+              position: 'before',
+            },
+            { pattern: '#/**', group: 'internal' },
+            { pattern: '@/**', group: 'internal' },
+            { pattern: '**/*.css', group: 'index', position: 'after' },
+          ],
+          pathGroupsExcludedImportTypes: ['type'],
+          'newlines-between': 'always',
+          alphabetize: { order: 'asc', caseInsensitive: true },
+        },
+      ],
     },
   },
   {

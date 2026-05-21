@@ -12,6 +12,8 @@ import type {
 import { createServerFn } from '@tanstack/react-start'
 import { setResponseHeaders } from '@tanstack/react-start/server'
 
+import * as v from 'valibot'
+
 import {
   CART_CREATE_MUTATION,
   CART_DISCOUNT_CODES_UPDATE_MUTATION,
@@ -22,7 +24,6 @@ import {
 } from '#/lib/shopify/queries'
 import { clearCartId, getCartId, setCartId } from '#/server/shopify/cookies'
 import { shopifyServerFetch } from '#/server/shopify/storefront-client'
-import * as v from 'valibot'
 
 export class CartUserErrorsError extends Error {
   constructor(public readonly userErrors: Array<CartUserError>) {

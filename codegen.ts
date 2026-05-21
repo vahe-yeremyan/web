@@ -1,5 +1,6 @@
-import { existsSync } from 'node:fs'
 import type { CodegenConfig } from '@graphql-codegen/cli'
+
+import { existsSync } from 'node:fs'
 
 import {
   ApiType,
