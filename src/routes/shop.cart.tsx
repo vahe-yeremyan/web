@@ -33,7 +33,7 @@ function CartRoute() {
     <div className="grid gap-10 lg:grid-cols-[1.6fr_1fr]">
       <section>
         <h1 className="mb-6 text-3xl font-medium tracking-tight">Cart</h1>
-        <ul className="border-t border-[var(--storefront-line)]">
+        <ul className="border-t border-[--storefront-line]">
           {cart.lines.nodes.map((line) => (
             <CartLineItem key={line.id} line={line} />
           ))}

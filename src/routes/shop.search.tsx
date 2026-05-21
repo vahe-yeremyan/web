@@ -56,20 +56,20 @@ function SearchRoute() {
           onChange={(e) => setDraft(e.target.value)}
           placeholder="Search products"
           autoFocus
-          className="flex-1 rounded-full border border-[var(--storefront-line)] bg-transparent px-5 py-3 text-base focus:border-[var(--storefront-accent)] focus:outline-none"
+          className="flex-1 rounded-full border border-[--storefront-line] bg-transparent px-5 py-3 text-base focus:border-[--storefront-accent] focus:outline-none"
         />
         <button
           type="submit"
-          className="rounded-full bg-[var(--storefront-accent)] px-6 py-3 text-sm font-medium text-[var(--storefront-accent-fg)]"
+          className="rounded-full bg-[--storefront-accent] px-6 py-3 text-sm font-medium text-[--storefront-accent-fg]"
         >
           Search
         </button>
       </form>
 
       {q && (
-        <p className="text-sm text-[var(--storefront-fg-muted)]">
+        <p className="text-sm text-[--storefront-fg-muted]">
           {totalCount} result{totalCount === 1 ? '' : 's'} for{' '}
-          <span className="font-medium text-[var(--storefront-fg)]">"{q}"</span>
+          <span className="font-medium text-[--storefront-fg]">"{q}"</span>
         </p>
       )}
 

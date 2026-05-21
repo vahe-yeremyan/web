@@ -64,7 +64,7 @@ function ShopLayout() {
                   className="rounded-md px-2 py-1.5 text-[--storefront-fg-muted] hover:bg-[--storefront-line]/40 hover:text-[--storefront-fg]"
                   activeProps={{
                     className:
-                      'rounded-md px-2 py-1.5 bg-[var(--storefront-line)]/60 text-[var(--storefront-fg)] font-medium',
+                      'rounded-md px-2 py-1.5 bg-[--storefront-line]/60 text-[--storefront-fg] font-medium',
                   }}
                 >
                   {collection.title}

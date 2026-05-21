@@ -35,7 +35,7 @@ export function AddToCartButton({
           },
         })
       }}
-      className="w-full rounded-full bg-[var(--storefront-accent)] px-6 py-3.5 text-sm font-medium text-[var(--storefront-accent-fg)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+      className="w-full rounded-full bg-[--storefront-accent] px-6 py-3.5 text-sm font-medium text-[--storefront-accent-fg] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
     >
       {!variant
         ? 'Select options'

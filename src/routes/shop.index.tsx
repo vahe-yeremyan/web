@@ -22,7 +22,7 @@ function ShopIndex() {
       <header className="space-y-3">
         <h1 className="text-4xl font-medium tracking-tight">{shop.name}</h1>
         {shop.description && (
-          <p className="max-w-2xl text-lg text-[var(--storefront-fg-muted)]">
+          <p className="max-w-2xl text-lg text-[--storefront-fg-muted]">
             {shop.description}
           </p>
         )}

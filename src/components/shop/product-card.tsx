@@ -22,10 +22,10 @@ export function ProductCard({ product }: ProductCardProps) {
     <Link
       to="/shop/products/$handle"
       params={{ handle: product.handle }}
-      className="group flex flex-col gap-3 text-[var(--storefront-fg)] no-underline"
+      className="group flex flex-col gap-3 text-[--storefront-fg] no-underline"
     >
       <div
-        className="relative overflow-hidden bg-[var(--storefront-line)]"
+        className="relative overflow-hidden bg-[--storefront-line]"
         style={{
           aspectRatio: '4 / 5',
           borderRadius: 'var(--storefront-radius)',
@@ -40,19 +40,19 @@ export function ProductCard({ product }: ProductCardProps) {
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         />
         {soldOut && (
-          <span className="absolute top-3 left-3 rounded-full bg-[var(--storefront-bg)]/90 px-2.5 py-1 text-xs font-medium tracking-wide uppercase">
+          <span className="absolute top-3 left-3 rounded-full bg-[--storefront-bg]/90 px-2.5 py-1 text-xs font-medium tracking-wide uppercase">
             Sold out
           </span>
         )}
         {!soldOut && onSale && (
-          <span className="absolute top-3 left-3 rounded-full bg-[var(--storefront-accent)] px-2.5 py-1 text-xs font-medium tracking-wide text-[var(--storefront-accent-fg)] uppercase">
+          <span className="absolute top-3 left-3 rounded-full bg-[--storefront-accent] px-2.5 py-1 text-xs font-medium tracking-wide text-[--storefront-accent-fg] uppercase">
             Sale
           </span>
         )}
       </div>
       <div className="flex flex-col gap-1">
         <h3 className="text-sm leading-snug font-medium">{product.title}</h3>
-        <p className="text-sm text-[var(--storefront-fg-muted)]">
+        <p className="text-sm text-[--storefront-fg-muted]">
           {onSale && (
             <span className="mr-2 line-through">
               <Money

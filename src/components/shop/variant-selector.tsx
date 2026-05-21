@@ -21,7 +21,7 @@ export function VariantSelector({
         <div key={option.id}>
           <div className="mb-2 flex items-baseline justify-between">
             <h3 className="text-sm font-medium">{option.name}</h3>
-            <span className="text-sm text-[var(--storefront-fg-muted)]">
+            <span className="text-sm text-[--storefront-fg-muted]">
               {selectedOptions[option.name]}
             </span>
           </div>
@@ -41,10 +41,10 @@ export function VariantSelector({
                   onClick={() => onChange(wouldBe)}
                   disabled={!available && !selected}
                   className={[
-                    'min-w-[3rem] rounded-full border px-4 py-2 text-sm transition',
+                    'min-w-12 rounded-full border px-4 py-2 text-sm transition',
                     selected
-                      ? 'border-[var(--storefront-accent)] bg-[var(--storefront-accent)] text-[var(--storefront-accent-fg)]'
-                      : 'border-[var(--storefront-line)] hover:border-[var(--storefront-accent)]',
+                      ? 'border-[--storefront-accent] bg-[--storefront-accent] text-[--storefront-accent-fg]'
+                      : 'border-[--storefront-line] hover:border-[--storefront-accent]',
                     !available && !selected
                       ? 'cursor-not-allowed line-through opacity-40'
                       : '',

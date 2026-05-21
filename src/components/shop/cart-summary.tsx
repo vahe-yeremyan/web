@@ -16,7 +16,7 @@ export function CartSummary({ cart }: CartSummaryProps) {
   const appliedCode = cart.discountCodes.find((c) => c.applicable)
 
   return (
-    <aside className="flex flex-col gap-4 rounded-2xl border border-[var(--storefront-line)] p-6">
+    <aside className="flex flex-col gap-4 rounded-2xl border border-[--storefront-line] p-6">
       <h2 className="text-lg font-medium">Order summary</h2>
 
       <div className="flex justify-between text-sm">
@@ -28,7 +28,7 @@ export function CartSummary({ cart }: CartSummaryProps) {
       </div>
       {cart.cost.totalTaxAmount &&
         Number(cart.cost.totalTaxAmount.amount) > 0 && (
-          <div className="flex justify-between text-sm text-[var(--storefront-fg-muted)]">
+          <div className="flex justify-between text-sm text-[--storefront-fg-muted]">
             <span>Estimated tax</span>
             <Money
               amount={cart.cost.totalTaxAmount.amount}
@@ -36,7 +36,7 @@ export function CartSummary({ cart }: CartSummaryProps) {
             />
           </div>
         )}
-      <p className="text-sm text-[var(--storefront-fg-muted)]">
+      <p className="text-sm text-[--storefront-fg-muted]">
         Shipping calculated at checkout.
       </p>
 
@@ -58,12 +58,12 @@ export function CartSummary({ cart }: CartSummaryProps) {
             value={code}
             onChange={(e) => setCode(e.target.value)}
             placeholder="Discount code"
-            className="min-w-0 flex-1 rounded-full border border-[var(--storefront-line)] bg-transparent px-4 py-2 text-sm focus:border-[var(--storefront-accent)] focus:outline-none"
+            className="min-w-0 flex-1 rounded-full border border-[--storefront-line] bg-transparent px-4 py-2 text-sm focus:border-[--storefront-accent] focus:outline-none"
           />
           <button
             type="submit"
             disabled={apply.isPending || !code.trim()}
-            className="rounded-full border border-[var(--storefront-line)] px-4 py-2 text-sm font-medium hover:border-[var(--storefront-accent)] disabled:opacity-40"
+            className="rounded-full border border-[--storefront-line] px-4 py-2 text-sm font-medium hover:border-[--storefront-accent] disabled:opacity-40"
           >
             Apply
           </button>
@@ -72,7 +72,7 @@ export function CartSummary({ cart }: CartSummaryProps) {
           <p className="text-xs text-red-600">{apply.error.message}</p>
         )}
         {appliedCode && (
-          <div className="flex items-center justify-between rounded-full bg-[var(--storefront-line)]/40 px-4 py-2 text-xs">
+          <div className="flex items-center justify-between rounded-full bg-[--storefront-line]/40 px-4 py-2 text-xs">
             <span>
               Applied: <strong>{appliedCode.code}</strong>
             </span>
@@ -88,7 +88,7 @@ export function CartSummary({ cart }: CartSummaryProps) {
         )}
       </form>
 
-      <div className="flex justify-between border-t border-[var(--storefront-line)] pt-4 text-base font-medium">
+      <div className="flex justify-between border-t border-[--storefront-line] pt-4 text-base font-medium">
         <span>Total</span>
         <Money
           amount={cart.cost.totalAmount.amount}
@@ -98,11 +98,11 @@ export function CartSummary({ cart }: CartSummaryProps) {
 
       <a
         href={cart.checkoutUrl}
-        className="block w-full rounded-full bg-[var(--storefront-accent)] px-6 py-3.5 text-center text-sm font-medium text-[var(--storefront-accent-fg)] no-underline transition hover:opacity-90"
+        className="block w-full rounded-full bg-[--storefront-accent] px-6 py-3.5 text-center text-sm font-medium text-[--storefront-accent-fg] no-underline transition hover:opacity-90"
       >
         Checkout
       </a>
-      <p className="text-center text-xs text-[var(--storefront-fg-muted)]">
+      <p className="text-center text-xs text-[--storefront-fg-muted]">
         Secure checkout powered by Shopify
       </p>
     </aside>

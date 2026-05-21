@@ -45,7 +45,7 @@ function CollectionRoute() {
             height={500}
             loading="eager"
             sizes="100vw"
-            className="aspect-[14/5] w-full rounded-lg object-cover"
+            className="aspect-14/5 w-full rounded-lg object-cover"
           />
         )}
         <div className="space-y-2">
@@ -53,7 +53,7 @@ function CollectionRoute() {
             {collection.title}
           </h1>
           {collection.description && (
-            <p className="max-w-2xl text-[var(--storefront-fg-muted)]">
+            <p className="max-w-2xl text-[--storefront-fg-muted]">
               {collection.description}
             </p>
           )}

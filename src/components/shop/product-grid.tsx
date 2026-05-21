@@ -9,7 +9,7 @@ type ProductGridProps = {
 export function ProductGrid({ products }: ProductGridProps) {
   if (products.length === 0) {
     return (
-      <p className="py-16 text-center text-[var(--storefront-fg-muted)]">
+      <p className="py-16 text-center text-[--storefront-fg-muted]">
         No products yet.
       </p>
     )

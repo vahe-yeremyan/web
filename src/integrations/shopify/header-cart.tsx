@@ -7,7 +7,7 @@ export default function ShopifyHeaderCart() {
   return (
     <Link
       to="/shop/cart"
-      className="relative inline-flex items-center justify-center rounded-xl p-2 transition hover:bg-[var(--storefront-line)]/40"
+      className="relative inline-flex items-center justify-center rounded-xl p-2 transition hover:bg-[--storefront-line]/40"
       aria-label={`Cart, ${totalQuantity} item${totalQuantity === 1 ? '' : 's'}`}
     >
       <svg
@@ -28,7 +28,7 @@ export default function ShopifyHeaderCart() {
         <circle cx="18" cy="20.5" r="1.2" />
       </svg>
       {totalQuantity > 0 && (
-        <span className="absolute -top-0.5 -right-0.5 inline-flex min-w-[1.1rem] items-center justify-center rounded-full bg-[var(--storefront-accent,#0a0a0a)] px-1 text-[10px] leading-[1.1rem] font-semibold text-[var(--storefront-accent-fg,#fff)]">
+        <span className="absolute -top-0.5 -right-0.5 inline-flex min-w-[1.1rem] items-center justify-center rounded-full bg-[--storefront-accent,#0a0a0a] px-1 text-[10px] leading-[1.1rem] font-semibold text-[--storefront-accent-fg,#fff]">
           {totalQuantity}
         </span>
       )}
