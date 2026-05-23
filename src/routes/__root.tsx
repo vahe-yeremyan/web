@@ -32,6 +32,16 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
     ],
     links: [
+      { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+      {
+        rel: 'preconnect',
+        href: 'https://fonts.gstatic.com',
+        crossOrigin: 'anonymous',
+      },
+      {
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap',
+      },
       {
         rel: 'stylesheet',
         href: appCss,
@@ -49,9 +59,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="flex min-h-screen flex-col">
         <Header />
-        <div className="flex flex-1 flex-col pt-(--header-height)">
-          {children}
-        </div>
+        <div className="site-content flex flex-1 flex-col">{children}</div>
         {import.meta.env.DEV && <Devtools />}
         <Scripts />
       </body>
