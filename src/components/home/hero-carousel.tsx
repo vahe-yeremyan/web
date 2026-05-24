@@ -14,7 +14,9 @@ import { cn } from '@/lib/utils'
 
 type HeroImage = {
   src: string
+  srcSet?: string
   alt: string
+  sizes?: string
 }
 
 export const HERO_IMAGES: Array<HeroImage> = [
@@ -37,6 +39,8 @@ export const HERO_IMAGES: Array<HeroImage> = [
 ]
 
 const AUTO_PLAY_INTERVAL_MS = 4000
+const HERO_IMAGE_SIZES =
+  '(min-width: 1536px) 1500px, (min-width: 1280px) 1400px, (min-width: 1024px) 1200px, (min-width: 768px) 900px, (min-width: 640px) 700px, calc(100vw - 2rem)'
 
 export function HeroCarousel() {
   const [api, setApi] = useState<CarouselApi>()
@@ -93,10 +97,12 @@ export function HeroCarousel() {
           <CarouselItem key={image.src} className="h-full pl-0">
             <img
               src={image.src}
+              srcSet={image.srcSet}
               alt={image.alt}
               decoding="async"
-              fetchPriority={index === 0 ? 'high' : 'auto'}
-              loading="eager"
+              fetchPriority={index === 0 ? 'high' : 'low'}
+              loading={index === 0 ? 'eager' : 'lazy'}
+              sizes={image.sizes ?? HERO_IMAGE_SIZES}
               className="h-full w-full object-cover"
             />
           </CarouselItem>
