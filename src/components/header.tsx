@@ -11,7 +11,7 @@ const NAV_LINKS = [
   { label: 'Prints', href: '/prints' },
   { label: 'Books', href: '/books' },
   { label: 'Sold', href: '/sold' },
-  { label: 'About', href: '/about' },
+  { label: 'About', to: '/about' },
 ] as const
 
 export default function Header() {

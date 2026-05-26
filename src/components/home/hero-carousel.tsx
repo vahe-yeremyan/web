@@ -90,7 +90,7 @@ export function HeroCarousel() {
     <Carousel
       setApi={setApi}
       opts={{ align: 'start', loop: true }}
-      className="group/hero h-[min(720px,calc(100dvh-var(--header-height)-3rem))] min-h-80 w-full overflow-hidden rounded-2xl **:data-[slot=carousel-content]:h-full [&_[data-slot=carousel-content]>div]:will-change-transform"
+      className="group/hero h-[min(720px,calc(100dvh-var(--header-height)-3rem))] min-h-80 w-full overflow-hidden rounded-2xl **:data-[slot=carousel-content]:h-full 2xl:mt-4 [&_[data-slot=carousel-content]>div]:will-change-transform"
     >
       <CarouselContent className="ml-0 h-full">
         {HERO_IMAGES.map((image, index) => (

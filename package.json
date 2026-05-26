@@ -18,6 +18,9 @@
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.37.1",
+    "@portabletext/react": "^6.2.0",
+    "@sanity/client": "^7.22.0",
+    "@sanity/image-url": "^2.1.1",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "latest",
     "@tanstack/react-query": "latest",
@@ -43,6 +46,7 @@
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^7.0.0",
+    "@portabletext/types": "^4.0.2",
     "@shopify/api-codegen-preset": "^2.0.0",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/devtools-vite": "latest",

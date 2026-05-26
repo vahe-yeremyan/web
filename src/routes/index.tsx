@@ -86,9 +86,9 @@ function Home() {
         artworks={HIGHLIGHTED_ARTWORKS}
       />
 
-      <ThemesSection themes={ARTWORK_THEMES} />
+      <ArtworkGridSection title="Recently Added" artworks={RECENT_ARTWORKS} />
 
-      <ArtworkGridSection title="Recent Artworks" artworks={RECENT_ARTWORKS} />
+      <ThemesSection themes={ARTWORK_THEMES} />
     </main>
   )
 }
