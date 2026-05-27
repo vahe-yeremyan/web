@@ -1,4 +1,4 @@
-import type { CartLineDetail } from '@/lib/shopify/queries'
+import type { CartLineDetail } from '@/lib/queries/shopify/queries'
 
 import { Link } from '@tanstack/react-router'
 

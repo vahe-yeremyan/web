@@ -1,3 +1,4 @@
+import type { PortableTextJsonBlock } from '@/lib/queries/sanity/about'
 import type { PortableTextComponents } from '@portabletext/react'
 import type { PortableTextBlock } from '@portabletext/types'
 
@@ -52,9 +53,14 @@ const portableTextComponents = {
 } satisfies PortableTextComponents
 
 type SanityPortableTextProps = {
-  value: Array<PortableTextBlock>
+  value: Array<PortableTextJsonBlock>
 }
 
 export function SanityPortableText({ value }: SanityPortableTextProps) {
-  return <PortableText value={value} components={portableTextComponents} />
+  return (
+    <PortableText
+      value={value as unknown as Array<PortableTextBlock>}
+      components={portableTextComponents}
+    />
+  )
 }

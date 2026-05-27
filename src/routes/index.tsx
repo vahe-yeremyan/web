@@ -1,39 +1,39 @@
-import type { ArtworkGridItem } from '@/components/home/artwork-grid-section'
 import type { ArtworkTheme } from '@/components/home/themes-section'
 
 import { createFileRoute } from '@tanstack/react-router'
 
 import { ArtworkGridSection } from '@/components/home/artwork-grid-section'
 import { HeroCarousel } from '@/components/home/hero-carousel'
+import { HomeSectionDivider } from '@/components/home/home-section-divider'
 import { ThemesSection } from '@/components/home/themes-section'
+import {
+  AmexIcon,
+  ApplePayIcon,
+  GooglePayIcon,
+  MastercardIcon,
+  PaypalIcon,
+  VisaIcon,
+} from '@/components/icons/PaymentIcons'
+import { shopifyProductsToArtworkGridItems } from '@/lib/queries/shopify/artwork-grid'
+import {
+  getHighlightedArtworks,
+  getRecentArtworks,
+} from '@/server/shopify/catalog.functions'
 
 export const Route = createFileRoute('/')({
+  loader: async () => {
+    const [highlightedArtworkProducts, recentArtworkProducts] =
+      await Promise.all([getHighlightedArtworks(), getRecentArtworks()])
+
+    return {
+      highlightedArtworks: shopifyProductsToArtworkGridItems(
+        highlightedArtworkProducts,
+      ),
+      recentArtworks: shopifyProductsToArtworkGridItems(recentArtworkProducts),
+    }
+  },
   component: Home,
 })
-
-const HIGHLIGHTED_ARTWORKS: Array<ArtworkGridItem> = Array.from(
-  { length: 4 },
-  (_, index) => ({
-    id: `highlighted-lilies-${index + 1}`,
-    title: 'Lilies',
-    medium: 'Oil on Canvas (HARDCODED)',
-    dimensions: '70 x 70 x 1.5 in (HARDCODED)',
-    imageSrc: '/lilies1.jpg',
-    imageAlt: 'Lilies artwork by Vahe Yeremyan',
-  }),
-)
-
-const RECENT_ARTWORKS: Array<ArtworkGridItem> = Array.from(
-  { length: 4 },
-  (_, index) => ({
-    id: `recent-trees-${index + 1}`,
-    title: 'Trees',
-    medium: 'Oil on Canvas (HARDCODED)',
-    dimensions: '70 x 70 x 1.5 in (HARDCODED)',
-    imageSrc: '/art.jpg',
-    imageAlt: 'Trees artwork by Vahe Yeremyan',
-  }),
-)
 
 const ARTWORK_THEMES: Array<ArtworkTheme> = [
   {
@@ -63,6 +63,8 @@ const ARTWORK_THEMES: Array<ArtworkTheme> = [
 ]
 
 function Home() {
+  const { highlightedArtworks, recentArtworks } = Route.useLoaderData()
+
   return (
     <main className="py-2">
       <HeroCarousel />
@@ -81,14 +83,45 @@ function Home() {
         </p>
       </section>
 
-      <ArtworkGridSection
-        title="Highlighted Artworks"
-        artworks={HIGHLIGHTED_ARTWORKS}
-      />
+      <HomeSectionDivider />
 
-      <ArtworkGridSection title="Recently Added" artworks={RECENT_ARTWORKS} />
+      {highlightedArtworks.length > 0 && (
+        <>
+          <ArtworkGridSection
+            title="Highlighted Artworks"
+            artworks={highlightedArtworks}
+          />
+          <HomeSectionDivider />
+        </>
+      )}
+
+      {recentArtworks.length > 0 && (
+        <>
+          <ArtworkGridSection
+            title="Recently Added"
+            artworks={recentArtworks}
+          />
+          <HomeSectionDivider />
+        </>
+      )}
 
       <ThemesSection themes={ARTWORK_THEMES} />
+
+      <HomeSectionDivider />
+
+      <section className="mt-20">
+        <h3 className="featured-headline text-center md:text-2xl!">
+          Secure Payment Options
+        </h3>
+        <div className="flex items-center justify-center gap-4">
+          <VisaIcon />
+          <AmexIcon />
+          <PaypalIcon />
+          <MastercardIcon />
+          <ApplePayIcon />
+          <GooglePayIcon />
+        </div>
+      </section>
     </main>
   )
 }

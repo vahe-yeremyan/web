@@ -2,7 +2,7 @@ import { createFileRoute, notFound } from '@tanstack/react-router'
 
 import { CredentialSections } from '@/components/sanity/credential-sections'
 import { SanityPortableText } from '@/components/sanity/portable-text'
-import { getAbout } from '@/lib/queries/sanity/about'
+import { getAbout } from '@/server/sanity/about.functions'
 
 export const Route = createFileRoute('/about')({
   loader: async () => {

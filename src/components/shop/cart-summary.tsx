@@ -1,4 +1,4 @@
-import type { CartDetail } from '@/lib/shopify/queries'
+import type { CartDetail } from '@/lib/queries/shopify/queries'
 
 import { useState } from 'react'
 

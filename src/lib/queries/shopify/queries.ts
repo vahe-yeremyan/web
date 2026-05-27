@@ -7,9 +7,11 @@ import type {
   CartQuery,
   CollectionQuery,
   CollectionsQuery,
+  HighlightedArtworksQuery,
   PageQuery,
   ProductQuery,
   ProductsQuery,
+  RecentArtworksQuery,
   SearchQuery,
   ShopPoliciesQuery,
   ShopQuery,
@@ -81,6 +83,14 @@ const PRODUCT_CARD_FRAGMENT = /* GraphQL */ `
         amount
         currencyCode
       }
+    }
+    medium: metafield(namespace: "custom", key: "medium") {
+      value
+      type
+    }
+    dimensions: metafield(namespace: "custom", key: "dimensions_us") {
+      value
+      type
     }
   }
 `
@@ -260,6 +270,91 @@ export type CollectionDetail = NonNullable<CollectionQuery['collection']>
 export type CollectionQueryResult = {
   collection: CollectionDetail | null
 }
+
+/* ─── Homepage artwork sections ─────────────────────────────────────────── */
+
+const HOME_ARTWORK_PRODUCT_FIELDS = /* GraphQL */ `
+  fragment HomeArtworkProduct on Product {
+    id
+    title
+    handle
+    images(first: $imagesFirst) {
+      edges {
+        node {
+          id
+          url
+          altText
+          width
+          height
+        }
+      }
+    }
+    dimensionsImperial: metafield(namespace: "custom", key: "dimensions_us") {
+      value
+      type
+    }
+    dimensionsMetric: metafield(namespace: "custom", key: "dimensions_global") {
+      value
+      type
+    }
+    medium: metafield(namespace: "custom", key: "medium") {
+      value
+      type
+    }
+  }
+`
+
+export const HIGHLIGHTED_ARTWORKS_QUERY = /* GraphQL */ `
+  ${HOME_ARTWORK_PRODUCT_FIELDS}
+  query HighlightedArtworks(
+    $collectionHandle: String!
+    $productsFirst: Int = 4
+    $imagesFirst: Int = 1
+  ) {
+    collectionByHandle(handle: $collectionHandle) {
+      products(
+        first: $productsFirst
+        sortKey: COLLECTION_DEFAULT
+        filters: [{ available: true }]
+      ) {
+        edges {
+          node {
+            ...HomeArtworkProduct
+          }
+        }
+      }
+    }
+  }
+`
+
+export type HighlightedArtworksQueryResult = HighlightedArtworksQuery
+export type HighlightedArtworkProduct = NonNullable<
+  NonNullable<
+    HighlightedArtworksQuery['collectionByHandle']
+  >['products']['edges'][number]
+>['node']
+
+export const RECENT_ARTWORKS_QUERY = /* GraphQL */ `
+  ${HOME_ARTWORK_PRODUCT_FIELDS}
+  query RecentArtworks($productsFirst: Int = 4, $imagesFirst: Int = 1) {
+    products(
+      first: $productsFirst
+      sortKey: CREATED_AT
+      reverse: true
+      query: "available_for_sale:true"
+    ) {
+      edges {
+        node {
+          ...HomeArtworkProduct
+        }
+      }
+    }
+  }
+`
+
+export type RecentArtworksQueryResult = RecentArtworksQuery
+export type RecentArtworkProduct =
+  RecentArtworksQuery['products']['edges'][number]['node']
 
 /* ─── Cart fragment + queries + mutations ───────────────────────────────── */
 

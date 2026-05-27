@@ -3,6 +3,8 @@ import type {
   CollectionListItem,
   CollectionQueryResult,
   CollectionsQueryResult,
+  HighlightedArtworkProduct,
+  HighlightedArtworksQueryResult,
   PageDetail,
   PageQueryResult,
   PolicySummary,
@@ -11,11 +13,13 @@ import type {
   ProductQueryResult,
   ProductsQueryResult,
   ProductsQueryVariables,
+  RecentArtworkProduct,
+  RecentArtworksQueryResult,
   SearchQueryResult,
   ShopPoliciesQueryResult,
   ShopPolicy,
   ShopQueryResult,
-} from '@/lib/shopify/queries'
+} from '@/lib/queries/shopify/queries'
 
 import { createServerFn } from '@tanstack/react-start'
 import { setResponseHeaders } from '@tanstack/react-start/server'
@@ -25,14 +29,16 @@ import * as v from 'valibot'
 import {
   COLLECTIONS_QUERY,
   COLLECTION_QUERY,
+  HIGHLIGHTED_ARTWORKS_QUERY,
   PAGE_QUERY,
   PRODUCTS_QUERY,
   PRODUCT_QUERY,
+  RECENT_ARTWORKS_QUERY,
   SEARCH_QUERY,
   SHOP_POLICIES_QUERY,
   SHOP_QUERY,
   flattenPolicies,
-} from '@/lib/shopify/queries'
+} from '@/lib/queries/shopify/queries'
 import { shopifyServerFetch } from '@/server/shopify/storefront-client'
 
 /**
@@ -72,6 +78,8 @@ const collectionSortKeys = [
   'RELEVANCE',
   'TITLE',
 ] as const
+
+const HIGHLIGHTED_ARTWORKS_COLLECTION_HANDLE = 'highlighted-artworks'
 
 export const getShop = createServerFn({ method: 'GET' }).handler(
   async (): Promise<ShopQueryResult['shop']> => {
@@ -170,6 +178,47 @@ export const getCollection = createServerFn({ method: 'POST' })
     })
     return result.collection
   })
+
+export const getHighlightedArtworks = createServerFn({ method: 'GET' }).handler(
+  async (): Promise<Array<HighlightedArtworkProduct>> => {
+    setBrowseCacheHeaders()
+    const result = await shopifyServerFetch<
+      HighlightedArtworksQueryResult,
+      { collectionHandle: string; productsFirst: number; imagesFirst: number }
+    >({
+      query: HIGHLIGHTED_ARTWORKS_QUERY,
+      variables: {
+        collectionHandle: HIGHLIGHTED_ARTWORKS_COLLECTION_HANDLE,
+        productsFirst: 4,
+        imagesFirst: 1,
+      },
+    })
+    return (
+      result.collectionByHandle?.products.edges
+        .map((edge) => edge.node)
+        .filter((product): product is HighlightedArtworkProduct =>
+          Boolean(product),
+        ) ?? []
+    )
+  },
+)
+
+export const getRecentArtworks = createServerFn({ method: 'GET' }).handler(
+  async (): Promise<Array<RecentArtworkProduct>> => {
+    setBrowseCacheHeaders()
+    const result = await shopifyServerFetch<
+      RecentArtworksQueryResult,
+      { productsFirst: number; imagesFirst: number }
+    >({
+      query: RECENT_ARTWORKS_QUERY,
+      variables: {
+        productsFirst: 4,
+        imagesFirst: 1,
+      },
+    })
+    return result.products.edges.map((edge) => edge.node)
+  },
+)
 
 export const getPage = createServerFn({ method: 'POST' })
   .inputValidator(v.object({ handle: v.string() }))

@@ -46,15 +46,27 @@ export function HeroCarousel() {
   const [api, setApi] = useState<CarouselApi>()
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(true)
+  const [autoPlayResetKey, setAutoPlayResetKey] = useState(0)
 
   const canMove = HERO_IMAGES.length > 1
 
   function scrollPrev() {
     api?.scrollPrev()
+    resetAutoPlayTimer()
   }
 
   function scrollNext() {
     api?.scrollNext()
+    resetAutoPlayTimer()
+  }
+
+  function scrollTo(index: number) {
+    api?.scrollTo(index)
+    resetAutoPlayTimer()
+  }
+
+  function resetAutoPlayTimer() {
+    setAutoPlayResetKey((key) => key + 1)
   }
 
   useEffect(() => {
@@ -84,15 +96,15 @@ export function HeroCarousel() {
     return () => {
       window.clearInterval(intervalId)
     }
-  }, [api, canMove, isPlaying, selectedIndex])
+  }, [api, autoPlayResetKey, canMove, isPlaying])
 
   return (
     <Carousel
       setApi={setApi}
       opts={{ align: 'start', loop: true }}
-      className="group/hero h-[min(720px,calc(100dvh-var(--header-height)-3rem))] min-h-80 w-full overflow-hidden rounded-2xl **:data-[slot=carousel-content]:h-full 2xl:mt-4 [&_[data-slot=carousel-content]>div]:will-change-transform"
+      className="group/hero h-[min(720px,calc(100dvh-var(--header-height)-3rem))] min-h-80 w-full overflow-hidden rounded-2xl 2xl:mt-4 [&_[data-slot=carousel-content]>div]:will-change-transform"
     >
-      <CarouselContent className="ml-0 h-full">
+      <CarouselContent viewportClassName="h-full" className="ml-0 h-full">
         {HERO_IMAGES.map((image, index) => (
           <CarouselItem key={image.src} className="h-full pl-0">
             <img
@@ -153,7 +165,7 @@ export function HeroCarousel() {
               selectedIndex === index ? 'bg-white' : 'bg-white/20',
             )}
             onClick={() => {
-              api?.scrollTo(index)
+              scrollTo(index)
             }}
           />
         ))}
@@ -176,7 +188,7 @@ function CarouselArrow({
   return (
     <div
       className={cn(
-        'absolute inset-y-0 w-1/5',
+        'absolute inset-y-0 z-10 w-1/5',
         edge === 'left' ? 'group/prev left-0' : 'group/next right-0',
       )}
     >

@@ -1,4 +1,4 @@
-import type { ProductListItem } from '@/lib/shopify/queries'
+import type { ProductListItem } from '@/lib/queries/shopify/queries'
 
 import { Link } from '@tanstack/react-router'
 

@@ -50,7 +50,7 @@ export default [
     ignores: [
       'eslint.config.js',
       'prettier.config.js',
-      'src/lib/shopify/generated/**',
+      'src/lib/queries/shopify/generated/**',
     ],
   },
 ]

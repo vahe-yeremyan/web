@@ -7,7 +7,7 @@ import type {
   CartLinesUpdateResult,
   CartQueryResult,
   CartUserError,
-} from '@/lib/shopify/queries'
+} from '@/lib/queries/shopify/queries'
 
 import { createServerFn } from '@tanstack/react-start'
 import { setResponseHeaders } from '@tanstack/react-start/server'
@@ -21,7 +21,7 @@ import {
   CART_LINES_REMOVE_MUTATION,
   CART_LINES_UPDATE_MUTATION,
   CART_QUERY,
-} from '@/lib/shopify/queries'
+} from '@/lib/queries/shopify/queries'
 import { clearCartId, getCartId, setCartId } from '@/server/shopify/cookies'
 import { shopifyServerFetch } from '@/server/shopify/storefront-client'
 

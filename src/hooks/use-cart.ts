@@ -1,8 +1,8 @@
 import type {
   MoneyV2,
   Image as StorefrontImage,
-} from '@/lib/shopify/generated/storefront.types'
-import type { CartDetail, CartLineDetail } from '@/lib/shopify/queries'
+} from '@/lib/queries/shopify/generated/storefront.types'
+import type { CartDetail, CartLineDetail } from '@/lib/queries/shopify/queries'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 

@@ -1,4 +1,4 @@
-import { formatMoney } from '@/lib/shopify/format'
+import { formatMoney } from '@/lib/queries/shopify/format'
 
 type MoneyProps = {
   amount: string | number

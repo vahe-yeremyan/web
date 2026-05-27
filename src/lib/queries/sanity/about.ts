@@ -1,11 +1,21 @@
-import type { PortableTextBlock } from '@portabletext/types'
+export type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | Array<JsonValue>
+  | { [key: string]: JsonValue }
 
-import { sanityClient } from '@/server/sanity/client'
+export type PortableTextJsonBlock = {
+  _key: string
+  _type: string
+  [key: string]: JsonValue
+}
 
 export type AboutPage = {
   title: string
   slug: string
-  body: Array<PortableTextBlock>
+  body: Array<PortableTextJsonBlock>
   credentialSections?: Array<AboutCredentialSection>
 }
 
@@ -19,7 +29,7 @@ export type AboutCredentialItem = {
   description: string
 }
 
-const ABOUT_QUERY = `
+export const ABOUT_QUERY = `
   *[_type == "about" && slug.current == $slug][0]{
     title,
     "slug": slug.current,
@@ -33,7 +43,3 @@ const ABOUT_QUERY = `
     }
   }
 `
-
-export function getAbout(slug = 'about') {
-  return sanityClient.fetch<AboutPage | null>(ABOUT_QUERY, { slug })
-}

@@ -3,9 +3,9 @@ import { HomeSectionTitle } from './home-section-title'
 export type ArtworkGridItem = {
   id: string
   title: string
-  medium: string
-  dimensions: string
-  imageSrc: string
+  medium?: string
+  dimensions?: string
+  imageSrc?: string
   imageSrcSet?: string
   imageSizes?: string
   imageAlt: string
@@ -30,24 +30,35 @@ export function ArtworkGridSection({
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {artworks.map((artwork) => (
           <article key={artwork.id} className="min-w-0">
-            <div className="aspect-square overflow-hidden rounded-2xl bg-[linear-gradient(145deg,#fdfdfc_0%,#fafafa_58%,#f6f6f5_100%)] p-4 shadow-[inset_0_0_0_1px_rgba(24,24,22,0.04)] sm:p-5">
+            <div className="aspect-square overflow-hidden rounded-2xl border border-neutral-200/60 bg-[linear-gradient(180deg,#fdfdfc_0%,#fbfbfa_58%,#f8f8f7_100%)] p-4 sm:p-5">
               <div className="flex h-full w-full items-center justify-center">
-                <img
-                  src={artwork.imageSrc}
-                  srcSet={artwork.imageSrcSet}
-                  alt={artwork.imageAlt}
-                  loading="lazy"
-                  decoding="async"
-                  sizes={artwork.imageSizes ?? ARTWORK_GRID_IMAGE_SIZES}
-                  className="block max-h-full max-w-full rounded-[2px] object-contain shadow-[0_14px_28px_rgba(31,25,18,0.1)]"
-                />
+                {artwork.imageSrc ? (
+                  <img
+                    src={artwork.imageSrc}
+                    srcSet={artwork.imageSrcSet}
+                    alt={artwork.imageAlt}
+                    loading="lazy"
+                    decoding="async"
+                    sizes={artwork.imageSizes ?? ARTWORK_GRID_IMAGE_SIZES}
+                    className="block max-h-full max-w-full rounded-[2px] object-contain"
+                  />
+                ) : (
+                  <div
+                    aria-hidden
+                    className="h-full w-full rounded-[2px] bg-neutral-100"
+                  />
+                )}
               </div>
             </div>
 
             <div className="mt-4 space-y-1 text-center">
               <h3 className="text-base font-semibold">{artwork.title}</h3>
-              <p className="text-sm text-neutral-600">{artwork.medium}</p>
-              <p className="text-sm text-neutral-600">{artwork.dimensions}</p>
+              {artwork.medium && (
+                <p className="text-sm text-neutral-600">{artwork.medium}</p>
+              )}
+              {artwork.dimensions && (
+                <p className="text-sm text-neutral-600">{artwork.dimensions}</p>
+              )}
             </div>
           </article>
         ))}

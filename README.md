@@ -128,8 +128,8 @@ default demo creds won't work for `/shop/account/*` — you'll need a real store
 - **Cart state** — Cart ID stored in an httpOnly cookie (`tanstack_cart_id`). React
   Query owns the cache (single key `['shopify', 'cart']`); optimistic updates with
   a module-level mutation counter to batch invalidations.
-- **GraphQL queries** — hand-written strings in `src/lib/shopify/queries.ts`, with
-  Storefront API operation types generated into `src/lib/shopify/generated`.
+- **GraphQL queries** — hand-written strings in `src/lib/queries/shopify/queries.ts`, with
+  Storefront API operation types generated into `src/lib/queries/shopify/generated`.
 - **Customer accounts** — hand-rolled OAuth 2.1 PKCE with `.well-known` discovery
   (no usable npm client exists yet). Tokens in a signed httpOnly cookie.
 - **Checkout** — redirects to `cart.checkoutUrl` (Shopify-hosted).

@@ -248,6 +248,12 @@ body::after {
   animation: rise-in 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+@layer utilities {
+  .featured-headline {
+    @apply mb-4 text-xl font-semibold tracking-[-0.0125rem] md:mb-8 md:text-[1.625rem] lg:text-3xl;
+  }
+}
+
 @keyframes rise-in {
   from {
     opacity: 0;
