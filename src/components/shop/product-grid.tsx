@@ -5,9 +5,10 @@ import { shopifyProductListItemsToArtworkGridItems } from '@/lib/queries/shopify
 
 type ProductGridProps = {
   products: ReadonlyArray<ProductListItem>
+  showPrice?: boolean
 }
 
-export function ProductGrid({ products }: ProductGridProps) {
+export function ProductGrid({ products, showPrice = false }: ProductGridProps) {
   if (products.length === 0) {
     return (
       <p className="py-16 text-center text-[--storefront-fg-muted]">
@@ -19,7 +20,9 @@ export function ProductGrid({ products }: ProductGridProps) {
   return (
     <ArtworkGridSection
       title="Products"
-      artworks={shopifyProductListItemsToArtworkGridItems(products)}
+      artworks={shopifyProductListItemsToArtworkGridItems(products, {
+        showPrice,
+      })}
       hideTitle
     />
   )

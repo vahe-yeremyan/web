@@ -1,0 +1,257 @@
+import type {
+  PriceFilterOption,
+  ShopFilterKey,
+  ShopFilterOptions,
+  ShopSearchParams,
+  ShopSortOption,
+} from '@/lib/shop-filters'
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  PRICE_FILTER_OPTIONS,
+  SHOP_SORT_OPTIONS,
+  hasActiveShopFilters,
+} from '@/lib/shop-filters'
+import { cn } from '@/lib/utils'
+
+type ArtworkFiltersSidebarProps = {
+  search: ShopSearchParams
+  filterOptions: ShopFilterOptions
+  onSortChange: (sort: ShopSortOption) => void
+  onFilterToggle: (key: ShopFilterKey, value: string) => void
+  onPriceChange: (price?: PriceFilterOption) => void
+  onClearFilters: () => void
+}
+
+type FilterSectionProps = {
+  title: string
+  name: ShopFilterKey
+  options: string[]
+  selected: string[]
+  onToggle: (key: ShopFilterKey, value: string) => void
+}
+
+type SidebarHeaderProps = {
+  hasFilters: boolean
+  onClearFilters: () => void
+}
+
+type SortFilterProps = {
+  value: ShopSortOption
+  hasFilters: boolean
+  onChange: (sort: ShopSortOption) => void
+}
+
+type PriceFilterProps = {
+  value?: PriceFilterOption
+  onChange: (price?: PriceFilterOption) => void
+}
+
+function optionId(prefix: string, value: string) {
+  return `${prefix}-${value.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+}
+
+function isTitleSort(value: ShopSortOption) {
+  return value === 'title-asc' || value === 'title-desc'
+}
+
+function FilterSection({
+  title,
+  name,
+  options,
+  selected,
+  onToggle,
+}: FilterSectionProps) {
+  if (options.length === 0) return null
+
+  return (
+    <section className="space-y-3" aria-labelledby={`${name}-filters`}>
+      <h3
+        id={`${name}-filters`}
+        className="text-sm font-medium text-neutral-700"
+      >
+        {title}
+      </h3>
+
+      <ul className="space-y-2">
+        {options.map((option) => {
+          const id = optionId(name, option)
+
+          return (
+            <li key={option} className="flex items-center gap-2">
+              <input
+                id={id}
+                type="checkbox"
+                checked={selected.includes(option)}
+                onChange={() => onToggle(name, option)}
+                className="h-4 w-4 cursor-pointer appearance-none rounded-[3px] border border-neutral-300 bg-white checked:border-neutral-900 checked:bg-neutral-900"
+              />
+              <label
+                htmlFor={id}
+                className="cursor-pointer text-sm text-neutral-700"
+              >
+                {option}
+              </label>
+            </li>
+          )
+        })}
+      </ul>
+    </section>
+  )
+}
+
+function SidebarHeader({ hasFilters, onClearFilters }: SidebarHeaderProps) {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <h2
+        id="artwork-filters-title"
+        className="text-base font-semibold text-neutral-950"
+      >
+        Refine
+      </h2>
+      {hasFilters && (
+        <button
+          type="button"
+          onClick={onClearFilters}
+          className="text-sm font-medium text-neutral-500 underline-offset-2 hover:text-neutral-800 hover:underline"
+        >
+          Clear filters
+        </button>
+      )}
+    </div>
+  )
+}
+
+function SortFilter({ value, hasFilters, onChange }: SortFilterProps) {
+  return (
+    <div className="space-y-2">
+      <label
+        htmlFor="artwork-sort"
+        className="text-sm font-medium text-neutral-700"
+      >
+        Sort by
+      </label>
+      <Select
+        value={value}
+        onValueChange={(nextValue) => onChange(nextValue as ShopSortOption)}
+      >
+        <SelectTrigger id="artwork-sort" className="mt-1 w-full">
+          <SelectValue placeholder="Select a sort option" />
+        </SelectTrigger>
+        <SelectContent>
+          {SHOP_SORT_OPTIONS.map((option) => (
+            <SelectItem
+              key={option.value}
+              value={option.value}
+              disabled={hasFilters && isTitleSort(option.value)}
+              className="data-disabled:pointer-events-auto data-disabled:cursor-not-allowed data-disabled:opacity-50"
+            >
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  )
+}
+
+function PriceFilter({ value, onChange }: PriceFilterProps) {
+  return (
+    <section className="space-y-3" aria-labelledby="price-filters">
+      <h3 id="price-filters" className="text-sm font-medium text-neutral-700">
+        Price
+      </h3>
+
+      <ul className="space-y-2">
+        {PRICE_FILTER_OPTIONS.map((option) => {
+          const isSelected = value === option.value
+
+          return (
+            <li key={option.value}>
+              <button
+                type="button"
+                onClick={() => onChange(isSelected ? undefined : option.value)}
+                className="flex w-full cursor-pointer items-center gap-2 text-left"
+                aria-pressed={isSelected}
+              >
+                <span
+                  className={cn(
+                    'flex h-4 w-4 items-center justify-center rounded-full border transition-colors',
+                    isSelected && 'border-neutral-900',
+                    !isSelected && 'border-neutral-300',
+                  )}
+                  aria-hidden
+                >
+                  {isSelected && (
+                    <span className="h-2 w-2 rounded-full bg-neutral-900" />
+                  )}
+                </span>
+                <span className="text-sm text-neutral-700">{option.label}</span>
+              </button>
+            </li>
+          )
+        })}
+      </ul>
+    </section>
+  )
+}
+
+export function ArtworkFiltersSidebar({
+  search,
+  filterOptions,
+  onSortChange,
+  onFilterToggle,
+  onPriceChange,
+  onClearFilters,
+}: ArtworkFiltersSidebarProps) {
+  const hasFilters = hasActiveShopFilters(search)
+
+  return (
+    <aside
+      aria-labelledby="artwork-filters-title"
+      className="space-y-6 rounded-md border border-neutral-200 bg-white p-4"
+    >
+      <div className="space-y-3">
+        <SidebarHeader
+          hasFilters={hasFilters}
+          onClearFilters={onClearFilters}
+        />
+        <SortFilter
+          value={search.sort}
+          hasFilters={hasFilters}
+          onChange={onSortChange}
+        />
+      </div>
+
+      <PriceFilter value={search.price} onChange={onPriceChange} />
+
+      <FilterSection
+        title="Category"
+        name="category"
+        options={filterOptions.categories}
+        selected={search.category}
+        onToggle={onFilterToggle}
+      />
+      <FilterSection
+        title="Medium"
+        name="medium"
+        options={filterOptions.mediums}
+        selected={search.medium}
+        onToggle={onFilterToggle}
+      />
+      <FilterSection
+        title="Orientation"
+        name="orientation"
+        options={filterOptions.orientations}
+        selected={search.orientation}
+        onToggle={onFilterToggle}
+      />
+    </aside>
+  )
+}

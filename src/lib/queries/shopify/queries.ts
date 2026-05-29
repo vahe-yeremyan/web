@@ -10,13 +10,18 @@ import type {
   HighlightedArtworksQuery,
   PageQuery,
   ProductQuery,
+  ProductSearchFilterOptionsQuery,
+  ProductSearchQuery,
   ProductsQuery,
   RecentArtworksQuery,
-  SearchQuery,
   ShopPoliciesQuery,
   ShopQuery,
 } from './generated/storefront.generated'
-import type { ProductSortKeys } from './generated/storefront.types'
+import type {
+  ProductFilter,
+  ProductSortKeys,
+  SearchSortKeys,
+} from './generated/storefront.types'
 
 /**
  * GraphQL queries for the Shopify Storefront API.
@@ -98,8 +103,10 @@ const PRODUCT_CARD_FRAGMENT = /* GraphQL */ `
 export const PRODUCTS_QUERY = /* GraphQL */ `
   ${PRODUCT_CARD_FRAGMENT}
   query Products(
-    $first: Int!
+    $first: Int
     $after: String
+    $last: Int
+    $before: String
     $sortKey: ProductSortKeys
     $reverse: Boolean
     $query: String
@@ -107,12 +114,16 @@ export const PRODUCTS_QUERY = /* GraphQL */ `
     products(
       first: $first
       after: $after
+      last: $last
+      before: $before
       sortKey: $sortKey
       reverse: $reverse
       query: $query
     ) {
       pageInfo {
         hasNextPage
+        hasPreviousPage
+        startCursor
         endCursor
       }
       nodes {
@@ -126,8 +137,10 @@ export type ProductListPage = ProductsQuery['products']
 export type ProductListItem = ProductListPage['nodes'][number]
 
 export type ProductsQueryVariables = {
-  first: number
+  first?: number | null
   after?: string | null
+  last?: number | null
+  before?: string | null
   sortKey?: ProductSortKeys | null
   reverse?: boolean | null
   query?: string | null
@@ -229,8 +242,10 @@ export const COLLECTION_QUERY = /* GraphQL */ `
   ${PRODUCT_CARD_FRAGMENT}
   query Collection(
     $handle: String!
-    $first: Int!
+    $first: Int
     $after: String
+    $last: Int
+    $before: String
     $sortKey: ProductCollectionSortKeys
     $reverse: Boolean
   ) {
@@ -253,12 +268,16 @@ export const COLLECTION_QUERY = /* GraphQL */ `
       products(
         first: $first
         after: $after
+        last: $last
+        before: $before
         sortKey: $sortKey
         reverse: $reverse
         filters: [{ available: true }]
       ) {
         pageInfo {
           hasNextPage
+          hasPreviousPage
+          startCursor
           endCursor
         }
         nodes {
@@ -668,17 +687,32 @@ export function flattenPolicies(
 
 export const SEARCH_QUERY = /* GraphQL */ `
   ${PRODUCT_CARD_FRAGMENT}
-  query Search($query: String!, $first: Int!, $after: String) {
+  query ProductSearch(
+    $query: String!
+    $first: Int
+    $after: String
+    $last: Int
+    $before: String
+    $sortKey: SearchSortKeys
+    $reverse: Boolean
+    $productFilters: [ProductFilter!]
+  ) {
     search(
       query: $query
       first: $first
       after: $after
+      last: $last
+      before: $before
       types: [PRODUCT]
-      productFilters: [{ available: true }]
+      sortKey: $sortKey
+      reverse: $reverse
+      productFilters: $productFilters
     ) {
       totalCount
       pageInfo {
         hasNextPage
+        hasPreviousPage
+        startCursor
         endCursor
       }
       nodes {
@@ -690,4 +724,38 @@ export const SEARCH_QUERY = /* GraphQL */ `
   }
 `
 
-export type SearchQueryResult = SearchQuery
+export const PRODUCT_SEARCH_FILTER_OPTIONS_QUERY = /* GraphQL */ `
+  query ProductSearchFilterOptions {
+    search(
+      query: "*"
+      first: 1
+      types: [PRODUCT]
+      productFilters: [{ available: true }]
+    ) {
+      productFilters {
+        id
+        label
+        values {
+          label
+          input
+        }
+      }
+    }
+  }
+`
+
+export type SearchQueryResult = ProductSearchQuery
+
+export type SearchQueryVariables = {
+  query: string
+  first?: number | null
+  after?: string | null
+  last?: number | null
+  before?: string | null
+  sortKey?: SearchSortKeys | null
+  reverse?: boolean | null
+  productFilters?: ProductFilter[] | null
+}
+
+export type ProductSearchFilterOptionsQueryResult =
+  ProductSearchFilterOptionsQuery

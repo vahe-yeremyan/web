@@ -41,7 +41,7 @@ const ORIENTATION_FILTERS = ['Horizontal', 'Square', 'Vertical'] as const
 
 export default function Header() {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 bg-white/95 text-black backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-50 bg-white/85 text-black backdrop-blur-xl">
       <nav
         aria-label="Primary"
         className="site-frame relative z-10 flex h-23 items-center justify-between"
@@ -204,7 +204,7 @@ function ArtworksDropdown({
             <li key={medium}>
               <Link
                 to="/shop"
-                search={{ medium }}
+                search={{ medium: [medium] }}
                 className={DROPDOWN_LINK_CLASS_NAME}
                 onClick={onLinkClick}
               >
@@ -223,7 +223,7 @@ function ArtworksDropdown({
             <li key={orientation}>
               <Link
                 to="/shop"
-                search={{ orientation }}
+                search={{ orientation: [orientation] }}
                 className={DROPDOWN_LINK_CLASS_NAME}
                 onClick={onLinkClick}
               >

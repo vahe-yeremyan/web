@@ -1,3 +1,4 @@
+import type { ConnectionPageInfo } from '@/lib/pagination'
 import type {
   CollectionDetail,
   CollectionListItem,
@@ -11,21 +12,25 @@ import type {
   ProductDetail,
   ProductListPage,
   ProductQueryResult,
+  ProductSearchFilterOptionsQueryResult,
   ProductsQueryResult,
   ProductsQueryVariables,
   RecentArtworkProduct,
   RecentArtworksQueryResult,
   SearchQueryResult,
+  SearchQueryVariables,
   ShopPoliciesQueryResult,
   ShopPolicy,
   ShopQueryResult,
 } from '@/lib/queries/shopify/queries'
+import type { ShopFilterOptions, ShopSearchParams } from '@/lib/shop-filters'
 
 import { createServerFn } from '@tanstack/react-start'
 import { setResponseHeaders } from '@tanstack/react-start/server'
 
 import * as v from 'valibot'
 
+import { getPaginationVariables } from '@/lib/pagination'
 import {
   COLLECTIONS_QUERY,
   COLLECTION_QUERY,
@@ -33,12 +38,23 @@ import {
   PAGE_QUERY,
   PRODUCTS_QUERY,
   PRODUCT_QUERY,
+  PRODUCT_SEARCH_FILTER_OPTIONS_QUERY,
   RECENT_ARTWORKS_QUERY,
   SEARCH_QUERY,
   SHOP_POLICIES_QUERY,
   SHOP_QUERY,
   flattenPolicies,
 } from '@/lib/queries/shopify/queries'
+import {
+  buildShopifyProductFilters,
+  createSearchFilterOptions,
+  getSearchSortParams,
+} from '@/lib/queries/shopify/search-filters'
+import {
+  PRICE_FILTER_OPTIONS,
+  SHOP_SORT_OPTIONS,
+  hasActiveShopFilters,
+} from '@/lib/shop-filters'
 import { shopifyServerFetch } from '@/server/shopify/storefront-client'
 
 /**
@@ -81,6 +97,40 @@ const collectionSortKeys = [
 
 const HIGHLIGHTED_ARTWORKS_COLLECTION_HANDLE = 'highlighted-artworks'
 
+const shopSortOptions = SHOP_SORT_OPTIONS.map((option) => option.value) as [
+  ShopSearchParams['sort'],
+  ...Array<ShopSearchParams['sort']>,
+]
+
+const priceFilterOptions = PRICE_FILTER_OPTIONS.map(
+  (option) => option.value,
+) as [
+  NonNullable<ShopSearchParams['price']>,
+  ...Array<NonNullable<ShopSearchParams['price']>>,
+]
+
+let filterOptionsPromise: Promise<
+  ReturnType<typeof createSearchFilterOptions>
+> | null = null
+
+async function loadSearchFilterOptions() {
+  filterOptionsPromise ??=
+    shopifyServerFetch<ProductSearchFilterOptionsQueryResult>({
+      query: PRODUCT_SEARCH_FILTER_OPTIONS_QUERY,
+    }).then((result) => createSearchFilterOptions(result.search.productFilters))
+
+  try {
+    return await filterOptionsPromise
+  } catch (error) {
+    filterOptionsPromise = null
+    throw error
+  }
+}
+
+function isTitleSort(sort: ShopSearchParams['sort']) {
+  return sort === 'title-asc' || sort === 'title-desc'
+}
+
 export const getShop = createServerFn({ method: 'GET' }).handler(
   async (): Promise<ShopQueryResult['shop']> => {
     setBrowseCacheHeaders()
@@ -94,8 +144,14 @@ export const getShop = createServerFn({ method: 'GET' }).handler(
 export const getProducts = createServerFn({ method: 'POST' })
   .inputValidator(
     v.object({
-      first: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1)), 24),
+      first: v.optional(
+        v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1))),
+      ),
       after: v.optional(v.nullable(v.string())),
+      last: v.optional(
+        v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1))),
+      ),
+      before: v.optional(v.nullable(v.string())),
       sortKey: v.optional(v.picklist(productSortKeys)),
       reverse: v.optional(v.boolean()),
       query: v.optional(v.string()),
@@ -109,8 +165,10 @@ export const getProducts = createServerFn({ method: 'POST' })
     >({
       query: PRODUCTS_QUERY,
       variables: {
-        first: data.first,
+        first: data.first ?? (data.last ? null : 24),
         after: data.after ?? null,
+        last: data.last ?? null,
+        before: data.before ?? null,
         sortKey: data.sortKey ?? null,
         reverse: data.reverse ?? null,
         query: data.query ?? null,
@@ -118,6 +176,107 @@ export const getProducts = createServerFn({ method: 'POST' })
     })
     return result.products
   })
+
+export const getShopProductFilterOptions = createServerFn({
+  method: 'GET',
+}).handler(async (): Promise<ShopFilterOptions> => {
+  setBrowseCacheHeaders()
+  const options = await loadSearchFilterOptions()
+
+  return {
+    categories: options.categories,
+    mediums: options.mediums,
+    orientations: options.orientations,
+  }
+})
+
+export const getShopProducts = createServerFn({ method: 'POST' })
+  .inputValidator(
+    v.object({
+      pageSize: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1)), 24),
+      cursor: v.optional(v.string()),
+      direction: v.optional(v.picklist(['next', 'prev'])),
+      sort: v.optional(v.picklist(shopSortOptions), 'default'),
+      category: v.optional(v.array(v.string()), []),
+      medium: v.optional(v.array(v.string()), []),
+      orientation: v.optional(v.array(v.string()), []),
+      price: v.optional(v.picklist(priceFilterOptions)),
+    }),
+  )
+  .handler(
+    async ({
+      data,
+    }): Promise<{
+      totalCount: number
+      pageInfo: ConnectionPageInfo
+      products: ProductListPage['nodes']
+    }> => {
+      setBrowseCacheHeaders()
+
+      const search: ShopSearchParams = data
+      const pagination = getPaginationVariables(search, data.pageSize)
+      if (!hasActiveShopFilters(search) && isTitleSort(search.sort)) {
+        const result = await shopifyServerFetch<
+          ProductsQueryResult,
+          ProductsQueryVariables
+        >({
+          query: PRODUCTS_QUERY,
+          variables: {
+            first: pagination.first,
+            after: pagination.after,
+            last: pagination.last,
+            before: pagination.before,
+            sortKey: 'TITLE',
+            reverse: search.sort === 'title-desc',
+            query: 'available_for_sale:true',
+          },
+        })
+
+        return {
+          totalCount: result.products.nodes.length,
+          pageInfo: {
+            hasNextPage: result.products.pageInfo.hasNextPage,
+            hasPreviousPage: result.products.pageInfo.hasPreviousPage,
+            startCursor: result.products.pageInfo.startCursor ?? null,
+            endCursor: result.products.pageInfo.endCursor ?? null,
+          },
+          products: result.products.nodes,
+        }
+      }
+
+      const filterOptions = await loadSearchFilterOptions()
+      const productFilters = buildShopifyProductFilters(search, filterOptions)
+      const { sortKey, reverse } = getSearchSortParams(search)
+
+      const result = await shopifyServerFetch<
+        SearchQueryResult,
+        SearchQueryVariables
+      >({
+        query: SEARCH_QUERY,
+        variables: {
+          query: '*',
+          first: pagination.first,
+          after: pagination.after,
+          last: pagination.last,
+          before: pagination.before,
+          sortKey,
+          reverse,
+          productFilters,
+        },
+      })
+
+      return {
+        totalCount: result.search.totalCount,
+        pageInfo: {
+          hasNextPage: result.search.pageInfo.hasNextPage,
+          hasPreviousPage: result.search.pageInfo.hasPreviousPage,
+          startCursor: result.search.pageInfo.startCursor ?? null,
+          endCursor: result.search.pageInfo.endCursor ?? null,
+        },
+        products: result.search.nodes,
+      }
+    },
+  )
 
 export const getCollections = createServerFn({ method: 'GET' }).handler(
   async (): Promise<Array<CollectionListItem>> => {
@@ -151,8 +310,14 @@ export const getCollection = createServerFn({ method: 'POST' })
   .inputValidator(
     v.object({
       handle: v.string(),
-      first: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1)), 24),
+      first: v.optional(
+        v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1))),
+      ),
       after: v.optional(v.nullable(v.string())),
+      last: v.optional(
+        v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1))),
+      ),
+      before: v.optional(v.nullable(v.string())),
       sortKey: v.optional(v.picklist(collectionSortKeys)),
       reverse: v.optional(v.boolean()),
     }),
@@ -163,8 +328,10 @@ export const getCollection = createServerFn({ method: 'POST' })
       CollectionQueryResult,
       {
         handle: string
-        first: number
+        first: number | null
         after: string | null
+        last: number | null
+        before: string | null
         sortKey: (typeof collectionSortKeys)[number] | null
         reverse: boolean | null
       }
@@ -172,8 +339,10 @@ export const getCollection = createServerFn({ method: 'POST' })
       query: COLLECTION_QUERY,
       variables: {
         handle: data.handle,
-        first: data.first,
+        first: data.first ?? (data.last ? null : 24),
         after: data.after ?? null,
+        last: data.last ?? null,
+        before: data.before ?? null,
         sortKey: data.sortKey ?? null,
         reverse: data.reverse ?? null,
       },
@@ -285,13 +454,18 @@ export const searchProducts = createServerFn({ method: 'POST' })
       setBrowseCacheHeaders()
       const result = await shopifyServerFetch<
         SearchQueryResult,
-        { query: string; first: number; after: string | null }
+        SearchQueryVariables
       >({
         query: SEARCH_QUERY,
         variables: {
           query: data.query,
           first: data.first,
           after: data.after ?? null,
+          last: null,
+          before: null,
+          sortKey: 'RELEVANCE',
+          reverse: false,
+          productFilters: [{ available: true }],
         },
       })
       return {

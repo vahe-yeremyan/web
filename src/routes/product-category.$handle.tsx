@@ -1,13 +1,17 @@
+import { useEffect, useState } from 'react'
+
 import { createFileRoute, notFound } from '@tanstack/react-router'
 
-import { ArtworkGridSection } from '@/components/home/artwork-grid-section'
 import { PageHeading } from '@/components/page-heading'
+import { ProductGrid } from '@/components/shop/product-grid'
+import { ProductLoadMore } from '@/components/shop/product-load-more'
 import {
   ARTWORK_CATEGORIES,
   isArtworkCategoryHandle,
 } from '@/lib/artwork-categories'
-import { shopifyProductListItemsToArtworkGridItems } from '@/lib/queries/shopify/artwork-grid'
 import { getCollection } from '@/server/shopify/catalog.functions'
+
+const PAGE_SIZE = 24
 
 export const Route = createFileRoute('/product-category/$handle')({
   loader: async ({ params }) => {
@@ -16,7 +20,7 @@ export const Route = createFileRoute('/product-category/$handle')({
     const collection = await getCollection({
       data: {
         handle: params.handle,
-        first: 24,
+        first: PAGE_SIZE,
         sortKey: 'COLLECTION_DEFAULT',
       },
     })
@@ -32,9 +36,8 @@ export const Route = createFileRoute('/product-category/$handle')({
       title: category.label,
       description: collection.description,
       seo: collection.seo,
-      products: shopifyProductListItemsToArtworkGridItems(
-        collection.products.nodes,
-      ),
+      pageInfo: collection.products.pageInfo,
+      products: collection.products.nodes,
     }
   },
   head: ({ loaderData }) => ({
@@ -54,12 +57,58 @@ export const Route = createFileRoute('/product-category/$handle')({
 })
 
 function ProductCategoryRoute() {
-  const { title, products } = Route.useLoaderData()
+  const { title, pageInfo, products } = Route.useLoaderData()
+  const { handle } = Route.useParams()
+  const [displayedProducts, setDisplayedProducts] = useState(products)
+  const [currentPageInfo, setCurrentPageInfo] = useState(pageInfo)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+
+  useEffect(() => {
+    setDisplayedProducts(products)
+    setCurrentPageInfo(pageInfo)
+    setIsLoadingMore(false)
+  }, [pageInfo, products])
+
+  const handleLoadMore = async () => {
+    if (
+      isLoadingMore ||
+      !currentPageInfo.hasNextPage ||
+      !currentPageInfo.endCursor
+    ) {
+      return
+    }
+
+    setIsLoadingMore(true)
+    try {
+      const collection = await getCollection({
+        data: {
+          handle,
+          first: PAGE_SIZE,
+          after: currentPageInfo.endCursor,
+          sortKey: 'COLLECTION_DEFAULT',
+        },
+      })
+      if (!collection) return
+
+      setDisplayedProducts((current) => [
+        ...current,
+        ...collection.products.nodes,
+      ])
+      setCurrentPageInfo(collection.products.pageInfo)
+    } finally {
+      setIsLoadingMore(false)
+    }
+  }
 
   return (
     <main className="pb-20">
       <PageHeading title={title} />
-      <ArtworkGridSection title={title} artworks={products} hideTitle />
+      <ProductGrid products={displayedProducts} showPrice />
+      <ProductLoadMore
+        pageInfo={currentPageInfo}
+        isLoading={isLoadingMore}
+        onLoadMore={handleLoadMore}
+      />
     </main>
   )
 }
