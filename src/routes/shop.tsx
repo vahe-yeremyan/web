@@ -1,82 +1,18 @@
-import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
+import { Outlet, createFileRoute } from '@tanstack/react-router'
 
 import '@/components/shop/shop.css'
 
-import { getCollections } from '@/server/shopify/catalog.functions'
+import { PageHeading } from '@/components/page-heading'
 
 export const Route = createFileRoute('/shop')({
-  loader: () => getCollections(),
   component: ShopLayout,
 })
 
 function ShopLayout() {
-  const collections = Route.useLoaderData()
-
   return (
-    <div className="shop-root min-h-screen">
-      <div className="py-8">
-        <div className="mb-8 flex flex-wrap items-center gap-4 border-b border-[--storefront-line] pb-6">
-          <Link
-            to="/shop"
-            className="text-2xl font-medium tracking-tight text-[--storefront-fg] no-underline"
-          >
-            Shop
-          </Link>
-          <div className="ml-auto flex items-center gap-4 text-sm">
-            <Link
-              to="/shop/search"
-              search={{ q: '' }}
-              className="underline-offset-4 hover:underline"
-            >
-              Search
-            </Link>
-            <Link
-              to="/shop/cart"
-              className="underline-offset-4 hover:underline"
-            >
-              Cart
-            </Link>
-          </div>
-        </div>
-
-        <div className="grid gap-8 lg:grid-cols-[200px_1fr]">
-          <aside className="hidden lg:block">
-            <nav className="sticky top-8 flex flex-col gap-1 text-sm">
-              <p className="mb-2 text-xs font-semibold tracking-wider text-[--storefront-fg-muted] uppercase">
-                Collections
-              </p>
-              <Link
-                to="/shop"
-                className="rounded-md px-2 py-1.5 text-[--storefront-fg-muted] hover:bg-[--storefront-line]/40 hover:text-[--storefront-fg]"
-                activeOptions={{ exact: true }}
-                activeProps={{
-                  className:
-                    'rounded-md px-2 py-1.5 bg-[--storefront-line]/60 text-[--storefront-fg] font-medium',
-                }}
-              >
-                All products
-              </Link>
-              {collections.map((collection) => (
-                <Link
-                  key={collection.id}
-                  to="/shop/collections/$handle"
-                  params={{ handle: collection.handle }}
-                  className="rounded-md px-2 py-1.5 text-[--storefront-fg-muted] hover:bg-[--storefront-line]/40 hover:text-[--storefront-fg]"
-                  activeProps={{
-                    className:
-                      'rounded-md px-2 py-1.5 bg-[--storefront-line]/60 text-[--storefront-fg] font-medium',
-                  }}
-                >
-                  {collection.title}
-                </Link>
-              ))}
-            </nav>
-          </aside>
-          <main>
-            <Outlet />
-          </main>
-        </div>
-      </div>
+    <div className="shop-root pb-20">
+      <PageHeading title="Artworks" />
+      <Outlet />
     </div>
   )
 }

@@ -4,7 +4,6 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { ArtworkGridSection } from '@/components/home/artwork-grid-section'
 import { HeroCarousel } from '@/components/home/hero-carousel'
-import { HomeSectionDivider } from '@/components/home/home-section-divider'
 import { ThemesSection } from '@/components/home/themes-section'
 import {
   AmexIcon,
@@ -14,6 +13,7 @@ import {
   PaypalIcon,
   VisaIcon,
 } from '@/components/icons/PaymentIcons'
+import { Divider } from '@/components/ui/divider'
 import { shopifyProductsToArtworkGridItems } from '@/lib/queries/shopify/artwork-grid'
 import {
   getHighlightedArtworks,
@@ -83,7 +83,7 @@ function Home() {
         </p>
       </section>
 
-      <HomeSectionDivider />
+      <Divider className="mt-16 md:mt-20" />
 
       {highlightedArtworks.length > 0 && (
         <>
@@ -91,7 +91,7 @@ function Home() {
             title="Highlighted Artworks"
             artworks={highlightedArtworks}
           />
-          <HomeSectionDivider />
+          <Divider className="mt-16 md:mt-20" />
         </>
       )}
 
@@ -101,13 +101,13 @@ function Home() {
             title="Recently Added"
             artworks={recentArtworks}
           />
-          <HomeSectionDivider />
+          <Divider className="mt-16 md:mt-20" />
         </>
       )}
 
       <ThemesSection themes={ARTWORK_THEMES} />
 
-      <HomeSectionDivider />
+      <Divider className="mt-16 md:mt-20" />
 
       <section className="mt-20">
         <h3 className="featured-headline text-center md:text-2xl!">

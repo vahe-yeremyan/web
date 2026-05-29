@@ -98,6 +98,7 @@ export const getProducts = createServerFn({ method: 'POST' })
       after: v.optional(v.nullable(v.string())),
       sortKey: v.optional(v.picklist(productSortKeys)),
       reverse: v.optional(v.boolean()),
+      query: v.optional(v.string()),
     }),
   )
   .handler(async ({ data }): Promise<ProductListPage> => {
@@ -112,6 +113,7 @@ export const getProducts = createServerFn({ method: 'POST' })
         after: data.after ?? null,
         sortKey: data.sortKey ?? null,
         reverse: data.reverse ?? null,
+        query: data.query ?? null,
       },
     })
     return result.products

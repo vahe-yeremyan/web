@@ -14,6 +14,7 @@ export type ArtworkGridItem = {
 type ArtworkGridSectionProps = {
   title: string
   artworks: Array<ArtworkGridItem>
+  hideTitle?: boolean
 }
 
 const ARTWORK_GRID_IMAGE_SIZES =
@@ -22,15 +23,16 @@ const ARTWORK_GRID_IMAGE_SIZES =
 export function ArtworkGridSection({
   title,
   artworks,
+  hideTitle = false,
 }: ArtworkGridSectionProps) {
   return (
-    <section className="mt-20">
-      <HomeSectionTitle>{title}</HomeSectionTitle>
+    <section className={hideTitle ? undefined : 'mt-20'}>
+      {!hideTitle && <HomeSectionTitle>{title}</HomeSectionTitle>}
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {artworks.map((artwork) => (
           <article key={artwork.id} className="min-w-0">
-            <div className="aspect-square overflow-hidden rounded-2xl border border-neutral-200/60 bg-[linear-gradient(180deg,#fdfdfc_0%,#fbfbfa_58%,#f8f8f7_100%)] p-4 sm:p-5">
+            <div className="aspect-square overflow-hidden rounded-md border border-neutral-200/60 bg-neutral-50/75 p-4 sm:p-5">
               <div className="flex h-full w-full items-center justify-center">
                 {artwork.imageSrc ? (
                   <img

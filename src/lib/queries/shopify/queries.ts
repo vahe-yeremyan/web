@@ -102,12 +102,14 @@ export const PRODUCTS_QUERY = /* GraphQL */ `
     $after: String
     $sortKey: ProductSortKeys
     $reverse: Boolean
+    $query: String
   ) {
     products(
       first: $first
       after: $after
       sortKey: $sortKey
       reverse: $reverse
+      query: $query
     ) {
       pageInfo {
         hasNextPage
@@ -128,6 +130,7 @@ export type ProductsQueryVariables = {
   after?: string | null
   sortKey?: ProductSortKeys | null
   reverse?: boolean | null
+  query?: string | null
 }
 
 export type ProductsQueryResult = {
@@ -252,6 +255,7 @@ export const COLLECTION_QUERY = /* GraphQL */ `
         after: $after
         sortKey: $sortKey
         reverse: $reverse
+        filters: [{ available: true }]
       ) {
         pageInfo {
           hasNextPage

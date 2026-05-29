@@ -24,7 +24,7 @@ export function ThemesSection({ themes }: ThemesSectionProps) {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {themes.map((theme) => (
           <article key={theme.id} className="min-w-0">
-            <div className="relative aspect-square overflow-hidden rounded-2xl bg-neutral-100">
+            <div className="relative aspect-square overflow-hidden rounded-md bg-neutral-100">
               <img
                 src={theme.imageSrc}
                 srcSet={theme.imageSrcSet}

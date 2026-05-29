@@ -1,5 +1,6 @@
 import type { HighlightedArtworkProduct, RecentArtworkProduct } from './queries'
 import type { ArtworkGridItem } from '@/components/home/artwork-grid-section'
+import type { ProductListItem } from '@/lib/queries/shopify/queries'
 
 import { shopifyImageUrl } from './format'
 
@@ -35,7 +36,32 @@ export function shopifyProductToArtworkGridItem(
 }
 
 export function shopifyProductsToArtworkGridItems(
-  products: Array<HighlightedArtworkProduct>,
+  products: Array<HighlightedArtworkProduct | RecentArtworkProduct>,
 ) {
   return products.map(shopifyProductToArtworkGridItem)
+}
+
+export function shopifyProductListItemsToArtworkGridItems(
+  products: ReadonlyArray<ProductListItem>,
+) {
+  return products.map(shopifyProductListItemToArtworkGridItem)
+}
+
+function shopifyProductListItemToArtworkGridItem(
+  product: ProductListItem,
+): ArtworkGridItem {
+  const imageUrl = product.featuredImage?.url
+
+  return {
+    id: product.id,
+    title: product.title,
+    medium: product.medium?.value ?? '',
+    dimensions: product.dimensions?.value ?? '',
+    imageSrc: imageUrl
+      ? shopifyImageUrl(imageUrl, { width: 800, format: 'webp' })
+      : '',
+    imageSrcSet: imageUrl ? getShopifyImageSrcSet(imageUrl) : undefined,
+    imageSizes: ARTWORK_GRID_IMAGE_SIZES,
+    imageAlt: product.featuredImage?.altText ?? product.title,
+  }
 }

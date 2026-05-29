@@ -1,6 +1,7 @@
 import type { ProductListItem } from '@/lib/queries/shopify/queries'
 
-import { ProductCard } from '@/components/shop/product-card'
+import { ArtworkGridSection } from '@/components/home/artwork-grid-section'
+import { shopifyProductListItemsToArtworkGridItems } from '@/lib/queries/shopify/artwork-grid'
 
 type ProductGridProps = {
   products: ReadonlyArray<ProductListItem>
@@ -16,10 +17,10 @@ export function ProductGrid({ products }: ProductGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
-    </div>
+    <ArtworkGridSection
+      title="Products"
+      artworks={shopifyProductListItemsToArtworkGridItems(products)}
+      hideTitle
+    />
   )
 }
