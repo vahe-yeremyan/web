@@ -1,13 +1,17 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
 
-import { ProductGrid } from '@/components/shop/product-grid'
+import {
+  ProductGrid,
+  ProductGridSkeleton,
+} from '@/components/shop/product-grid'
 import { ShopImage } from '@/components/shop/shop-image'
+import { PRODUCT_PAGE_SIZE } from '@/lib/product-page-constants'
 import { getCollection } from '@/server/shopify/catalog.functions'
 
 export const Route = createFileRoute('/shop/collections/$handle')({
   loader: async ({ params }) => {
     const collection = await getCollection({
-      data: { handle: params.handle, first: 24 },
+      data: { handle: params.handle, first: PRODUCT_PAGE_SIZE },
     })
     if (!collection) throw notFound()
     return { collection }
@@ -28,6 +32,7 @@ export const Route = createFileRoute('/shop/collections/$handle')({
         ]
       : [],
   }),
+  pendingComponent: CollectionPending,
   component: CollectionRoute,
 })
 
@@ -44,6 +49,7 @@ function CollectionRoute() {
             width={1400}
             height={500}
             loading="eager"
+            fetchPriority="high"
             sizes="100vw"
             className="aspect-14/5 w-full rounded-lg object-cover"
           />
@@ -61,6 +67,14 @@ function CollectionRoute() {
       </header>
 
       <ProductGrid products={collection.products.nodes} />
+    </div>
+  )
+}
+
+function CollectionPending() {
+  return (
+    <div className="space-y-10">
+      <ProductGridSkeleton count={PRODUCT_PAGE_SIZE} />
     </div>
   )
 }

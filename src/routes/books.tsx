@@ -2,13 +2,19 @@ import { createFileRoute, notFound } from '@tanstack/react-router'
 
 import { ArtworkGridSection } from '@/components/home/artwork-grid-section'
 import { PageHeading } from '@/components/page-heading'
+import { ProductGridSkeleton } from '@/components/shop/product-grid'
+import { PRODUCT_PAGE_SIZE } from '@/lib/product-page-constants'
 import { shopifyProductListItemsToArtworkGridItems } from '@/lib/queries/shopify/artwork-grid'
 import { getCollection } from '@/server/shopify/catalog.functions'
 
 export const Route = createFileRoute('/books')({
   loader: async () => {
     const collection = await getCollection({
-      data: { handle: 'books', first: 24, sortKey: 'COLLECTION_DEFAULT' },
+      data: {
+        handle: 'books',
+        first: PRODUCT_PAGE_SIZE,
+        sortKey: 'COLLECTION_DEFAULT',
+      },
     })
 
     if (!collection) throw notFound()
@@ -35,6 +41,7 @@ export const Route = createFileRoute('/books')({
         ]
       : [],
   }),
+  pendingComponent: BooksPending,
   component: BooksRoute,
 })
 
@@ -44,7 +51,21 @@ function BooksRoute() {
   return (
     <main className="pb-20">
       <PageHeading title={title} />
-      <ArtworkGridSection title={title} artworks={products} hideTitle />
+      <ArtworkGridSection
+        title={title}
+        artworks={products}
+        hideTitle
+        priorityCount={4}
+      />
+    </main>
+  )
+}
+
+function BooksPending() {
+  return (
+    <main className="pb-20">
+      <PageHeading title="Books" />
+      <ProductGridSkeleton count={PRODUCT_PAGE_SIZE} />
     </main>
   )
 }

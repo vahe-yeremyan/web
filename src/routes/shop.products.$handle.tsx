@@ -52,6 +52,7 @@ function ProductDetailRoute() {
             width={1000}
             height={1250}
             loading="eager"
+            fetchPriority="high"
             sizes="(min-width: 1024px) 50vw, 100vw"
             className="w-full rounded-lg object-cover"
           />

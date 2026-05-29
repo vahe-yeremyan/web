@@ -7,11 +7,21 @@ import type {
 
 import { useEffect, useState } from 'react'
 
+import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
 import { ArtworkFiltersSidebar } from '@/components/shop/artwork-filters-sidebar'
-import { ProductGrid } from '@/components/shop/product-grid'
+import {
+  ProductGrid,
+  ProductGridSkeleton,
+} from '@/components/shop/product-grid'
+import { ProductListingLayout } from '@/components/shop/product-listing-layout'
 import { ProductLoadMore } from '@/components/shop/product-load-more'
+import {
+  PRODUCT_PAGE_GC_TIME,
+  PRODUCT_PAGE_SIZE,
+  PRODUCT_PAGE_STALE_TIME,
+} from '@/lib/product-page-constants'
 import {
   hasActiveShopFilters,
   normalizeShopSearchParams,
@@ -20,8 +30,6 @@ import {
   getShopProductFilterOptions,
   getShopProducts,
 } from '@/server/shopify/catalog.functions'
-
-const PAGE_SIZE = 24
 
 export const Route = createFileRoute('/shop/')({
   validateSearch: (search): Partial<ShopSearchParams> =>
@@ -33,7 +41,7 @@ export const Route = createFileRoute('/shop/')({
       getShopProductFilterOptions(),
       getShopProducts({
         data: {
-          pageSize: PAGE_SIZE,
+          pageSize: PRODUCT_PAGE_SIZE,
           sort: search.sort,
           category: search.category,
           medium: search.medium,
@@ -49,6 +57,7 @@ export const Route = createFileRoute('/shop/')({
       products: page.products,
     }
   },
+  pendingComponent: ShopIndexPending,
   component: ShopIndex,
 })
 
@@ -66,6 +75,30 @@ function searchKey(search: ShopSearchParams) {
   return JSON.stringify(search)
 }
 
+function shopProductsNextPageQueryOptions(
+  search: ShopSearchParams,
+  cursor: string,
+) {
+  return {
+    queryKey: ['shop-products-next-page', searchKey(search), cursor] as const,
+    queryFn: () =>
+      getShopProducts({
+        data: {
+          pageSize: PRODUCT_PAGE_SIZE,
+          cursor,
+          direction: 'next',
+          sort: search.sort,
+          category: search.category,
+          medium: search.medium,
+          orientation: search.orientation,
+          price: search.price,
+        },
+      }),
+    staleTime: PRODUCT_PAGE_STALE_TIME,
+    gcTime: PRODUCT_PAGE_GC_TIME,
+  }
+}
+
 function ShopIndex() {
   const { filterOptions, pageInfo, products } = Route.useLoaderData()
   const routeSearch = normalizeShopSearchParams(Route.useSearch())
@@ -74,6 +107,8 @@ function ShopIndex() {
   const [displayedProducts, setDisplayedProducts] = useState(products)
   const [currentPageInfo, setCurrentPageInfo] = useState(pageInfo)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [hasBrowseIntent, setHasBrowseIntent] = useState(false)
+  const queryClient = useQueryClient()
   const navigate = useNavigate({ from: Route.fullPath })
 
   useEffect(() => {
@@ -85,6 +120,23 @@ function ShopIndex() {
     setCurrentPageInfo(pageInfo)
     setIsLoadingMore(false)
   }, [pageInfo, products])
+
+  useEffect(() => {
+    const cursor = currentPageInfo.endCursor
+    if (!hasBrowseIntent) return
+    if (!currentPageInfo.hasNextPage || !cursor) return
+
+    const prefetchSearch = JSON.parse(routeSearchKey) as ShopSearchParams
+    void queryClient.prefetchQuery(
+      shopProductsNextPageQueryOptions(prefetchSearch, cursor),
+    )
+  }, [
+    currentPageInfo.endCursor,
+    currentPageInfo.hasNextPage,
+    hasBrowseIntent,
+    queryClient,
+    routeSearchKey,
+  ])
 
   const updateSearch = (next: ShopSearchParams, replace = true) => {
     const searchWithoutPagination = {
@@ -101,6 +153,7 @@ function ShopIndex() {
     setSearch(resolvedSearch)
     void navigate({
       replace,
+      resetScroll: false,
       search: resolvedSearch,
     })
   }
@@ -140,19 +193,14 @@ function ShopIndex() {
     }
 
     setIsLoadingMore(true)
+    setHasBrowseIntent(true)
     try {
-      const nextPage = await getShopProducts({
-        data: {
-          pageSize: PAGE_SIZE,
-          cursor: currentPageInfo.endCursor,
-          direction: 'next',
-          sort: search.sort,
-          category: search.category,
-          medium: search.medium,
-          orientation: search.orientation,
-          price: search.price,
-        },
-      })
+      const nextPage = await queryClient.fetchQuery(
+        shopProductsNextPageQueryOptions(
+          routeSearch,
+          currentPageInfo.endCursor,
+        ),
+      )
 
       setDisplayedProducts((current) => [...current, ...nextPage.products])
       setCurrentPageInfo(nextPage.pageInfo)
@@ -162,24 +210,39 @@ function ShopIndex() {
   }
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[16rem_minmax(0,1fr)] lg:items-start">
-      <ArtworkFiltersSidebar
-        search={search}
-        filterOptions={filterOptions}
-        onSortChange={handleSortChange}
-        onFilterToggle={handleFilterToggle}
-        onPriceChange={handlePriceChange}
-        onClearFilters={handleClearFilters}
-      />
-
-      <div className="min-w-0">
-        <ProductGrid products={displayedProducts} showPrice />
-        <ProductLoadMore
-          pageInfo={currentPageInfo}
-          isLoading={isLoadingMore}
-          onLoadMore={handleLoadMore}
+    <ProductListingLayout
+      title="Artworks"
+      onMainScrollIntent={() => {
+        setHasBrowseIntent(true)
+      }}
+      sidebar={
+        <ArtworkFiltersSidebar
+          search={search}
+          filterOptions={filterOptions}
+          onSortChange={handleSortChange}
+          onFilterToggle={handleFilterToggle}
+          onPriceChange={handlePriceChange}
+          onClearFilters={handleClearFilters}
         />
-      </div>
-    </div>
+      }
+    >
+      <ProductGrid products={displayedProducts} showPrice priorityCount={4} />
+      <ProductLoadMore
+        pageInfo={currentPageInfo}
+        isLoading={isLoadingMore}
+        onLoadMore={handleLoadMore}
+      />
+    </ProductListingLayout>
+  )
+}
+
+function ShopIndexPending() {
+  return (
+    <ProductListingLayout
+      title="Artworks"
+      sidebar={<div className="hidden lg:block" />}
+    >
+      <ProductGridSkeleton count={PRODUCT_PAGE_SIZE} showPrice />
+    </ProductListingLayout>
   )
 }

@@ -69,8 +69,8 @@ function Home() {
     <main className="py-2">
       <HeroCarousel />
 
-      <section>
-        <p className="mt-14 mb-4 text-center text-[2.125rem] font-semibold tracking-tight">
+      <section className="mt-10">
+        <p className="mb-4 text-center text-[2rem] font-semibold tracking-tight">
           Welcome to Vahe Yeremyan's Personal Gallery
         </p>
 
@@ -83,7 +83,7 @@ function Home() {
         </p>
       </section>
 
-      <Divider className="mt-16 md:mt-20" />
+      <Divider className="my-6 md:my-10" />
 
       {highlightedArtworks.length > 0 && (
         <>
@@ -91,7 +91,7 @@ function Home() {
             title="Highlighted Artworks"
             artworks={highlightedArtworks}
           />
-          <Divider className="mt-16 md:mt-20" />
+          <Divider className="my-6 md:my-10" />
         </>
       )}
 
@@ -101,19 +101,19 @@ function Home() {
             title="Recently Added"
             artworks={recentArtworks}
           />
-          <Divider className="mt-16 md:mt-20" />
+          <Divider className="my-6 md:my-10" />
         </>
       )}
 
       <ThemesSection themes={ARTWORK_THEMES} />
 
-      <Divider className="mt-16 md:mt-20" />
+      <Divider className="my-6 md:my-10" />
 
-      <section className="mt-20">
+      <section className="my-6 md:my-10">
         <h3 className="featured-headline text-center md:text-2xl!">
           Secure Payment Options
         </h3>
-        <div className="flex items-center justify-center gap-4">
+        <div className="flex items-center justify-center gap-2">
           <VisaIcon />
           <AmexIcon />
           <PaypalIcon />

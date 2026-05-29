@@ -16,12 +16,19 @@ type ArtworkGridSectionProps = {
   title: string
   artworks: Array<ArtworkGridItem>
   hideTitle?: boolean
+  priorityCount?: number
 }
 
 const ARTWORK_GRID_IMAGE_SIZES =
-  '(min-width: 1024px) 25vw, (min-width: 640px) 50vw, calc(100vw - 2rem)'
+  '(min-width: 1536px) 360px, (min-width: 1280px) 335px, (min-width: 1024px) 25vw, (min-width: 640px) 50vw, calc(100vw - 2rem)'
 
-function ArtworkImage({ artwork }: { artwork: ArtworkGridItem }) {
+function ArtworkImage({
+  artwork,
+  priority,
+}: {
+  artwork: ArtworkGridItem
+  priority: boolean
+}) {
   if (!artwork.imageSrc) {
     return (
       <div aria-hidden className="h-full w-full rounded-[2px] bg-neutral-100" />
@@ -33,8 +40,9 @@ function ArtworkImage({ artwork }: { artwork: ArtworkGridItem }) {
       src={artwork.imageSrc}
       srcSet={artwork.imageSrcSet}
       alt={artwork.imageAlt}
-      loading="lazy"
+      loading={priority ? 'eager' : 'lazy'}
       decoding="async"
+      fetchPriority={priority ? 'high' : 'auto'}
       sizes={artwork.imageSizes ?? ARTWORK_GRID_IMAGE_SIZES}
       className="block max-h-full max-w-full rounded-[2px] object-contain"
     />
@@ -45,17 +53,21 @@ export function ArtworkGridSection({
   title,
   artworks,
   hideTitle = false,
+  priorityCount = 0,
 }: ArtworkGridSectionProps) {
   return (
-    <section className={hideTitle ? undefined : 'mt-20'}>
+    <section className={hideTitle ? undefined : 'my-6 md:my-10'}>
       {!hideTitle && <HomeSectionTitle>{title}</HomeSectionTitle>}
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-5 lg:grid-cols-4">
-        {artworks.map((artwork) => (
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
+        {artworks.map((artwork, index) => (
           <article key={artwork.id} className="min-w-0">
-            <div className="aspect-square overflow-hidden rounded-md border border-neutral-200/60 bg-neutral-50/75 p-4 sm:p-5">
+            <div className="aspect-9/8 overflow-hidden rounded-md border border-neutral-200/60 bg-neutral-50/75 p-3">
               <div className="flex h-full w-full items-center justify-center">
-                <ArtworkImage artwork={artwork} />
+                <ArtworkImage
+                  artwork={artwork}
+                  priority={index < priorityCount}
+                />
               </div>
             </div>
 

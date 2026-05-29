@@ -294,6 +294,30 @@ export type CollectionQueryResult = {
   collection: CollectionDetail | null
 }
 
+export const COLLECTION_METADATA_QUERY = /* GraphQL */ `
+  query CollectionMetadata($handle: String!) {
+    collection(handle: $handle) {
+      id
+      handle
+      title
+      description
+      seo {
+        title
+        description
+      }
+    }
+  }
+`
+
+export type CollectionMetadata = Pick<
+  CollectionDetail,
+  'id' | 'handle' | 'title' | 'description' | 'seo'
+>
+
+export type CollectionMetadataQueryResult = {
+  collection: CollectionMetadata | null
+}
+
 /* ─── Homepage artwork sections ─────────────────────────────────────────── */
 
 const HOME_ARTWORK_PRODUCT_FIELDS = /* GraphQL */ `

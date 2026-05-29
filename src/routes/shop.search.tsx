@@ -4,7 +4,11 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
 import * as v from 'valibot'
 
-import { ProductGrid } from '@/components/shop/product-grid'
+import {
+  ProductGrid,
+  ProductGridSkeleton,
+} from '@/components/shop/product-grid'
+import { PRODUCT_PAGE_SIZE } from '@/lib/product-page-constants'
 import { searchProducts } from '@/server/shopify/catalog.functions'
 
 const SearchSchema = v.object({
@@ -23,7 +27,7 @@ export const Route = createFileRoute('/shop/search')({
       }
     }
     const result = await searchProducts({
-      data: { query: deps.q.trim(), first: 24 },
+      data: { query: deps.q.trim(), first: PRODUCT_PAGE_SIZE },
     })
     return {
       q: deps.q,
@@ -31,6 +35,7 @@ export const Route = createFileRoute('/shop/search')({
       totalCount: result.totalCount,
     }
   },
+  pendingComponent: SearchPending,
   component: SearchRoute,
 })
 
@@ -73,7 +78,16 @@ function SearchRoute() {
         </p>
       )}
 
-      {q && <ProductGrid products={products} />}
+      {q && <ProductGrid products={products} priorityCount={4} />}
+    </div>
+  )
+}
+
+function SearchPending() {
+  return (
+    <div className="space-y-8">
+      <h1 className="text-3xl font-medium tracking-tight">Search</h1>
+      <ProductGridSkeleton count={PRODUCT_PAGE_SIZE} />
     </div>
   )
 }

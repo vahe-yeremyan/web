@@ -1,7 +1,5 @@
 import { cn } from '@/lib/utils'
 
-import { Divider } from './ui/divider'
-
 type PageHeadingProps = {
   title: string
   className?: string
@@ -9,13 +7,10 @@ type PageHeadingProps = {
 
 export function PageHeading({ title, className }: PageHeadingProps) {
   return (
-    <header
-      className={cn('mb-12 pt-[calc(var(--header-height)-1.5rem)]', className)}
-    >
+    <header className={cn('mt-8 mb-6', className)}>
       <h1 className="text-2xl leading-tight font-semibold tracking-tight text-black md:text-3xl">
         {title}
       </h1>
-      <Divider className="mt-8" />
     </header>
   )
 }

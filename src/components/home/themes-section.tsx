@@ -18,7 +18,7 @@ const THEME_IMAGE_SIZES =
 
 export function ThemesSection({ themes }: ThemesSectionProps) {
   return (
-    <section className="mt-20">
+    <section className="my-6 md:my-10">
       <HomeSectionTitle>Explore Themes</HomeSectionTitle>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">

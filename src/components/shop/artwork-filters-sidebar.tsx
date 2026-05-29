@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils'
 type ArtworkFiltersSidebarProps = {
   search: ShopSearchParams
   filterOptions: ShopFilterOptions
+  lockedCategory?: string
   onSortChange: (sort: ShopSortOption) => void
   onFilterToggle: (key: ShopFilterKey, value: string) => void
   onPriceChange: (price?: PriceFilterOption) => void
@@ -205,12 +206,17 @@ function PriceFilter({ value, onChange }: PriceFilterProps) {
 export function ArtworkFiltersSidebar({
   search,
   filterOptions,
+  lockedCategory,
   onSortChange,
   onFilterToggle,
   onPriceChange,
   onClearFilters,
 }: ArtworkFiltersSidebarProps) {
   const hasFilters = hasActiveShopFilters(search)
+  const displayedSearch = lockedCategory
+    ? { ...search, category: [lockedCategory] }
+    : search
+  const hasSortFilters = hasActiveShopFilters(displayedSearch)
 
   return (
     <aside
@@ -224,7 +230,7 @@ export function ArtworkFiltersSidebar({
         />
         <SortFilter
           value={search.sort}
-          hasFilters={hasFilters}
+          hasFilters={hasSortFilters}
           onChange={onSortChange}
         />
       </div>
@@ -235,21 +241,21 @@ export function ArtworkFiltersSidebar({
         title="Category"
         name="category"
         options={filterOptions.categories}
-        selected={search.category}
+        selected={displayedSearch.category}
         onToggle={onFilterToggle}
       />
       <FilterSection
         title="Medium"
         name="medium"
         options={filterOptions.mediums}
-        selected={search.medium}
+        selected={displayedSearch.medium}
         onToggle={onFilterToggle}
       />
       <FilterSection
         title="Orientation"
         name="orientation"
         options={filterOptions.orientations}
-        selected={search.orientation}
+        selected={displayedSearch.orientation}
         onToggle={onFilterToggle}
       />
     </aside>

@@ -2,6 +2,8 @@ import type { ConnectionPageInfo } from '@/lib/pagination'
 import type {
   CollectionDetail,
   CollectionListItem,
+  CollectionMetadata,
+  CollectionMetadataQueryResult,
   CollectionQueryResult,
   CollectionsQueryResult,
   HighlightedArtworkProduct,
@@ -33,6 +35,7 @@ import * as v from 'valibot'
 import { getPaginationVariables } from '@/lib/pagination'
 import {
   COLLECTIONS_QUERY,
+  COLLECTION_METADATA_QUERY,
   COLLECTION_QUERY,
   HIGHLIGHTED_ARTWORKS_QUERY,
   PAGE_QUERY,
@@ -346,6 +349,20 @@ export const getCollection = createServerFn({ method: 'POST' })
         sortKey: data.sortKey ?? null,
         reverse: data.reverse ?? null,
       },
+    })
+    return result.collection
+  })
+
+export const getCollectionMetadata = createServerFn({ method: 'POST' })
+  .inputValidator(v.object({ handle: v.string() }))
+  .handler(async ({ data }): Promise<CollectionMetadata | null> => {
+    setBrowseCacheHeaders()
+    const result = await shopifyServerFetch<
+      CollectionMetadataQueryResult,
+      { handle: string }
+    >({
+      query: COLLECTION_METADATA_QUERY,
+      variables: { handle: data.handle },
     })
     return result.collection
   })

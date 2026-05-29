@@ -7,7 +7,7 @@ import { formatMoney, shopifyImageUrl } from './format'
 const SHOPIFY_ARTWORK_IMAGE_WIDTHS = [320, 480, 640, 800, 1000]
 
 const ARTWORK_GRID_IMAGE_SIZES =
-  '(min-width: 1024px) 25vw, (min-width: 640px) 50vw, calc(100vw - 2rem)'
+  '(min-width: 1536px) 360px, (min-width: 1280px) 335px, (min-width: 1024px) 25vw, (min-width: 640px) 50vw, calc(100vw - 2rem)'
 
 function getShopifyImageSrcSet(src: string) {
   return SHOPIFY_ARTWORK_IMAGE_WIDTHS.map(

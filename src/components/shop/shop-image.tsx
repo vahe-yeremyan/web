@@ -8,7 +8,13 @@ type ShopImageProps = {
   className?: string
   sizes?: string
   loading?: 'eager' | 'lazy'
+  fetchPriority?: 'high' | 'low' | 'auto'
+  srcSetWidths?: ReadonlyArray<number>
 }
+
+const DEFAULT_SRC_SET_WIDTHS = [
+  160, 240, 320, 480, 640, 800, 1000, 1200, 1600, 2000, 2400, 2800,
+]
 
 export function ShopImage({
   src,
@@ -18,6 +24,8 @@ export function ShopImage({
   className,
   sizes,
   loading = 'lazy',
+  fetchPriority = 'auto',
+  srcSetWidths = DEFAULT_SRC_SET_WIDTHS,
 }: ShopImageProps) {
   if (!src) {
     return (
@@ -33,11 +41,19 @@ export function ShopImage({
   }
 
   const transformed = shopifyImageUrl(src, { width, height, format: 'webp' })
-  const srcSet = [1, 2]
-    .map((dpr) => {
-      const w = width * dpr
-      const h = height ? height * dpr : undefined
-      return `${shopifyImageUrl(src, { width: w, height: h, format: 'webp' })} ${dpr}x`
+  const maxSrcSetWidth = width * 2
+  const srcSet = srcSetWidths
+    .filter((candidate) => candidate <= maxSrcSetWidth)
+    .concat(width)
+    .filter(
+      (candidate, index, candidates) => candidates.indexOf(candidate) === index,
+    )
+    .sort((a, b) => a - b)
+    .map((candidateWidth) => {
+      const candidateHeight = height
+        ? Math.round((candidateWidth / width) * height)
+        : undefined
+      return `${shopifyImageUrl(src, { width: candidateWidth, height: candidateHeight, format: 'webp' })} ${candidateWidth}w`
     })
     .join(', ')
 
@@ -45,12 +61,13 @@ export function ShopImage({
     <img
       src={transformed}
       srcSet={srcSet}
-      sizes={sizes}
+      sizes={sizes ?? `${width}px`}
       alt={alt ?? ''}
       width={width}
       height={height}
       loading={loading}
       decoding="async"
+      fetchPriority={fetchPriority}
       className={className}
     />
   )
