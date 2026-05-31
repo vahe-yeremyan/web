@@ -55,7 +55,7 @@ function BooksRoute() {
         title={title}
         artworks={products}
         hideTitle
-        priorityCount={4}
+        priorityCount={9}
       />
     </main>
   )

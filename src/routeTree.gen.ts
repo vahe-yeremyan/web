@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SoldRouteImport } from './routes/sold'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as BooksRouteImport } from './routes/books'
 import { Route as AboutRouteImport } from './routes/about'
@@ -16,12 +17,17 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ShopIndexRouteImport } from './routes/shop.index'
 import { Route as ShopSearchRouteImport } from './routes/shop.search'
 import { Route as ShopCartRouteImport } from './routes/shop.cart'
+import { Route as ProductHandleRouteImport } from './routes/product.$handle'
 import { Route as ProductCategoryHandleRouteImport } from './routes/product-category.$handle'
-import { Route as ShopProductsHandleRouteImport } from './routes/shop.products.$handle'
 import { Route as ShopPoliciesHandleRouteImport } from './routes/shop.policies.$handle'
 import { Route as ShopPagesHandleRouteImport } from './routes/shop.pages.$handle'
 import { Route as ShopCollectionsHandleRouteImport } from './routes/shop.collections.$handle'
 
+const SoldRoute = SoldRouteImport.update({
+  id: '/sold',
+  path: '/sold',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
@@ -57,15 +63,15 @@ const ShopCartRoute = ShopCartRouteImport.update({
   path: '/cart',
   getParentRoute: () => ShopRoute,
 } as any)
+const ProductHandleRoute = ProductHandleRouteImport.update({
+  id: '/product/$handle',
+  path: '/product/$handle',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductCategoryHandleRoute = ProductCategoryHandleRouteImport.update({
   id: '/product-category/$handle',
   path: '/product-category/$handle',
   getParentRoute: () => rootRouteImport,
-} as any)
-const ShopProductsHandleRoute = ShopProductsHandleRouteImport.update({
-  id: '/products/$handle',
-  path: '/products/$handle',
-  getParentRoute: () => ShopRoute,
 } as any)
 const ShopPoliciesHandleRoute = ShopPoliciesHandleRouteImport.update({
   id: '/policies/$handle',
@@ -88,27 +94,29 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/books': typeof BooksRoute
   '/shop': typeof ShopRouteWithChildren
+  '/sold': typeof SoldRoute
   '/product-category/$handle': typeof ProductCategoryHandleRoute
+  '/product/$handle': typeof ProductHandleRoute
   '/shop/cart': typeof ShopCartRoute
   '/shop/search': typeof ShopSearchRoute
   '/shop/': typeof ShopIndexRoute
   '/shop/collections/$handle': typeof ShopCollectionsHandleRoute
   '/shop/pages/$handle': typeof ShopPagesHandleRoute
   '/shop/policies/$handle': typeof ShopPoliciesHandleRoute
-  '/shop/products/$handle': typeof ShopProductsHandleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/books': typeof BooksRoute
+  '/sold': typeof SoldRoute
   '/product-category/$handle': typeof ProductCategoryHandleRoute
+  '/product/$handle': typeof ProductHandleRoute
   '/shop/cart': typeof ShopCartRoute
   '/shop/search': typeof ShopSearchRoute
   '/shop': typeof ShopIndexRoute
   '/shop/collections/$handle': typeof ShopCollectionsHandleRoute
   '/shop/pages/$handle': typeof ShopPagesHandleRoute
   '/shop/policies/$handle': typeof ShopPoliciesHandleRoute
-  '/shop/products/$handle': typeof ShopProductsHandleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -116,14 +124,15 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/books': typeof BooksRoute
   '/shop': typeof ShopRouteWithChildren
+  '/sold': typeof SoldRoute
   '/product-category/$handle': typeof ProductCategoryHandleRoute
+  '/product/$handle': typeof ProductHandleRoute
   '/shop/cart': typeof ShopCartRoute
   '/shop/search': typeof ShopSearchRoute
   '/shop/': typeof ShopIndexRoute
   '/shop/collections/$handle': typeof ShopCollectionsHandleRoute
   '/shop/pages/$handle': typeof ShopPagesHandleRoute
   '/shop/policies/$handle': typeof ShopPoliciesHandleRoute
-  '/shop/products/$handle': typeof ShopProductsHandleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -132,41 +141,44 @@ export interface FileRouteTypes {
     | '/about'
     | '/books'
     | '/shop'
+    | '/sold'
     | '/product-category/$handle'
+    | '/product/$handle'
     | '/shop/cart'
     | '/shop/search'
     | '/shop/'
     | '/shop/collections/$handle'
     | '/shop/pages/$handle'
     | '/shop/policies/$handle'
-    | '/shop/products/$handle'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/books'
+    | '/sold'
     | '/product-category/$handle'
+    | '/product/$handle'
     | '/shop/cart'
     | '/shop/search'
     | '/shop'
     | '/shop/collections/$handle'
     | '/shop/pages/$handle'
     | '/shop/policies/$handle'
-    | '/shop/products/$handle'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/books'
     | '/shop'
+    | '/sold'
     | '/product-category/$handle'
+    | '/product/$handle'
     | '/shop/cart'
     | '/shop/search'
     | '/shop/'
     | '/shop/collections/$handle'
     | '/shop/pages/$handle'
     | '/shop/policies/$handle'
-    | '/shop/products/$handle'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -174,11 +186,20 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   BooksRoute: typeof BooksRoute
   ShopRoute: typeof ShopRouteWithChildren
+  SoldRoute: typeof SoldRoute
   ProductCategoryHandleRoute: typeof ProductCategoryHandleRoute
+  ProductHandleRoute: typeof ProductHandleRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sold': {
+      id: '/sold'
+      path: '/sold'
+      fullPath: '/sold'
+      preLoaderRoute: typeof SoldRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop': {
       id: '/shop'
       path: '/shop'
@@ -228,19 +249,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopCartRouteImport
       parentRoute: typeof ShopRoute
     }
+    '/product/$handle': {
+      id: '/product/$handle'
+      path: '/product/$handle'
+      fullPath: '/product/$handle'
+      preLoaderRoute: typeof ProductHandleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/product-category/$handle': {
       id: '/product-category/$handle'
       path: '/product-category/$handle'
       fullPath: '/product-category/$handle'
       preLoaderRoute: typeof ProductCategoryHandleRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/shop/products/$handle': {
-      id: '/shop/products/$handle'
-      path: '/products/$handle'
-      fullPath: '/shop/products/$handle'
-      preLoaderRoute: typeof ShopProductsHandleRouteImport
-      parentRoute: typeof ShopRoute
     }
     '/shop/policies/$handle': {
       id: '/shop/policies/$handle'
@@ -273,7 +294,6 @@ interface ShopRouteChildren {
   ShopCollectionsHandleRoute: typeof ShopCollectionsHandleRoute
   ShopPagesHandleRoute: typeof ShopPagesHandleRoute
   ShopPoliciesHandleRoute: typeof ShopPoliciesHandleRoute
-  ShopProductsHandleRoute: typeof ShopProductsHandleRoute
 }
 
 const ShopRouteChildren: ShopRouteChildren = {
@@ -283,7 +303,6 @@ const ShopRouteChildren: ShopRouteChildren = {
   ShopCollectionsHandleRoute: ShopCollectionsHandleRoute,
   ShopPagesHandleRoute: ShopPagesHandleRoute,
   ShopPoliciesHandleRoute: ShopPoliciesHandleRoute,
-  ShopProductsHandleRoute: ShopProductsHandleRoute,
 }
 
 const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
@@ -293,7 +312,9 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   BooksRoute: BooksRoute,
   ShopRoute: ShopRouteWithChildren,
+  SoldRoute: SoldRoute,
   ProductCategoryHandleRoute: ProductCategoryHandleRoute,
+  ProductHandleRoute: ProductHandleRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

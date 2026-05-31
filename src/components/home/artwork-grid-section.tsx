@@ -1,3 +1,10 @@
+import { useEffect, useRef, useState } from 'react'
+
+import { Link } from '@tanstack/react-router'
+
+import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
+
 import { HomeSectionTitle } from './home-section-title'
 
 export type ArtworkGridItem = {
@@ -6,6 +13,8 @@ export type ArtworkGridItem = {
   medium?: string
   dimensions?: string
   price?: string
+  status?: string
+  productHandle?: string
   imageSrc?: string
   imageSrcSet?: string
   imageSizes?: string
@@ -29,6 +38,18 @@ function ArtworkImage({
   artwork: ArtworkGridItem
   priority: boolean
 }) {
+  const [isLoaded, setIsLoaded] = useState(false)
+  const imageRef = useRef<HTMLImageElement>(null)
+
+  useEffect(() => {
+    setIsLoaded(false)
+
+    const image = imageRef.current
+    if (image?.complete) {
+      setIsLoaded(true)
+    }
+  }, [artwork.imageSrc])
+
   if (!artwork.imageSrc) {
     return (
       <div aria-hidden className="h-full w-full rounded-[2px] bg-neutral-100" />
@@ -36,16 +57,59 @@ function ArtworkImage({
   }
 
   return (
-    <img
-      src={artwork.imageSrc}
-      srcSet={artwork.imageSrcSet}
-      alt={artwork.imageAlt}
-      loading={priority ? 'eager' : 'lazy'}
-      decoding="async"
-      fetchPriority={priority ? 'high' : 'auto'}
-      sizes={artwork.imageSizes ?? ARTWORK_GRID_IMAGE_SIZES}
-      className="block max-h-full max-w-full rounded-[2px] object-contain"
-    />
+    <div className="relative flex h-full w-full items-center justify-center">
+      <Skeleton
+        aria-hidden
+        className={cn(
+          'pointer-events-none absolute inset-0 rounded-[2px] bg-neutral-200/70 transition-opacity duration-200',
+          isLoaded && 'animate-none opacity-0',
+        )}
+      />
+      <img
+        ref={imageRef}
+        src={artwork.imageSrc}
+        srcSet={artwork.imageSrcSet}
+        alt={artwork.imageAlt}
+        loading={priority ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchPriority={priority ? 'high' : 'auto'}
+        sizes={artwork.imageSizes ?? ARTWORK_GRID_IMAGE_SIZES}
+        onLoad={() => {
+          setIsLoaded(true)
+        }}
+        onError={() => {
+          setIsLoaded(true)
+        }}
+        className={cn(
+          'relative z-10 block max-h-full max-w-full rounded-[2px] object-contain transition-opacity duration-200',
+          isLoaded ? 'opacity-100' : 'opacity-0',
+        )}
+      />
+    </div>
+  )
+}
+
+function ArtworkLink({
+  artwork,
+  className,
+  children,
+}: {
+  artwork: ArtworkGridItem
+  className?: string
+  children: React.ReactNode
+}) {
+  if (!artwork.productHandle) {
+    return <div className={className}>{children}</div>
+  }
+
+  return (
+    <Link
+      to="/product/$handle"
+      params={{ handle: artwork.productHandle }}
+      className={className}
+    >
+      {children}
+    </Link>
   )
 }
 
@@ -62,17 +126,32 @@ export function ArtworkGridSection({
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
         {artworks.map((artwork, index) => (
           <article key={artwork.id} className="min-w-0">
-            <div className="aspect-9/8 overflow-hidden rounded-md border border-neutral-200/60 bg-neutral-50/75 p-3">
+            <ArtworkLink
+              artwork={artwork}
+              className="block aspect-9/8 overflow-hidden rounded-md border border-neutral-200/60 bg-neutral-50/75 p-3"
+            >
               <div className="flex h-full w-full items-center justify-center">
                 <ArtworkImage
                   artwork={artwork}
                   priority={index < priorityCount}
                 />
               </div>
-            </div>
+            </ArtworkLink>
 
             <div className="mt-4 space-y-1.5 text-left">
-              <h3 className="text-base font-semibold">{artwork.title}</h3>
+              <h3 className="text-base font-semibold">
+                {artwork.productHandle ? (
+                  <Link
+                    to="/product/$handle"
+                    params={{ handle: artwork.productHandle }}
+                    className="hover:text-secondary transition-colors"
+                  >
+                    {artwork.title}
+                  </Link>
+                ) : (
+                  artwork.title
+                )}
+              </h3>
 
               {artwork.medium && artwork.dimensions && (
                 <div className="leading-wide space-y-1 text-xs text-neutral-600">
@@ -81,8 +160,13 @@ export function ArtworkGridSection({
                 </div>
               )}
 
-              {artwork.price && (
-                <p className="text-sm text-neutral-500">{artwork.price}</p>
+              {(artwork.price || artwork.status) && (
+                <p className="inline-flex items-center gap-1 text-sm text-neutral-500">
+                  {artwork.price}
+                  {artwork.status && (
+                    <span className="text-rose-600">• {artwork.status}</span>
+                  )}
+                </p>
               )}
             </div>
           </article>

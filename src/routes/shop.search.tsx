@@ -78,7 +78,7 @@ function SearchRoute() {
         </p>
       )}
 
-      {q && <ProductGrid products={products} priorityCount={4} />}
+      {q && <ProductGrid products={products} />}
     </div>
   )
 }

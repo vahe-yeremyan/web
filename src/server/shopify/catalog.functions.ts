@@ -24,6 +24,8 @@ import type {
   ShopPoliciesQueryResult,
   ShopPolicy,
   ShopQueryResult,
+  SoldProductListItem,
+  SoldProductsQueryResult,
 } from '@/lib/queries/shopify/queries'
 import type { ShopFilterOptions, ShopSearchParams } from '@/lib/shop-filters'
 
@@ -46,6 +48,7 @@ import {
   SEARCH_QUERY,
   SHOP_POLICIES_QUERY,
   SHOP_QUERY,
+  SOLD_PRODUCTS_QUERY,
   flattenPolicies,
 } from '@/lib/queries/shopify/queries'
 import {
@@ -99,6 +102,7 @@ const collectionSortKeys = [
 ] as const
 
 const HIGHLIGHTED_ARTWORKS_COLLECTION_HANDLE = 'highlighted-artworks'
+const SOLD_PRODUCTS_LIMIT = 100
 
 const shopSortOptions = SHOP_SORT_OPTIONS.map((option) => option.value) as [
   ShopSearchParams['sort'],
@@ -280,6 +284,21 @@ export const getShopProducts = createServerFn({ method: 'POST' })
       }
     },
   )
+
+export const getSoldProducts = createServerFn({ method: 'GET' }).handler(
+  async (): Promise<Array<SoldProductListItem>> => {
+    setBrowseCacheHeaders()
+    const result = await shopifyServerFetch<
+      SoldProductsQueryResult,
+      { first: number }
+    >({
+      query: SOLD_PRODUCTS_QUERY,
+      variables: { first: SOLD_PRODUCTS_LIMIT },
+    })
+
+    return result.products.nodes
+  },
+)
 
 export const getCollections = createServerFn({ method: 'GET' }).handler(
   async (): Promise<Array<CollectionListItem>> => {

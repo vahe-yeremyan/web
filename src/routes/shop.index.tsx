@@ -226,7 +226,7 @@ function ShopIndex() {
         />
       }
     >
-      <ProductGrid products={displayedProducts} showPrice priorityCount={4} />
+      <ProductGrid products={displayedProducts} showPrice />
       <ProductLoadMore
         pageInfo={currentPageInfo}
         isLoading={isLoadingMore}

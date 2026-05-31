@@ -11,7 +11,7 @@ const ARTWORK_GRID_IMAGE_SIZES =
 
 function getShopifyImageSrcSet(src: string) {
   return SHOPIFY_ARTWORK_IMAGE_WIDTHS.map(
-    (width) => `${shopifyImageUrl(src, { width, format: 'webp' })} ${width}w`,
+    (width) => `${shopifyImageUrl(src, { width })} ${width}w`,
   ).join(', ')
 }
 
@@ -24,11 +24,10 @@ export function shopifyProductToArtworkGridItem(
   return {
     id: product.id,
     title: product.title,
+    productHandle: product.handle,
     medium: product.medium?.value ?? '',
     dimensions: product.dimensionsImperial?.value ?? '',
-    imageSrc: imageUrl
-      ? shopifyImageUrl(imageUrl, { width: 800, format: 'webp' })
-      : '',
+    imageSrc: imageUrl ? shopifyImageUrl(imageUrl, { width: 800 }) : '',
     imageSrcSet: imageUrl ? getShopifyImageSrcSet(imageUrl) : undefined,
     imageSizes: ARTWORK_GRID_IMAGE_SIZES,
     imageAlt: image?.altText ?? product.title,
@@ -43,7 +42,7 @@ export function shopifyProductsToArtworkGridItems(
 
 export function shopifyProductListItemsToArtworkGridItems(
   products: ReadonlyArray<ProductListItem>,
-  options: { showPrice?: boolean } = {},
+  options: { showPrice?: boolean; showSoldStatus?: boolean } = {},
 ) {
   return products.map((product) =>
     shopifyProductListItemToArtworkGridItem(product, options),
@@ -52,22 +51,22 @@ export function shopifyProductListItemsToArtworkGridItems(
 
 function shopifyProductListItemToArtworkGridItem(
   product: ProductListItem,
-  options: { showPrice?: boolean },
+  options: { showPrice?: boolean; showSoldStatus?: boolean },
 ): ArtworkGridItem {
   const imageUrl = product.featuredImage?.url
 
   return {
     id: product.id,
     title: product.title,
+    productHandle: product.handle,
     medium: product.medium?.value ?? '',
     dimensions: product.dimensions?.value ?? '',
-    imageSrc: imageUrl
-      ? shopifyImageUrl(imageUrl, { width: 800, format: 'webp' })
-      : '',
+    imageSrc: imageUrl ? shopifyImageUrl(imageUrl, { width: 800 }) : '',
     imageSrcSet: imageUrl ? getShopifyImageSrcSet(imageUrl) : undefined,
     imageSizes: ARTWORK_GRID_IMAGE_SIZES,
     imageAlt: product.featuredImage?.altText ?? product.title,
     price: options.showPrice ? formatProductListItemPrice(product) : undefined,
+    status: options.showSoldStatus ? 'Sold' : undefined,
   }
 }
 

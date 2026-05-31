@@ -7,18 +7,24 @@ import { shopifyProductListItemsToArtworkGridItems } from '@/lib/queries/shopify
 type ProductGridProps = {
   products: ReadonlyArray<ProductListItem>
   showPrice?: boolean
+  showSoldStatus?: boolean
   priorityCount?: number
+  emptyMessage?: string
 }
+
+const PRODUCT_GRID_PRIORITY_COUNT = 9
 
 export function ProductGrid({
   products,
   showPrice = false,
-  priorityCount = 0,
+  showSoldStatus = false,
+  priorityCount = PRODUCT_GRID_PRIORITY_COUNT,
+  emptyMessage = 'No artworks yet.',
 }: ProductGridProps) {
   if (products.length === 0) {
     return (
       <p className="py-16 text-center text-[--storefront-fg-muted]">
-        No products yet.
+        {emptyMessage}
       </p>
     )
   }
@@ -28,6 +34,7 @@ export function ProductGrid({
       title="Products"
       artworks={shopifyProductListItemsToArtworkGridItems(products, {
         showPrice,
+        showSoldStatus,
       })}
       hideTitle
       priorityCount={priorityCount}

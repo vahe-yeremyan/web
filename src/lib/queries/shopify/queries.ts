@@ -150,6 +150,41 @@ export type ProductsQueryResult = {
   products: ProductListPage
 }
 
+export type SoldProductListItem = ProductListItem & {
+  category?: { value: string; type: string } | null
+  orientation?: { value: string; type: string } | null
+}
+
+export const SOLD_PRODUCTS_QUERY = /* GraphQL */ `
+  ${PRODUCT_CARD_FRAGMENT}
+  query SoldProducts($first: Int!) {
+    products(
+      first: $first
+      sortKey: PRICE
+      reverse: true
+      query: "available_for_sale:false"
+    ) {
+      nodes {
+        ...ProductCard
+        category: metafield(namespace: "custom", key: "category") {
+          value
+          type
+        }
+        orientation: metafield(namespace: "custom", key: "orientation") {
+          value
+          type
+        }
+      }
+    }
+  }
+`
+
+export type SoldProductsQueryResult = {
+  products: {
+    nodes: Array<SoldProductListItem>
+  }
+}
+
 /* ─── Single product (PDP) ──────────────────────────────────────────────── */
 
 export const PRODUCT_QUERY = /* GraphQL */ `
@@ -158,6 +193,7 @@ export const PRODUCT_QUERY = /* GraphQL */ `
       id
       handle
       title
+      availableForSale
       descriptionHtml
       options {
         id
@@ -192,6 +228,35 @@ export const PRODUCT_QUERY = /* GraphQL */ `
             height
           }
         }
+      }
+      priceRange {
+        minVariantPrice {
+          amount
+          currencyCode
+        }
+        maxVariantPrice {
+          amount
+          currencyCode
+        }
+      }
+      category: metafield(namespace: "custom", key: "category") {
+        value
+        type
+      }
+      medium: metafield(namespace: "custom", key: "medium") {
+        value
+        type
+      }
+      dimensionsImperial: metafield(namespace: "custom", key: "dimensions_us") {
+        value
+        type
+      }
+      dimensionsMetric: metafield(
+        namespace: "custom"
+        key: "dimensions_global"
+      ) {
+        value
+        type
       }
       seo {
         title

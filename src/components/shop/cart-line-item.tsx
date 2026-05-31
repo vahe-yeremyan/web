@@ -18,7 +18,7 @@ export function CartLineItem({ line }: CartLineItemProps) {
   return (
     <li className="flex gap-4 border-b border-[--storefront-line] py-6">
       <Link
-        to="/shop/products/$handle"
+        to="/product/$handle"
         params={{ handle: merch.product.handle }}
         className="shrink-0"
       >
@@ -34,7 +34,7 @@ export function CartLineItem({ line }: CartLineItemProps) {
         <div className="flex items-start justify-between gap-4">
           <div>
             <Link
-              to="/shop/products/$handle"
+              to="/product/$handle"
               params={{ handle: merch.product.handle }}
               className="text-base font-medium text-[--storefront-fg] no-underline"
             >

@@ -24,7 +24,7 @@ const NAV_ITEMS = [
   { type: 'artworks', label: 'Artworks' },
   { type: 'anchor', label: 'Prints', href: '/prints' },
   { type: 'route', label: 'Books', to: '/books' },
-  { type: 'anchor', label: 'Sold', href: '/sold' },
+  { type: 'route', label: 'Sold', to: '/sold' },
   { type: 'route', label: 'About', to: '/about' },
 ] as const
 
