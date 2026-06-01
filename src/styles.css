@@ -28,6 +28,12 @@
   --link-bg-hover: rgba(255, 255, 255, 0.9);
   --hero-a: rgba(79, 184, 178, 0.36);
   --hero-b: rgba(47, 106, 74, 0.2);
+  --primary-accent: #910000;
+  --primary-accent-soft: color-mix(
+    in oklab,
+    var(--primary-accent) 1.25%,
+    oklch(0.985 0 0) 98.75%
+  );
 
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
@@ -163,6 +169,8 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-accent: var(--primary-accent);
+  --color-primary-accent-soft: var(--primary-accent-soft);
   --color-gray: oklch(0.7984 0 0);
   --color-secondary: oklch(0.5452 0 0);
   --color-secondary-foreground: var(--secondary-foreground);

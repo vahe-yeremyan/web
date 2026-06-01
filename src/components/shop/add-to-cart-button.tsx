@@ -52,7 +52,7 @@ export function AddToCartButton({
         'w-full cursor-pointer rounded-full px-6 py-3 text-sm font-medium transition-all duration-200 ease-in-out active:scale-[0.99] md:w-fit md:px-12',
         disabled
           ? 'cursor-not-allowed bg-white text-gray-600 ring ring-gray-300 active:scale-100'
-          : 'bg-black text-white hover:bg-[#910000]',
+          : 'hover:bg-primary-accent bg-black text-white',
       )}
     >
       {buttonText}

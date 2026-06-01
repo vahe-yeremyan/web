@@ -229,7 +229,7 @@ export function ProductImageCarousel({
                 className={cn(
                   'h-20 w-24 shrink-0 rounded-sm bg-neutral-50 transition-colors',
                   selectedIndex === index
-                    ? 'border-[1.5px] border-[#910000] p-[3.5px]'
+                    ? 'border-primary-accent border-[1.5px] p-[3.5px]'
                     : 'border border-neutral-200 p-1 hover:border-neutral-400',
                   zoomed && 'bg-black',
                 )}

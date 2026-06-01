@@ -14,7 +14,7 @@ const NAV_LINK_CLASS_NAME = cn(
 )
 
 const DROPDOWN_LINK_CLASS_NAME =
-  'block rounded-sm px-4 py-2 text-sm font-semibold text-black hover:bg-neutral-100 focus-visible:bg-neutral-100 focus-visible:ring-2 focus-visible:ring-neutral-300 focus-visible:ring-inset focus-visible:outline-none'
+  'block rounded-sm px-4 py-2 text-sm font-semibold text-black hover:bg-primary-accent-soft focus-visible:bg-primary-accent-soft focus-visible:ring-2 focus-visible:ring-primary-accent/20 focus-visible:ring-inset focus-visible:outline-none'
 
 const DROPDOWN_TITLE_CLASS_NAME =
   'px-4 pt-2 pb-2 text-sm font-bold text-secondary'
@@ -162,76 +162,82 @@ function ArtworksDropdown({
   return (
     <div
       className={cn(
-        'pointer-events-none absolute top-full left-1/2 z-20 w-176 -translate-x-1/2 pt-5 opacity-0 transition duration-150',
+        'pointer-events-none absolute top-full left-1/2 z-20 w-192 -translate-x-1/2 pt-5 opacity-0 transition duration-150',
         isOpen && 'pointer-events-auto opacity-100',
       )}
     >
       <div
         id="artworks-navigation"
         aria-label="Artwork navigation"
-        className="grid grid-cols-3 divide-x divide-neutral-100 rounded-md border border-neutral-200 bg-white p-2 shadow-[0_18px_40px_rgba(0,0,0,0.08)]"
+        className="rounded-md border border-neutral-200 bg-neutral-50 p-3 shadow-[0_18px_40px_rgba(0,0,0,0.08)]"
       >
-        <DropdownSection title="Category" headingId="artworks-category-heading">
-          <li>
-            <Link
-              to="/shop"
-              className={DROPDOWN_LINK_CLASS_NAME}
-              onClick={onLinkClick}
-            >
-              All Artworks
-            </Link>
-          </li>
-          {ARTWORK_CATEGORIES.map((category) => (
-            <li key={category.handle}>
-              <Link
-                to="/product-category/$handle"
-                params={{ handle: category.handle }}
-                className={DROPDOWN_LINK_CLASS_NAME}
-                onClick={onLinkClick}
-              >
-                {category.label}
-              </Link>
-            </li>
-          ))}
-        </DropdownSection>
-
-        <DropdownSection
-          title="Medium"
-          headingId="artworks-medium-heading"
-          className="px-3"
-        >
-          {MEDIUM_FILTERS.map((medium) => (
-            <li key={medium}>
+        <div className="grid grid-cols-3 divide-x divide-neutral-100 overflow-hidden rounded-sm border border-neutral-200 bg-white">
+          <DropdownSection
+            title="Category"
+            headingId="artworks-category-heading"
+            className="p-2"
+          >
+            <li>
               <Link
                 to="/shop"
-                search={{ medium: [medium] }}
                 className={DROPDOWN_LINK_CLASS_NAME}
                 onClick={onLinkClick}
               >
-                {medium}
+                All Artworks
               </Link>
             </li>
-          ))}
-        </DropdownSection>
+            {ARTWORK_CATEGORIES.map((category) => (
+              <li key={category.handle}>
+                <Link
+                  to="/product-category/$handle"
+                  params={{ handle: category.handle }}
+                  className={DROPDOWN_LINK_CLASS_NAME}
+                  onClick={onLinkClick}
+                >
+                  {category.label}
+                </Link>
+              </li>
+            ))}
+          </DropdownSection>
 
-        <DropdownSection
-          title="Orientation"
-          headingId="artworks-orientation-heading"
-          className="pl-3"
-        >
-          {ORIENTATION_FILTERS.map((orientation) => (
-            <li key={orientation}>
-              <Link
-                to="/shop"
-                search={{ orientation: [orientation] }}
-                className={DROPDOWN_LINK_CLASS_NAME}
-                onClick={onLinkClick}
-              >
-                {orientation}
-              </Link>
-            </li>
-          ))}
-        </DropdownSection>
+          <DropdownSection
+            title="Medium"
+            headingId="artworks-medium-heading"
+            className="p-2"
+          >
+            {MEDIUM_FILTERS.map((medium) => (
+              <li key={medium}>
+                <Link
+                  to="/shop"
+                  search={{ medium: [medium] }}
+                  className={DROPDOWN_LINK_CLASS_NAME}
+                  onClick={onLinkClick}
+                >
+                  {medium}
+                </Link>
+              </li>
+            ))}
+          </DropdownSection>
+
+          <DropdownSection
+            title="Orientation"
+            headingId="artworks-orientation-heading"
+            className="p-2"
+          >
+            {ORIENTATION_FILTERS.map((orientation) => (
+              <li key={orientation}>
+                <Link
+                  to="/shop"
+                  search={{ orientation: [orientation] }}
+                  className={DROPDOWN_LINK_CLASS_NAME}
+                  onClick={onLinkClick}
+                >
+                  {orientation}
+                </Link>
+              </li>
+            ))}
+          </DropdownSection>
+        </div>
       </div>
     </div>
   )
@@ -240,7 +246,7 @@ function ArtworksDropdown({
 function DropdownSection({
   title,
   headingId,
-  className = 'pr-3',
+  className,
   children,
 }: {
   title: string
