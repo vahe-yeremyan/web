@@ -1,3 +1,4 @@
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, notFound } from '@tanstack/react-router'
 
 import {
@@ -8,11 +9,26 @@ import { ShopImage } from '@/components/shop/shop-image'
 import { PRODUCT_PAGE_SIZE } from '@/lib/product-page-constants'
 import { getCollection } from '@/server/shopify/catalog.functions'
 
+function collectionQueryOptions(handle: string) {
+  return queryOptions({
+    queryKey: [
+      'shopify',
+      'collection',
+      handle,
+      { first: PRODUCT_PAGE_SIZE },
+    ] as const,
+    queryFn: () =>
+      getCollection({
+        data: { handle, first: PRODUCT_PAGE_SIZE },
+      }),
+  })
+}
+
 export const Route = createFileRoute('/shop/collections/$handle')({
-  loader: async ({ params }) => {
-    const collection = await getCollection({
-      data: { handle: params.handle, first: PRODUCT_PAGE_SIZE },
-    })
+  loader: async ({ context, params }) => {
+    const collection = await context.queryClient.ensureQueryData(
+      collectionQueryOptions(params.handle),
+    )
     if (!collection) throw notFound()
     return { collection }
   },
@@ -37,7 +53,10 @@ export const Route = createFileRoute('/shop/collections/$handle')({
 })
 
 function CollectionRoute() {
-  const { collection } = Route.useLoaderData()
+  const { handle } = Route.useParams()
+  const { data: collection } = useSuspenseQuery(collectionQueryOptions(handle))
+
+  if (!collection) return null
 
   return (
     <div className="space-y-10">

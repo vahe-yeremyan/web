@@ -1,3 +1,4 @@
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, notFound } from '@tanstack/react-router'
 
 import { ArtworkGridSection } from '@/components/home/artwork-grid-section'
@@ -7,36 +8,44 @@ import { PRODUCT_PAGE_SIZE } from '@/lib/product-page-constants'
 import { shopifyProductListItemsToArtworkGridItems } from '@/lib/queries/shopify/artwork-grid'
 import { getCollection } from '@/server/shopify/catalog.functions'
 
+function booksQueryOptions() {
+  return queryOptions({
+    queryKey: [
+      'shopify',
+      'collection',
+      'books',
+      { first: PRODUCT_PAGE_SIZE, sortKey: 'COLLECTION_DEFAULT' },
+    ] as const,
+    queryFn: () =>
+      getCollection({
+        data: {
+          handle: 'books',
+          first: PRODUCT_PAGE_SIZE,
+          sortKey: 'COLLECTION_DEFAULT',
+        },
+      }),
+  })
+}
+
 export const Route = createFileRoute('/books')({
-  loader: async () => {
-    const collection = await getCollection({
-      data: {
-        handle: 'books',
-        first: PRODUCT_PAGE_SIZE,
-        sortKey: 'COLLECTION_DEFAULT',
-      },
-    })
-
+  loader: async ({ context }) => {
+    const collection =
+      await context.queryClient.ensureQueryData(booksQueryOptions())
     if (!collection) throw notFound()
-
-    return {
-      title: collection.title,
-      description: collection.description,
-      seo: collection.seo,
-      products: shopifyProductListItemsToArtworkGridItems(
-        collection.products.nodes,
-      ),
-    }
+    return { collection }
   },
   head: ({ loaderData }) => ({
     meta: loaderData
       ? [
           {
-            title: loaderData.seo.title ?? loaderData.title,
+            title:
+              loaderData.collection.seo.title ?? loaderData.collection.title,
           },
           {
             name: 'description',
-            content: loaderData.seo.description || loaderData.description,
+            content:
+              loaderData.collection.seo.description ||
+              loaderData.collection.description,
           },
         ]
       : [],
@@ -46,13 +55,16 @@ export const Route = createFileRoute('/books')({
 })
 
 function BooksRoute() {
-  const { title, products } = Route.useLoaderData()
+  const { data: collection } = useSuspenseQuery(booksQueryOptions())
+  const products = shopifyProductListItemsToArtworkGridItems(
+    collection?.products.nodes ?? [],
+  )
 
   return (
     <main className="pb-20">
-      <PageHeading title={title} />
+      <PageHeading title={collection?.title ?? 'Books'} />
       <ArtworkGridSection
-        title={title}
+        title={collection?.title ?? 'Books'}
         artworks={products}
         hideTitle
         priorityCount={9}

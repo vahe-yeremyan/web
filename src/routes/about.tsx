@@ -1,3 +1,4 @@
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, notFound } from '@tanstack/react-router'
 
 import { PageHeading } from '@/components/page-heading'
@@ -5,9 +6,16 @@ import { CredentialSections } from '@/components/sanity/credential-sections'
 import { SanityPortableText } from '@/components/sanity/portable-text'
 import { getAbout } from '@/server/sanity/about.functions'
 
+function aboutQueryOptions() {
+  return queryOptions({
+    queryKey: ['sanity', 'about'] as const,
+    queryFn: () => getAbout(),
+  })
+}
+
 export const Route = createFileRoute('/about')({
-  loader: async () => {
-    const about = await getAbout()
+  loader: async ({ context }) => {
+    const about = await context.queryClient.ensureQueryData(aboutQueryOptions())
     if (!about) throw notFound()
     return { about }
   },
@@ -18,7 +26,8 @@ export const Route = createFileRoute('/about')({
 })
 
 function AboutRoute() {
-  const { about } = Route.useLoaderData()
+  const { data: about } = useSuspenseQuery(aboutQueryOptions())
+  if (!about) throw notFound()
 
   return (
     <main className="pb-20">

@@ -9,28 +9,36 @@ import type {
 
 import { useEffect, useMemo, useState } from 'react'
 
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
 import { ArtworkFiltersSidebar } from '@/components/shop/artwork-filters-sidebar'
-import {
-  ProductGrid,
-  ProductGridSkeleton,
-} from '@/components/shop/product-grid'
+import { ProductGrid } from '@/components/shop/product-grid'
 import { ProductListingLayout } from '@/components/shop/product-listing-layout'
+import { ProductListingPending } from '@/components/shop/product-listing-page'
 import { ProductLoadMore } from '@/components/shop/product-load-more'
 import { PRODUCT_PAGE_SIZE } from '@/lib/product-page-constants'
 import {
   getPriceFilterBounds,
+  getStableShopSearchKey,
   normalizeShopSearchParams,
+  resetShopSearchPagination,
+  toggleShopFilterValue,
 } from '@/lib/shop-filters'
 import { getSoldProducts } from '@/server/shopify/catalog.functions'
+
+function soldProductsQueryOptions() {
+  return queryOptions({
+    queryKey: ['shopify', 'products', 'sold'] as const,
+    queryFn: () => getSoldProducts(),
+  })
+}
 
 export const Route = createFileRoute('/sold')({
   validateSearch: (search): Partial<ShopSearchParams> =>
     normalizeShopSearchParams(search),
-  loader: async () => {
-    const products = await getSoldProducts()
-    return { products }
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(soldProductsQueryOptions())
   },
   head: () => ({
     meta: [
@@ -47,16 +55,6 @@ export const Route = createFileRoute('/sold')({
   pendingComponent: SoldPending,
   component: SoldRoute,
 })
-
-function searchKey(search: ShopSearchParams) {
-  return JSON.stringify(search)
-}
-
-function toggleValue(values: string[], value: string) {
-  return values.includes(value)
-    ? values.filter((item) => item !== value)
-    : [...values, value]
-}
 
 function productPrice(product: SoldProductListItem) {
   return Number(product.priceRange.maxVariantPrice.amount)
@@ -134,9 +132,9 @@ function sortSoldProducts(
 }
 
 function SoldRoute() {
-  const { products } = Route.useLoaderData()
+  const { data: products } = useSuspenseQuery(soldProductsQueryOptions())
   const routeSearch = normalizeShopSearchParams(Route.useSearch())
-  const routeSearchKey = searchKey(routeSearch)
+  const routeSearchKey = getStableShopSearchKey(routeSearch)
   const [search, setSearch] = useState(routeSearch)
   const [visibleCount, setVisibleCount] = useState(PRODUCT_PAGE_SIZE)
   const navigate = useNavigate({ from: Route.fullPath })
@@ -158,11 +156,7 @@ function SoldRoute() {
   const visibleProducts = sortedProducts.slice(0, visibleCount)
 
   const updateSearch = (next: ShopSearchParams, replace = true) => {
-    const resolvedSearch = {
-      ...next,
-      cursor: undefined,
-      direction: undefined,
-    }
+    const resolvedSearch = resetShopSearchPagination(next)
 
     setSearch(resolvedSearch)
     void navigate({
@@ -179,7 +173,7 @@ function SoldRoute() {
   const handleFilterToggle = (key: ShopFilterKey, value: string) => {
     updateSearch({
       ...search,
-      [key]: toggleValue(search[key], value),
+      [key]: toggleShopFilterValue(search[key], value),
     })
   }
 
@@ -233,12 +227,5 @@ function SoldRoute() {
 }
 
 function SoldPending() {
-  return (
-    <ProductListingLayout
-      title="Sold"
-      sidebar={<div className="hidden lg:block" />}
-    >
-      <ProductGridSkeleton count={PRODUCT_PAGE_SIZE} showPrice />
-    </ProductListingLayout>
-  )
+  return <ProductListingPending title="Sold" />
 }

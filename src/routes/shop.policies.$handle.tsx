@@ -1,10 +1,20 @@
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, notFound } from '@tanstack/react-router'
 
 import { getShopPolicy } from '@/server/shopify/catalog.functions'
 
+function policyQueryOptions(handle: string) {
+  return queryOptions({
+    queryKey: ['shopify', 'policy', handle] as const,
+    queryFn: () => getShopPolicy({ data: { handle } }),
+  })
+}
+
 export const Route = createFileRoute('/shop/policies/$handle')({
-  loader: async ({ params }) => {
-    const policy = await getShopPolicy({ data: { handle: params.handle } })
+  loader: async ({ context, params }) => {
+    const policy = await context.queryClient.ensureQueryData(
+      policyQueryOptions(params.handle),
+    )
     if (!policy) throw notFound()
     return { policy }
   },
@@ -15,7 +25,11 @@ export const Route = createFileRoute('/shop/policies/$handle')({
 })
 
 function PolicyRoute() {
-  const { policy } = Route.useLoaderData()
+  const { handle } = Route.useParams()
+  const { data: policy } = useSuspenseQuery(policyQueryOptions(handle))
+
+  if (!policy) return null
+
   return (
     <article className="space-y-6">
       <h1 className="text-3xl font-medium tracking-tight">{policy.title}</h1>

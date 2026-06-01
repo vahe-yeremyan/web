@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
 import * as v from 'valibot'
@@ -15,34 +16,47 @@ const SearchSchema = v.object({
   q: v.optional(v.string(), ''),
 })
 
+function searchProductsQueryOptions(query: string) {
+  const trimmedQuery = query.trim()
+
+  return queryOptions({
+    queryKey: ['shopify', 'search', 'products', trimmedQuery] as const,
+    queryFn: async () => {
+      if (!trimmedQuery) {
+        return {
+          products: [],
+          totalCount: 0,
+        }
+      }
+
+      return searchProducts({
+        data: { query: trimmedQuery, first: PRODUCT_PAGE_SIZE },
+      })
+    },
+  })
+}
+
 export const Route = createFileRoute('/shop/search')({
   validateSearch: (search) => v.parse(SearchSchema, search),
   loaderDeps: ({ search }) => ({ q: search.q }),
-  loader: async ({ deps }) => {
-    if (!deps.q.trim()) {
-      return {
-        q: '',
-        products: [] as Awaited<ReturnType<typeof searchProducts>>['products'],
-        totalCount: 0,
-      }
-    }
-    const result = await searchProducts({
-      data: { query: deps.q.trim(), first: PRODUCT_PAGE_SIZE },
-    })
-    return {
-      q: deps.q,
-      products: result.products,
-      totalCount: result.totalCount,
-    }
+  loader: async ({ context, deps }) => {
+    const q = deps.q.trim()
+    await context.queryClient.ensureQueryData(searchProductsQueryOptions(q))
+    return { q }
   },
   pendingComponent: SearchPending,
   component: SearchRoute,
 })
 
 function SearchRoute() {
-  const { q, products, totalCount } = Route.useLoaderData()
+  const { q } = Route.useLoaderData()
+  const { data } = useSuspenseQuery(searchProductsQueryOptions(q))
   const navigate = useNavigate({ from: Route.fullPath })
   const [draft, setDraft] = useState(q)
+
+  useEffect(() => {
+    setDraft(q)
+  }, [q])
 
   return (
     <div className="space-y-8">
@@ -73,12 +87,12 @@ function SearchRoute() {
 
       {q && (
         <p className="text-sm text-[--storefront-fg-muted]">
-          {totalCount} result{totalCount === 1 ? '' : 's'} for{' '}
+          {data.totalCount} result{data.totalCount === 1 ? '' : 's'} for{' '}
           <span className="font-medium text-[--storefront-fg]">"{q}"</span>
         </p>
       )}
 
-      {q && <ProductGrid products={products} />}
+      {q && <ProductGrid products={data.products} />}
     </div>
   )
 }

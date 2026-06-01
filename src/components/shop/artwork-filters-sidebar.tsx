@@ -17,6 +17,7 @@ import {
   PRICE_FILTER_OPTIONS,
   SHOP_SORT_OPTIONS,
   hasActiveShopFilters,
+  isTitleShopSort,
 } from '@/lib/shop-filters'
 import { cn } from '@/lib/utils'
 
@@ -56,10 +57,6 @@ type PriceFilterProps = {
 
 function optionId(prefix: string, value: string) {
   return `${prefix}-${value.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
-}
-
-function isTitleSort(value: ShopSortOption) {
-  return value === 'title-asc' || value === 'title-desc'
 }
 
 function FilterSection({
@@ -150,7 +147,7 @@ function SortFilter({ value, hasFilters, onChange }: SortFilterProps) {
             <SelectItem
               key={option.value}
               value={option.value}
-              disabled={hasFilters && isTitleSort(option.value)}
+              disabled={hasFilters && isTitleShopSort(option.value)}
               className="data-disabled:pointer-events-auto data-disabled:cursor-not-allowed data-disabled:opacity-50"
             >
               {option.label}

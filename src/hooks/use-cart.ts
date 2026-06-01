@@ -4,7 +4,12 @@ import type {
 } from '@/lib/queries/shopify/generated/storefront.types'
 import type { CartDetail, CartLineDetail } from '@/lib/queries/shopify/queries'
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  queryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 
 import {
   addToCart,
@@ -25,6 +30,14 @@ import {
 export const CART_QUERY_KEY = ['shopify', 'cart'] as const
 
 const CART_MUTATION_KEY = ['shopify', 'cart', 'mutate'] as const
+
+export function cartQueryOptions() {
+  return queryOptions<CartDetail | null>({
+    queryKey: CART_QUERY_KEY,
+    queryFn: () => getCart(),
+    staleTime: 30_000,
+  })
+}
 
 /**
  * Explicit in-flight counter. We don't rely on `queryClient.isMutating()`
@@ -48,11 +61,7 @@ function settleWhenIdle(qc: ReturnType<typeof useQueryClient>) {
 }
 
 export function useCart() {
-  const query = useQuery<CartDetail | null>({
-    queryKey: CART_QUERY_KEY,
-    queryFn: () => getCart(),
-    staleTime: 30_000,
-  })
+  const query = useQuery(cartQueryOptions())
 
   return {
     cart: query.data ?? null,

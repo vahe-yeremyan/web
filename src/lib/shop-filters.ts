@@ -100,6 +100,30 @@ export function hasActiveShopFilters(search: ShopSearchParams) {
   )
 }
 
+export function isTitleShopSort(sort: ShopSortOption) {
+  return sort === 'title-asc' || sort === 'title-desc'
+}
+
+export function toggleShopFilterValue(values: string[], value: string) {
+  return values.includes(value)
+    ? values.filter((item) => item !== value)
+    : [...values, value]
+}
+
+export function getStableShopSearchKey(search: ShopSearchParams) {
+  return JSON.stringify(search)
+}
+
+export function resetShopSearchPagination(
+  search: ShopSearchParams,
+): ShopSearchParams {
+  return {
+    ...search,
+    cursor: undefined,
+    direction: undefined,
+  }
+}
+
 export function getPriceFilterBounds(value?: PriceFilterOption) {
   if (!value) return null
   return PRICE_FILTER_OPTIONS.find((option) => option.value === value) ?? null

@@ -1,5 +1,6 @@
 import type { ArtworkTheme } from '@/components/home/themes-section'
 
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 
 import { ArtworkGridSection } from '@/components/home/artwork-grid-section'
@@ -20,17 +21,26 @@ import {
   getRecentArtworks,
 } from '@/server/shopify/catalog.functions'
 
-export const Route = createFileRoute('/')({
-  loader: async () => {
-    const [highlightedArtworkProducts, recentArtworkProducts] =
-      await Promise.all([getHighlightedArtworks(), getRecentArtworks()])
+function highlightedArtworksQueryOptions() {
+  return queryOptions({
+    queryKey: ['shopify', 'home', 'highlighted-artworks'] as const,
+    queryFn: () => getHighlightedArtworks(),
+  })
+}
 
-    return {
-      highlightedArtworks: shopifyProductsToArtworkGridItems(
-        highlightedArtworkProducts,
-      ),
-      recentArtworks: shopifyProductsToArtworkGridItems(recentArtworkProducts),
-    }
+function recentArtworksQueryOptions() {
+  return queryOptions({
+    queryKey: ['shopify', 'home', 'recent-artworks'] as const,
+    queryFn: () => getRecentArtworks(),
+  })
+}
+
+export const Route = createFileRoute('/')({
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData(highlightedArtworksQueryOptions()),
+      context.queryClient.ensureQueryData(recentArtworksQueryOptions()),
+    ])
   },
   component: Home,
 })
@@ -63,7 +73,18 @@ const ARTWORK_THEMES: Array<ArtworkTheme> = [
 ]
 
 function Home() {
-  const { highlightedArtworks, recentArtworks } = Route.useLoaderData()
+  const { data: highlightedArtworkProducts } = useSuspenseQuery(
+    highlightedArtworksQueryOptions(),
+  )
+  const { data: recentArtworkProducts } = useSuspenseQuery(
+    recentArtworksQueryOptions(),
+  )
+  const highlightedArtworks = shopifyProductsToArtworkGridItems(
+    highlightedArtworkProducts,
+  )
+  const recentArtworks = shopifyProductsToArtworkGridItems(
+    recentArtworkProducts,
+  )
 
   return (
     <main className="py-2">
