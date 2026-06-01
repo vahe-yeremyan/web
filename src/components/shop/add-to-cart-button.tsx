@@ -4,6 +4,7 @@ import type {
 } from '@/lib/queries/shopify/queries'
 
 import { useAddToCart } from '@/hooks/use-cart'
+import { cn } from '@/lib/utils'
 
 type AddToCartButtonProps = {
   product: ProductDetail
@@ -18,11 +19,20 @@ export function AddToCartButton({
 }: AddToCartButtonProps) {
   const { mutate, isPending } = useAddToCart()
   const disabled = !variant || !variant.availableForSale || isPending
+  const buttonText = !variant
+    ? 'Select options'
+    : !variant.availableForSale
+      ? 'Sold out'
+      : isPending
+        ? 'Adding...'
+        : 'Add to cart'
 
   return (
     <button
       type="button"
       disabled={disabled}
+      aria-label={`Add ${product.title} to cart`}
+      aria-busy={isPending}
       onClick={() => {
         if (!variant) return
         mutate({
@@ -38,15 +48,14 @@ export function AddToCartButton({
           },
         })
       }}
-      className="w-full rounded-full bg-[--storefront-accent] px-6 py-3.5 text-sm font-medium text-[--storefront-accent-fg] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+      className={cn(
+        'w-full cursor-pointer rounded-full px-6 py-3 text-sm font-medium transition-all duration-200 ease-in-out active:scale-[0.99] md:w-fit md:px-12',
+        disabled
+          ? 'cursor-not-allowed bg-white text-gray-600 ring ring-gray-300 active:scale-100'
+          : 'bg-black text-white hover:bg-[#910000]',
+      )}
     >
-      {!variant
-        ? 'Select options'
-        : !variant.availableForSale
-          ? 'Sold out'
-          : isPending
-            ? 'Adding…'
-            : 'Add to cart'}
+      {buttonText}
     </button>
   )
 }

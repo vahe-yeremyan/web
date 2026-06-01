@@ -31,3 +31,13 @@ export function shopifyImageUrl(url: string, opts: ShopifyImageOptions = {}) {
   if (opts.crop) u.searchParams.set('crop', opts.crop)
   return u.toString()
 }
+
+export function shopifyImageSrcSet(
+  url: string,
+  widths: ReadonlyArray<number>,
+  opts: Omit<ShopifyImageOptions, 'width'> = {},
+) {
+  return widths
+    .map((width) => `${shopifyImageUrl(url, { ...opts, width })} ${width}w`)
+    .join(', ')
+}

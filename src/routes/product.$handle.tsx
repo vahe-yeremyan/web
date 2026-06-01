@@ -69,7 +69,7 @@ function ProductRoute() {
 
         <div className="min-w-0 lg:sticky lg:top-[calc(var(--header-height)+2rem)] lg:self-start">
           <section className="space-y-2">
-            <h1 className="text-3xl leading-tight font-semibold tracking-tight md:text-4xl">
+            <h1 className="text-2xl leading-tight font-semibold tracking-tight md:text-3xl">
               {product.title}
             </h1>
             <p className="inline-flex items-center gap-1.5 text-xl text-neutral-800">
@@ -94,8 +94,8 @@ function ProductRoute() {
               onChange={setSelectedOptions}
             />
 
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="w-full sm:max-w-64">
+            <div className="flex flex-col items-center gap-4 md:flex-row md:gap-10">
+              <div className="w-fit">
                 <AddToCartButton product={product} variant={variant} />
               </div>
               {isSold ? (

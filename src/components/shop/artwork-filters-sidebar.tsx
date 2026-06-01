@@ -6,6 +6,8 @@ import type {
   ShopSortOption,
 } from '@/lib/shop-filters'
 
+import { Check } from 'lucide-react'
+
 import {
   Select,
   SelectContent,
@@ -83,13 +85,20 @@ function FilterSection({
 
           return (
             <li key={option} className="flex items-center gap-2">
-              <input
-                id={id}
-                type="checkbox"
-                checked={selected.includes(option)}
-                onChange={() => onToggle(name, option)}
-                className="h-4 w-4 cursor-pointer appearance-none rounded-[3px] border border-neutral-300 bg-white checked:border-neutral-900 checked:bg-neutral-900"
-              />
+              <span className="relative flex size-4 shrink-0 items-center justify-center">
+                <input
+                  id={id}
+                  type="checkbox"
+                  checked={selected.includes(option)}
+                  onChange={() => onToggle(name, option)}
+                  className="peer size-4 cursor-pointer appearance-none rounded-[3px] border border-neutral-300 bg-white checked:border-neutral-900 checked:bg-neutral-900 focus-visible:ring-2 focus-visible:ring-neutral-900/20 focus-visible:outline-none"
+                />
+                <Check
+                  aria-hidden
+                  className="pointer-events-none absolute size-3 text-white opacity-0 peer-checked:opacity-100"
+                  strokeWidth={3}
+                />
+              </span>
               <label
                 htmlFor={id}
                 className="cursor-pointer text-sm text-neutral-700"

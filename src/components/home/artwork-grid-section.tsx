@@ -164,7 +164,10 @@ export function ArtworkGridSection({
                 <p className="inline-flex items-center gap-1 text-sm text-neutral-500">
                   {artwork.price}
                   {artwork.status && (
-                    <span className="text-rose-600">• {artwork.status}</span>
+                    <>
+                      <span>•</span>
+                      <span className="text-rose-600">{artwork.status}</span>
+                    </>
                   )}
                 </p>
               )}
