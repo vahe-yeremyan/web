@@ -22,7 +22,6 @@ const DROPDOWN_TITLE_CLASS_NAME =
 const NAV_ITEMS = [
   { type: 'route', label: 'Home', to: '/' },
   { type: 'artworks', label: 'Artworks' },
-  { type: 'anchor', label: 'Prints', href: '/prints' },
   { type: 'route', label: 'Books', to: '/books' },
   { type: 'route', label: 'Sold', to: '/sold' },
   { type: 'route', label: 'About', to: '/about' },
@@ -77,30 +76,16 @@ function DesktopNav() {
             return <ArtworksNavItem key={item.label} label={item.label} />
           }
 
-          return <StandardNavItem key={item.label} item={item} />
+          return (
+            <li key={item.label}>
+              <Link to={item.to} className={NAV_LINK_CLASS_NAME}>
+                {item.label}
+              </Link>
+            </li>
+          )
         })}
       </ul>
     </div>
-  )
-}
-
-function StandardNavItem({
-  item,
-}: {
-  item: Exclude<(typeof NAV_ITEMS)[number], { type: 'artworks' }>
-}) {
-  return (
-    <li>
-      {item.type === 'route' ? (
-        <Link to={item.to} className={NAV_LINK_CLASS_NAME}>
-          {item.label}
-        </Link>
-      ) : (
-        <a href={item.href} className={NAV_LINK_CLASS_NAME}>
-          {item.label}
-        </a>
-      )}
-    </li>
   )
 }
 
