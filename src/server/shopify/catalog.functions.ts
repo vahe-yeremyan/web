@@ -78,6 +78,12 @@ function setBrowseCacheHeaders() {
   )
 }
 
+function availableProducts<T extends { availableForSale: boolean }>(
+  products: T[],
+) {
+  return products.filter((product) => product.availableForSale)
+}
+
 const productSortKeys = [
   'BEST_SELLING',
   'CREATED_AT',
@@ -239,15 +245,17 @@ export const getShopProducts = createServerFn({ method: 'POST' })
           },
         })
 
+        const products = availableProducts(result.products.nodes)
+
         return {
-          totalCount: result.products.nodes.length,
+          totalCount: products.length,
           pageInfo: {
             hasNextPage: result.products.pageInfo.hasNextPage,
             hasPreviousPage: result.products.pageInfo.hasPreviousPage,
             startCursor: result.products.pageInfo.startCursor ?? null,
             endCursor: result.products.pageInfo.endCursor ?? null,
           },
-          products: result.products.nodes,
+          products,
         }
       }
 
@@ -272,6 +280,8 @@ export const getShopProducts = createServerFn({ method: 'POST' })
         },
       })
 
+      const products = availableProducts(result.search.nodes)
+
       return {
         totalCount: result.search.totalCount,
         pageInfo: {
@@ -280,7 +290,7 @@ export const getShopProducts = createServerFn({ method: 'POST' })
           startCursor: result.search.pageInfo.startCursor ?? null,
           endCursor: result.search.pageInfo.endCursor ?? null,
         },
-        products: result.search.nodes,
+        products,
       }
     },
   )
@@ -296,7 +306,7 @@ export const getSoldProducts = createServerFn({ method: 'GET' }).handler(
       variables: { first: SOLD_PRODUCTS_LIMIT },
     })
 
-    return result.products.nodes
+    return result.products.nodes.filter((product) => !product.availableForSale)
   },
 )
 
@@ -369,7 +379,15 @@ export const getCollection = createServerFn({ method: 'POST' })
         reverse: data.reverse ?? null,
       },
     })
-    return result.collection
+    if (!result.collection) return null
+
+    return {
+      ...result.collection,
+      products: {
+        ...result.collection.products,
+        nodes: availableProducts(result.collection.products.nodes),
+      },
+    }
   })
 
 export const getCollectionMetadata = createServerFn({ method: 'POST' })
@@ -504,13 +522,15 @@ export const searchProducts = createServerFn({ method: 'POST' })
           productFilters: [{ available: true }],
         },
       })
+      const products = availableProducts(result.search.nodes)
+
       return {
         totalCount: result.search.totalCount,
         pageInfo: {
           hasNextPage: result.search.pageInfo.hasNextPage,
           endCursor: result.search.pageInfo.endCursor ?? null,
         },
-        products: result.search.nodes,
+        products,
       }
     },
   )

@@ -227,7 +227,7 @@ export function ArtworkFiltersSidebar({
   return (
     <aside
       aria-labelledby="artwork-filters-title"
-      className="space-y-6 rounded-md border border-neutral-200 bg-white p-4"
+      className="font-manrope space-y-6 rounded-md border border-neutral-200 bg-white p-4"
     >
       <div className="space-y-3">
         <SidebarHeader

@@ -4,16 +4,10 @@ import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 
 import { ArtworkGridSection } from '@/components/home/artwork-grid-section'
-import { HeroCarousel } from '@/components/home/hero-carousel'
+import { HomeHero } from '@/components/home/home-hero'
+import { PartnerLogosSection } from '@/components/home/partner-logos-section'
+import { SecurePaymentOptionsSection } from '@/components/home/secure-payments-section'
 import { ThemesSection } from '@/components/home/themes-section'
-import {
-  AmexIcon,
-  ApplePayIcon,
-  GooglePayIcon,
-  MastercardIcon,
-  PaypalIcon,
-  VisaIcon,
-} from '@/components/icons/PaymentIcons'
 import { Divider } from '@/components/ui/divider'
 import { shopifyProductsToArtworkGridItems } from '@/lib/queries/shopify/artwork-grid'
 import {
@@ -49,24 +43,28 @@ const ARTWORK_THEMES: Array<ArtworkTheme> = [
   {
     id: 'abstract',
     title: 'Abstract',
+    categoryHandle: 'abstract',
     imageSrc: '/abstract.jpg',
     imageAlt: 'Abstract painting by Vahe Yeremyan',
   },
   {
     id: 'seascape',
     title: 'Seascape',
+    categoryHandle: 'seascape',
     imageSrc: '/seascape.jpg',
     imageAlt: 'Seascape painting by Vahe Yeremyan',
   },
   {
     id: 'flowers',
     title: 'Flowers',
+    categoryHandle: 'flowers',
     imageSrc: '/flowers.jpg',
     imageAlt: 'Floral painting by Vahe Yeremyan',
   },
   {
     id: 'landscape',
     title: 'Landscape',
+    categoryHandle: 'landscape',
     imageSrc: '/landscape.jpg',
     imageAlt: 'Landscape painting by Vahe Yeremyan',
   },
@@ -87,24 +85,8 @@ function Home() {
   )
 
   return (
-    <main className="py-2">
-      <HeroCarousel />
-
-      <section className="mt-10">
-        <p className="mb-4 text-center text-[2rem] font-semibold tracking-tight">
-          Welcome to Vahe Yeremyan's Personal Gallery
-        </p>
-
-        <p className="mx-auto max-w-4/5 text-center text-lg font-medium text-pretty lg:max-w-[45%]">
-          I hope you enjoy the tour and discover a painting that truly moves
-          you. Painting is the essence of my emotions, inspiration, and life; it
-          is as natural to me as breathing. Through my art, I seek to capture
-          the tranquility of nature, the vastness of the sky, and the soothing
-          beauty of landscapes, fruits, and light-filled meadows.
-        </p>
-      </section>
-
-      <Divider className="my-6 md:my-10" />
+    <main className="pb-2">
+      <HomeHero />
 
       {highlightedArtworks.length > 0 && (
         <>
@@ -130,19 +112,11 @@ function Home() {
 
       <Divider className="my-6 md:my-10" />
 
-      <section className="my-6 md:my-10">
-        <h3 className="featured-headline text-center md:text-2xl!">
-          Secure Payment Options
-        </h3>
-        <div className="flex items-center justify-center gap-2">
-          <VisaIcon />
-          <AmexIcon />
-          <PaypalIcon />
-          <MastercardIcon />
-          <ApplePayIcon />
-          <GooglePayIcon />
-        </div>
-      </section>
+      <PartnerLogosSection />
+
+      <Divider className="my-6 md:my-10" />
+
+      <SecurePaymentOptionsSection />
     </main>
   )
 }

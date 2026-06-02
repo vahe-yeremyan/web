@@ -4,12 +4,26 @@
  */
 
 export function formatMoney(amount: string | number, currencyCode: string) {
-  return new Intl.NumberFormat(undefined, {
+  const value = typeof amount === 'string' ? Number(amount) : amount
+  const parts = new Intl.NumberFormat(undefined, {
     style: 'currency',
     currency: currencyCode,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(typeof amount === 'string' ? Number(amount) : amount)
+  }).formatToParts(value)
+
+  return parts
+    .map((part, index) => {
+      if (part.type !== 'currency') return part.value
+
+      const previousPart = index > 0 ? parts[index - 1] : undefined
+      const nextPart = index < parts.length - 1 ? parts[index + 1] : undefined
+      const hasAdjacentAmount =
+        previousPart?.type === 'integer' || nextPart?.type === 'integer'
+
+      return hasAdjacentAmount ? `${part.value}\u200a` : part.value
+    })
+    .join('')
 }
 
 type ShopifyImageOptions = {

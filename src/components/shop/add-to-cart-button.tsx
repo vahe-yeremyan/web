@@ -10,31 +10,49 @@ type AddToCartButtonProps = {
   product: ProductDetail
   variant: ProductDetailVariant | undefined
   quantity?: number
+  sold?: boolean
+}
+
+function getButtonText({
+  sold,
+  variant,
+  isPending,
+}: {
+  sold: boolean
+  variant: ProductDetailVariant | undefined
+  isPending: boolean
+}) {
+  if (sold) return 'Sold'
+  if (!variant) return 'Select options'
+  if (!variant.availableForSale) return 'Sold'
+  if (isPending) return 'Adding...'
+  return 'Add to bag'
+}
+
+function getAriaLabel(product: ProductDetail, sold: boolean) {
+  if (sold) return `${product.title} is sold`
+  return `Add ${product.title} to bag`
 }
 
 export function AddToCartButton({
   product,
   variant,
   quantity = 1,
+  sold = false,
 }: AddToCartButtonProps) {
   const { mutate, isPending } = useAddToCart()
-  const disabled = !variant || !variant.availableForSale || isPending
-  const buttonText = !variant
-    ? 'Select options'
-    : !variant.availableForSale
-      ? 'Sold out'
-      : isPending
-        ? 'Adding...'
-        : 'Add to cart'
+  const disabled = sold || !variant || !variant.availableForSale || isPending
+  const buttonText = getButtonText({ sold, variant, isPending })
+  const ariaLabel = getAriaLabel(product, sold)
 
   return (
     <button
       type="button"
       disabled={disabled}
-      aria-label={`Add ${product.title} to cart`}
+      aria-label={ariaLabel}
       aria-busy={isPending}
       onClick={() => {
-        if (!variant) return
+        if (disabled) return
         mutate({
           variantId: variant.id,
           quantity,
@@ -49,10 +67,10 @@ export function AddToCartButton({
         })
       }}
       className={cn(
-        'w-full cursor-pointer rounded-full px-6 py-3 text-sm font-medium transition-all duration-200 ease-in-out active:scale-[0.99] md:w-fit md:px-12',
-        disabled
-          ? 'cursor-not-allowed bg-white text-gray-600 ring ring-gray-300 active:scale-100'
-          : 'hover:bg-primary-accent bg-black text-white',
+        'w-full cursor-pointer rounded-full px-6 py-3 font-semibold tracking-wide transition-all duration-200 ease-in-out active:scale-[0.99] md:w-fit md:px-12',
+        disabled &&
+          'cursor-not-allowed bg-white text-gray-600 ring ring-gray-300 active:scale-100',
+        !disabled && 'hover:bg-primary-accent bg-black text-white',
       )}
     >
       {buttonText}

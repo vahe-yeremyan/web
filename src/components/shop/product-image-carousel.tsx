@@ -11,10 +11,6 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel'
 import {
-  shopifyImageSrcSet,
-  shopifyImageUrl,
-} from '@/lib/queries/shopify/format'
-import {
   PRODUCT_IMAGE_SIZES,
   PRODUCT_IMAGE_SRC_SET_WIDTHS,
   PRODUCT_IMAGE_WIDTH,
@@ -24,6 +20,7 @@ import {
 } from '@/lib/queries/shopify/product-images'
 import { cn } from '@/lib/utils'
 
+import { useProductImagePreload } from './product-image-preload'
 import { ShopImage } from './shop-image'
 
 type ProductImageCarouselProps = {
@@ -32,6 +29,18 @@ type ProductImageCarouselProps = {
   initialIndex?: number
   zoomed?: boolean
   onImageClick?: (index: number) => void
+}
+
+const PRODUCT_IMAGE_SETTINGS = {
+  width: PRODUCT_IMAGE_WIDTH,
+  sizes: PRODUCT_IMAGE_SIZES,
+  srcSetWidths: PRODUCT_IMAGE_SRC_SET_WIDTHS,
+}
+
+const ZOOM_PRODUCT_IMAGE_SETTINGS = {
+  width: ZOOM_PRODUCT_IMAGE_WIDTH,
+  sizes: ZOOM_PRODUCT_IMAGE_SIZES,
+  srcSetWidths: ZOOM_PRODUCT_IMAGE_SRC_SET_WIDTHS,
 }
 
 export function ProductImageCarousel({
@@ -48,6 +57,15 @@ export function ProductImageCarousel({
     () => new Set([safeInitialIndex]),
   )
   const thumbnailRefs = useRef<Array<HTMLButtonElement | null>>([])
+  const imageSettings = zoomed
+    ? ZOOM_PRODUCT_IMAGE_SETTINGS
+    : PRODUCT_IMAGE_SETTINGS
+
+  useProductImagePreload({
+    images,
+    initialIndex: safeInitialIndex,
+    zoomed,
+  })
 
   useEffect(() => {
     if (!api) return
@@ -82,39 +100,6 @@ export function ProductImageCarousel({
     })
   }, [selectedIndex])
 
-  useEffect(() => {
-    if (zoomed || images.length <= 1) return
-
-    const preloadImages = images
-      .filter((image, index) => index !== safeInitialIndex && image.url)
-      .map((image) => image.url)
-
-    if (preloadImages.length === 0) return
-
-    const preloadedImages: HTMLImageElement[] = []
-    const cancelSchedule = scheduleAfterPageSettles(() => {
-      for (const src of preloadImages) {
-        const image = new Image()
-        image.decoding = 'async'
-        image.fetchPriority = 'low'
-        image.sizes = PRODUCT_IMAGE_SIZES
-        image.srcset = shopifyImageSrcSet(src, PRODUCT_IMAGE_SRC_SET_WIDTHS, {
-          format: 'webp',
-        })
-        image.src = shopifyImageUrl(src, {
-          width: PRODUCT_IMAGE_WIDTH,
-          format: 'webp',
-        })
-        preloadedImages.push(image)
-      }
-    })
-
-    return () => {
-      cancelSchedule()
-      preloadedImages.length = 0
-    }
-  }, [images, safeInitialIndex, zoomed])
-
   if (images.length === 0) {
     return (
       <div className="aspect-5/4 rounded-md border border-neutral-200 bg-neutral-50" />
@@ -134,7 +119,8 @@ export function ProductImageCarousel({
         <CarouselContent
           viewportClassName={cn(
             'rounded-md',
-            zoomed ? 'bg-black' : 'bg-neutral-50',
+            zoomed && 'bg-black',
+            !zoomed && 'bg-neutral-50',
           )}
         >
           {images.map((image, index) => (
@@ -160,19 +146,11 @@ export function ProductImageCarousel({
                   <ShopImage
                     src={image.url}
                     alt={image.altText ?? title}
-                    width={
-                      zoomed ? ZOOM_PRODUCT_IMAGE_WIDTH : PRODUCT_IMAGE_WIDTH
-                    }
+                    width={imageSettings.width}
                     loading={index === safeInitialIndex ? 'eager' : 'lazy'}
                     fetchPriority={index === safeInitialIndex ? 'high' : 'auto'}
-                    sizes={
-                      zoomed ? ZOOM_PRODUCT_IMAGE_SIZES : PRODUCT_IMAGE_SIZES
-                    }
-                    srcSetWidths={
-                      zoomed
-                        ? ZOOM_PRODUCT_IMAGE_SRC_SET_WIDTHS
-                        : PRODUCT_IMAGE_SRC_SET_WIDTHS
-                    }
+                    sizes={imageSettings.sizes}
+                    srcSetWidths={imageSettings.srcSetWidths}
                     className="max-h-full max-w-full rounded-[2px] object-contain"
                   />
                 ) : (
@@ -258,27 +236,4 @@ function clampIndex(index: number, length: number) {
   if (index < 0) return 0
   if (index >= length) return length - 1
   return index
-}
-
-function scheduleAfterPageSettles(callback: () => void) {
-  let timeoutId: number | undefined
-  let idleId: number | undefined
-
-  const runWhenIdle = () => {
-    timeoutId = window.setTimeout(() => {
-      idleId = window.requestIdleCallback(callback, { timeout: 3000 })
-    }, 1000)
-  }
-
-  if (document.readyState === 'complete') {
-    runWhenIdle()
-  } else {
-    window.addEventListener('load', runWhenIdle, { once: true })
-  }
-
-  return () => {
-    window.removeEventListener('load', runWhenIdle)
-    if (timeoutId !== undefined) window.clearTimeout(timeoutId)
-    if (idleId !== undefined) window.cancelIdleCallback(idleId)
-  }
 }

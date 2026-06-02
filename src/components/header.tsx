@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 
 const NAV_LINK_CLASS_NAME = cn(
   'relative text-[1.05rem] font-semibold transition-all duration-200 after:absolute after:-bottom-0.5 after:left-0 after:h-[1.5px] after:w-full after:origin-left after:scale-x-0 after:bg-linear-to-r after:transition-transform after:duration-200 hover:after:scale-x-100',
-  'after:from-black after:to-black',
+  'after:from-current after:to-current',
 )
 
 const DROPDOWN_LINK_CLASS_NAME =
@@ -41,7 +41,7 @@ const ORIENTATION_FILTERS = ['Horizontal', 'Square', 'Vertical'] as const
 
 export default function Header() {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 bg-white/85 text-black backdrop-blur-xl">
+    <header className="fixed inset-x-0 top-0 z-50 bg-white/90 text-black backdrop-blur-xl">
       <nav
         aria-label="Primary"
         className="site-frame relative z-10 flex h-23 items-center justify-between"
@@ -70,7 +70,7 @@ function Logo() {
 
 function DesktopNav() {
   return (
-    <div className="flex items-center">
+    <div className="font-manrope flex items-center">
       <ul className="hidden items-center tracking-wide lg:flex lg:gap-6 xl:gap-10">
         {NAV_ITEMS.map((item) => {
           if (item.type === 'artworks') {
@@ -162,7 +162,7 @@ function ArtworksDropdown({
   return (
     <div
       className={cn(
-        'pointer-events-none absolute top-full left-1/2 z-20 w-192 -translate-x-1/2 pt-5 opacity-0 transition duration-150',
+        'pointer-events-none absolute top-full left-1/2 z-20 w-3xl -translate-x-1/2 pt-5 opacity-0 transition duration-150',
         isOpen && 'pointer-events-auto opacity-100',
       )}
     >

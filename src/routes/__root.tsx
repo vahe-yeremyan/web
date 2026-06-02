@@ -8,6 +8,7 @@ import {
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 
+import { Footer } from '@/components/footer'
 import Header from '@/components/header'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
@@ -45,6 +46,14 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
       {
         rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap',
+      },
+      {
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap',
+      },
+      {
+        rel: 'stylesheet',
         href: appCss,
       },
     ],
@@ -61,6 +70,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body className="flex min-h-screen flex-col">
         <Header />
         <div className="site-content flex flex-1 flex-col">{children}</div>
+        <Footer />
         {import.meta.env.DEV && <Devtools />}
         <Scripts />
       </body>

@@ -20,36 +20,48 @@ export function ProductMetadata({ product }: ProductMetadataProps) {
   }
 
   return (
-    <section className="mt-8 space-y-1.5 border-t border-neutral-200 pt-6 text-sm tracking-wide">
+    <section className="mt-8 space-y-1.5 border-t border-neutral-200 pt-6 tracking-wide">
       {category && (
-        <p className="font-medium">
+        <p className="font-semibold">
           Category:{' '}
           <Link
             to="/product-category/$handle"
             params={{ handle: category.handle }}
-            className="hover:text-secondary font-normal underline-offset-3 hover:underline"
+            className="hover:text-primary-accent font-medium"
           >
             {category.label}
           </Link>
         </p>
       )}
       {product.medium?.value && (
-        <p className="font-medium">
+        <p className="font-semibold">
           Medium:{' '}
           <Link
             to="/shop"
             search={{ medium: [product.medium.value] }}
-            className="hover:text-secondary font-normal underline-offset-3 hover:underline"
+            className="hover:text-primary-accent font-medium"
           >
             {product.medium.value}
           </Link>
         </p>
       )}
       {dimensions.length > 0 && (
-        <p className="font-medium">
-          Dimensions:{' '}
-          <span className="font-normal">{dimensions.join(' | ')}</span>
-        </p>
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-semibold">
+          <span>Dimensions:</span>
+          <span className="font-manrope inline-flex flex-wrap items-center gap-x-2 gap-y-1">
+            {dimensions.map((dimension, index) => (
+              <span
+                key={`${dimension}-${index}`}
+                className="inline-flex items-center gap-2 font-normal"
+              >
+                {index > 0 && (
+                  <span aria-hidden="true" className="h-4.5 w-px bg-black" />
+                )}
+                <span>{dimension}</span>
+              </span>
+            ))}
+          </span>
+        </div>
       )}
     </section>
   )

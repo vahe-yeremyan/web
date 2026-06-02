@@ -19,6 +19,8 @@ import { Route as ShopSearchRouteImport } from './routes/shop.search'
 import { Route as ShopCartRouteImport } from './routes/shop.cart'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
 import { Route as ProductCategoryHandleRouteImport } from './routes/product-category.$handle'
+import { Route as LegalTermsOfServiceRouteImport } from './routes/legal.terms-of-service'
+import { Route as LegalPrivacyPolicyRouteImport } from './routes/legal.privacy-policy'
 import { Route as ShopPoliciesHandleRouteImport } from './routes/shop.policies.$handle'
 import { Route as ShopPagesHandleRouteImport } from './routes/shop.pages.$handle'
 import { Route as ShopCollectionsHandleRouteImport } from './routes/shop.collections.$handle'
@@ -73,6 +75,16 @@ const ProductCategoryHandleRoute = ProductCategoryHandleRouteImport.update({
   path: '/product-category/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LegalTermsOfServiceRoute = LegalTermsOfServiceRouteImport.update({
+  id: '/legal/terms-of-service',
+  path: '/legal/terms-of-service',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalPrivacyPolicyRoute = LegalPrivacyPolicyRouteImport.update({
+  id: '/legal/privacy-policy',
+  path: '/legal/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopPoliciesHandleRoute = ShopPoliciesHandleRouteImport.update({
   id: '/policies/$handle',
   path: '/policies/$handle',
@@ -95,6 +107,8 @@ export interface FileRoutesByFullPath {
   '/books': typeof BooksRoute
   '/shop': typeof ShopRouteWithChildren
   '/sold': typeof SoldRoute
+  '/legal/privacy-policy': typeof LegalPrivacyPolicyRoute
+  '/legal/terms-of-service': typeof LegalTermsOfServiceRoute
   '/product-category/$handle': typeof ProductCategoryHandleRoute
   '/product/$handle': typeof ProductHandleRoute
   '/shop/cart': typeof ShopCartRoute
@@ -109,6 +123,8 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/books': typeof BooksRoute
   '/sold': typeof SoldRoute
+  '/legal/privacy-policy': typeof LegalPrivacyPolicyRoute
+  '/legal/terms-of-service': typeof LegalTermsOfServiceRoute
   '/product-category/$handle': typeof ProductCategoryHandleRoute
   '/product/$handle': typeof ProductHandleRoute
   '/shop/cart': typeof ShopCartRoute
@@ -125,6 +141,8 @@ export interface FileRoutesById {
   '/books': typeof BooksRoute
   '/shop': typeof ShopRouteWithChildren
   '/sold': typeof SoldRoute
+  '/legal/privacy-policy': typeof LegalPrivacyPolicyRoute
+  '/legal/terms-of-service': typeof LegalTermsOfServiceRoute
   '/product-category/$handle': typeof ProductCategoryHandleRoute
   '/product/$handle': typeof ProductHandleRoute
   '/shop/cart': typeof ShopCartRoute
@@ -142,6 +160,8 @@ export interface FileRouteTypes {
     | '/books'
     | '/shop'
     | '/sold'
+    | '/legal/privacy-policy'
+    | '/legal/terms-of-service'
     | '/product-category/$handle'
     | '/product/$handle'
     | '/shop/cart'
@@ -156,6 +176,8 @@ export interface FileRouteTypes {
     | '/about'
     | '/books'
     | '/sold'
+    | '/legal/privacy-policy'
+    | '/legal/terms-of-service'
     | '/product-category/$handle'
     | '/product/$handle'
     | '/shop/cart'
@@ -171,6 +193,8 @@ export interface FileRouteTypes {
     | '/books'
     | '/shop'
     | '/sold'
+    | '/legal/privacy-policy'
+    | '/legal/terms-of-service'
     | '/product-category/$handle'
     | '/product/$handle'
     | '/shop/cart'
@@ -187,6 +211,8 @@ export interface RootRouteChildren {
   BooksRoute: typeof BooksRoute
   ShopRoute: typeof ShopRouteWithChildren
   SoldRoute: typeof SoldRoute
+  LegalPrivacyPolicyRoute: typeof LegalPrivacyPolicyRoute
+  LegalTermsOfServiceRoute: typeof LegalTermsOfServiceRoute
   ProductCategoryHandleRoute: typeof ProductCategoryHandleRoute
   ProductHandleRoute: typeof ProductHandleRoute
 }
@@ -263,6 +289,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductCategoryHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/legal/terms-of-service': {
+      id: '/legal/terms-of-service'
+      path: '/legal/terms-of-service'
+      fullPath: '/legal/terms-of-service'
+      preLoaderRoute: typeof LegalTermsOfServiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/privacy-policy': {
+      id: '/legal/privacy-policy'
+      path: '/legal/privacy-policy'
+      fullPath: '/legal/privacy-policy'
+      preLoaderRoute: typeof LegalPrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop/policies/$handle': {
       id: '/shop/policies/$handle'
       path: '/policies/$handle'
@@ -313,6 +353,8 @@ const rootRouteChildren: RootRouteChildren = {
   BooksRoute: BooksRoute,
   ShopRoute: ShopRouteWithChildren,
   SoldRoute: SoldRoute,
+  LegalPrivacyPolicyRoute: LegalPrivacyPolicyRoute,
+  LegalTermsOfServiceRoute: LegalTermsOfServiceRoute,
   ProductCategoryHandleRoute: ProductCategoryHandleRoute,
   ProductHandleRoute: ProductHandleRoute,
 }

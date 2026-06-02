@@ -1,8 +1,13 @@
+import type { ArtworkCategoryHandle } from '@/lib/artwork-categories'
+
+import { Link } from '@tanstack/react-router'
+
 import { HomeSectionTitle } from './home-section-title'
 
 export type ArtworkTheme = {
   id: string
   title: string
+  categoryHandle: ArtworkCategoryHandle
   imageSrc: string
   imageSrcSet?: string
   imageSizes?: string
@@ -19,12 +24,27 @@ const THEME_IMAGE_SIZES =
 export function ThemesSection({ themes }: ThemesSectionProps) {
   return (
     <section className="my-6 md:my-10">
-      <HomeSectionTitle>Explore Themes</HomeSectionTitle>
+      <HomeSectionTitle
+        action={
+          <Link
+            to="/shop"
+            className="font-manrope text-secondary hover:text-primary-accent focus-visible:text-primary-accent text-sm font-semibold transition-colors focus-visible:outline-none"
+          >
+            View all
+          </Link>
+        }
+      >
+        Explore Themes
+      </HomeSectionTitle>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {themes.map((theme) => (
           <article key={theme.id} className="min-w-0">
-            <div className="relative aspect-square overflow-hidden rounded-md bg-neutral-100">
+            <Link
+              to="/product-category/$handle"
+              params={{ handle: theme.categoryHandle }}
+              className="group focus-visible:ring-primary-accent/20 relative block aspect-square overflow-hidden rounded-md bg-neutral-100 focus-visible:ring-2 focus-visible:outline-none"
+            >
               <img
                 src={theme.imageSrc}
                 srcSet={theme.imageSrcSet}
@@ -40,7 +60,7 @@ export function ThemesSection({ themes }: ThemesSectionProps) {
                   {theme.title}
                 </h3>
               </div>
-            </div>
+            </Link>
           </article>
         ))}
       </div>

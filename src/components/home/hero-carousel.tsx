@@ -42,7 +42,7 @@ const AUTO_PLAY_INTERVAL_MS = 4000
 const HERO_IMAGE_SIZES =
   '(min-width: 1536px) 1500px, (min-width: 1280px) 1400px, (min-width: 1024px) 1200px, (min-width: 768px) 900px, (min-width: 640px) 700px, calc(100vw - 2rem)'
 
-export function HeroCarousel() {
+export function HeroCarousel({ className }: { className?: string }) {
   const [api, setApi] = useState<CarouselApi>()
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(true)
@@ -102,7 +102,10 @@ export function HeroCarousel() {
     <Carousel
       setApi={setApi}
       opts={{ align: 'start', loop: true }}
-      className="group/hero h-[min(720px,calc(100dvh-var(--header-height)-3rem))] min-h-80 w-full overflow-hidden rounded-2xl 2xl:mt-4 [&_[data-slot=carousel-content]>div]:will-change-transform"
+      className={cn(
+        'group/hero h-[min(720px,calc(100dvh-var(--header-height)-3rem))] min-h-80 w-full overflow-hidden rounded-2xl 2xl:mt-4 [&_[data-slot=carousel-content]>div]:will-change-transform',
+        className,
+      )}
     >
       <CarouselContent viewportClassName="h-full" className="ml-0 h-full">
         {HERO_IMAGES.map((image, index) => (
@@ -138,7 +141,7 @@ export function HeroCarousel() {
         </>
       )}
 
-      <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2">
+      <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-2">
         <button
           type="button"
           aria-label={isPlaying ? 'Pause carousel' : 'Play carousel'}

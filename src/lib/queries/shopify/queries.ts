@@ -54,6 +54,7 @@ const PRODUCT_CARD_FRAGMENT = /* GraphQL */ `
     id
     handle
     title
+    availableForSale
     productType
     tags
     publishedAt
@@ -162,7 +163,7 @@ export const SOLD_PRODUCTS_QUERY = /* GraphQL */ `
       first: $first
       sortKey: PRICE
       reverse: true
-      query: "available_for_sale:false"
+      query: "-available_for_sale:true"
     ) {
       nodes {
         ...ProductCard

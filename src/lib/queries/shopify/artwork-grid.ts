@@ -1,5 +1,5 @@
 import type { HighlightedArtworkProduct, RecentArtworkProduct } from './queries'
-import type { ArtworkGridItem } from '@/components/home/artwork-grid-section'
+import type { ArtworkGridItem } from '@/components/home/artwork-grid-item'
 import type { ProductListItem } from '@/lib/queries/shopify/queries'
 
 import { formatMoney, shopifyImageUrl } from './format'
