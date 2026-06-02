@@ -19,9 +19,7 @@ export function EmptyState({
     <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-[--storefront-line] px-6 py-16 text-center">
       <h2 className="text-xl font-medium">{title}</h2>
       {description && (
-        <p className="max-w-md text-[--storefront-fg-muted]">
-          {description}
-        </p>
+        <p className="max-w-md text-[--storefront-fg-muted]">{description}</p>
       )}
       {children}
       {cta && (

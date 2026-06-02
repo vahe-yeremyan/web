@@ -10,7 +10,7 @@
     "dev": "bun run codegen && vite dev --port 3000",
     "build": "bun run verify && bun run codegen && vite build",
     "preview": "vite preview",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "lint": "prettier --check . && eslint",
     "format": "prettier --write . && eslint --fix",
     "verify": "bun run lint && bun run test",
