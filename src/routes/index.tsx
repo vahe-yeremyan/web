@@ -36,6 +36,12 @@ export const Route = createFileRoute('/')({
       context.queryClient.ensureQueryData(recentArtworksQueryOptions()),
     ])
   },
+  head: () => ({
+    meta: [
+      { property: 'og:image', content: '/art.jpg' },
+      { name: 'twitter:image', content: '/art.jpg' },
+    ],
+  }),
   component: Home,
 })
 
