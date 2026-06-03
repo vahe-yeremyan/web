@@ -88,7 +88,7 @@ function Home() {
   )
 
   return (
-    <main className="pb-2">
+    <main className="-mt-(--header-height) pb-2">
       <HomeHero />
 
       {highlightedArtworks.length > 0 && (

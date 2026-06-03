@@ -2,8 +2,8 @@ import { HeroCarousel } from './hero-carousel'
 
 export function HomeHero() {
   return (
-    <div className="relative left-1/2 ml-[-50vw] w-screen">
-      <HeroCarousel className="h-[calc(100dvh-var(--header-height))] rounded-none 2xl:mt-0" />
+    <div data-home-hero className="relative left-1/2 ml-[-50vw] w-screen">
+      <HeroCarousel className="h-dvh rounded-none 2xl:mt-0" />
 
       <div
         aria-hidden="true"

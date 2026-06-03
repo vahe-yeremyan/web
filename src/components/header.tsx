@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { Link } from '@tanstack/react-router'
+import { Link, useLocation } from '@tanstack/react-router'
 
 import { ChevronsUpDown, Search } from 'lucide-react'
 
@@ -9,7 +9,7 @@ import { ARTWORK_CATEGORIES } from '@/lib/artwork-categories'
 import { cn } from '@/lib/utils'
 
 const NAV_LINK_CLASS_NAME = cn(
-  'relative text-[1.05rem] font-semibold transition-all duration-200 after:absolute after:-bottom-0.5 after:left-0 after:h-[1.5px] after:w-full after:origin-left after:scale-x-0 after:bg-linear-to-r after:transition-transform after:duration-200 hover:after:scale-x-100',
+  'relative text-[1.05rem] font-semibold transition-colors duration-100 ease-in-out after:absolute after:-bottom-0.5 after:left-0 after:h-[1.5px] after:w-full after:origin-left after:scale-x-0 after:bg-linear-to-r after:transition-transform after:duration-300 after:ease-in-out hover:after:scale-x-100',
   'after:from-current after:to-current',
 )
 
@@ -18,14 +18,22 @@ const DROPDOWN_LINK_CLASS_NAME =
 
 const DROPDOWN_TITLE_CLASS_NAME =
   'px-4 pt-2 pb-2 text-sm font-bold text-secondary'
+const HEADER_TRANSITION_CLASS =
+  'transition-[background-color,box-shadow,backdrop-filter] duration-300 ease-in-out'
+const LOGO_TRANSITION_CLASS = 'transition-opacity duration-300 ease-in-out'
+const HEADER_GRADIENT_TRANSITION_CLASS =
+  'transition-opacity duration-300 ease-in-out'
+const HEADER_TEXT_TRANSITION_CLASS =
+  'transition-colors duration-100 ease-in-out'
+const HOME_HERO_SOLID_THRESHOLD_RATIO = 0.5
 
 const NAV_ITEMS = [
   { type: 'route', label: 'Home', to: '/' },
   { type: 'artworks', label: 'Artworks' },
   { type: 'route', label: 'Books', to: '/books' },
   { type: 'route', label: 'Sold', to: '/sold' },
-  { type: 'route', label: 'About', to: '/about' },
   { type: 'route', label: 'Studio & Show', to: '/studio-show' },
+  { type: 'route', label: 'About', to: '/about' },
 ] as const
 
 const MEDIUM_FILTERS = [
@@ -40,13 +48,35 @@ const MEDIUM_FILTERS = [
 const ORIENTATION_FILTERS = ['Horizontal', 'Square', 'Vertical'] as const
 
 export default function Header() {
+  const location = useLocation()
+  const isHomeRoute = location.pathname === '/'
+  const hasPassedHomeHeroThreshold = useHomeHeroThreshold(location.pathname)
+  const isSolid = !isHomeRoute || hasPassedHomeHeroThreshold
+
   return (
-    <header className="fixed inset-x-0 top-0 z-50 bg-white/90 text-black backdrop-blur-xl">
+    <header
+      className={cn(
+        'fixed inset-x-0 top-0 z-50',
+        HEADER_TRANSITION_CLASS,
+        getHeaderSurfaceClassName(isSolid),
+      )}
+    >
+      <div
+        aria-hidden="true"
+        className={cn(
+          'pointer-events-none absolute inset-x-0 top-0 h-40 bg-linear-to-b from-black/35 via-black/15 to-transparent',
+          HEADER_GRADIENT_TRANSITION_CLASS,
+          getHeaderGradientVisibilityClassName(isSolid),
+        )}
+      />
       <nav
         aria-label="Primary"
-        className="site-frame relative z-10 flex h-23 items-center justify-between"
+        className={cn(
+          'site-frame relative z-10 flex h-23 items-center justify-between',
+          HEADER_TEXT_TRANSITION_CLASS,
+        )}
       >
-        <Logo />
+        <Logo isSolid={isSolid} />
         <DesktopNav />
         <HeaderActions />
       </nav>
@@ -54,15 +84,110 @@ export default function Header() {
   )
 }
 
-function Logo() {
+function useHomeHeroThreshold(pathname: string) {
+  const [hasPassedThreshold, setHasPassedThreshold] = useState(false)
+
+  useEffect(() => {
+    const isHomeRoute = pathname === '/'
+    let frameId: number | undefined
+    let isDisposed = false
+
+    if (!isHomeRoute) {
+      setHasPassedThreshold(false)
+      return
+    }
+
+    function updateHeaderState() {
+      frameId = undefined
+      if (isDisposed) return
+
+      const hero = document.querySelector<HTMLElement>('[data-home-hero]')
+      if (!hero) {
+        setHasPassedThreshold(false)
+        return
+      }
+
+      setHasPassedThreshold(hasHeroPassedThreshold(hero))
+    }
+
+    function queueHeaderStateUpdate() {
+      if (frameId !== undefined) return
+      frameId = window.requestAnimationFrame(updateHeaderState)
+    }
+
+    queueHeaderStateUpdate()
+    const observer = new MutationObserver(queueHeaderStateUpdate)
+    observer.observe(document.body, { childList: true, subtree: true })
+    window.addEventListener('scroll', queueHeaderStateUpdate, { passive: true })
+    window.addEventListener('resize', queueHeaderStateUpdate)
+
+    return () => {
+      isDisposed = true
+      if (frameId !== undefined) window.cancelAnimationFrame(frameId)
+      observer.disconnect()
+      window.removeEventListener('scroll', queueHeaderStateUpdate)
+      window.removeEventListener('resize', queueHeaderStateUpdate)
+    }
+  }, [pathname])
+
+  return hasPassedThreshold
+}
+
+function hasHeroPassedThreshold(hero: HTMLElement) {
+  const rect = hero.getBoundingClientRect()
+  const visibleTop = Math.max(rect.top, 0)
+  const visibleBottom = Math.min(rect.bottom, window.innerHeight)
+  const visibleHeight = Math.max(visibleBottom - visibleTop, 0)
+  const visibleRatio = visibleHeight / rect.height
+  const hasScrolledIntoHero = rect.top < 0
+  const isPastHalfVisible = visibleRatio <= HOME_HERO_SOLID_THRESHOLD_RATIO
+
+  return hasScrolledIntoHero && isPastHalfVisible
+}
+
+function getHeaderSurfaceClassName(isSolid: boolean) {
+  if (isSolid) {
+    return 'bg-white/80 text-black backdrop-blur-xl'
+  }
+
+  return 'bg-transparent text-white shadow-none backdrop-blur-none'
+}
+
+function getLogoVisibilityClassName(isVisible: boolean) {
+  if (isVisible) return 'opacity-100'
+  return 'opacity-0'
+}
+
+function getHeaderGradientVisibilityClassName(isSolid: boolean) {
+  if (isSolid) return 'opacity-0'
+  return 'opacity-100'
+}
+
+function Logo({ isSolid }: { isSolid: boolean }) {
   return (
-    <Link to="/" aria-label="Home">
+    <Link to="/" aria-label="Home" className="relative block h-22 w-40">
       <img
-        src="/logo.png"
+        src="/logo-black.png"
         alt="Vahe Yeremyan Art"
         width="160"
-        height="80"
-        className="h-20 w-40 object-cover"
+        height="88"
+        className={cn(
+          'absolute inset-0 h-22 w-40 object-cover',
+          LOGO_TRANSITION_CLASS,
+          getLogoVisibilityClassName(isSolid),
+        )}
+      />
+      <img
+        src="/logo-white.png"
+        alt=""
+        width="160"
+        height="88"
+        aria-hidden="true"
+        className={cn(
+          'absolute inset-0 h-22 w-40 object-cover',
+          LOGO_TRANSITION_CLASS,
+          getLogoVisibilityClassName(!isSolid),
+        )}
       />
     </Link>
   )
@@ -128,7 +253,7 @@ function ArtworksNavItem({ label }: { label: string }) {
       >
         {label}
         <ChevronsUpDown
-          className="text-gray mt-0.5 size-4"
+          className="mt-0.5 size-4 opacity-75"
           aria-hidden="true"
         />
       </Link>
@@ -260,7 +385,7 @@ function HeaderActions() {
           to="/shop/search"
           search={{ q: '' }}
           aria-label="Search"
-          className="p-2"
+          className={cn('p-2', HEADER_TEXT_TRANSITION_CLASS)}
         >
           <Search className="size-5" />
         </Link>
@@ -275,7 +400,7 @@ function CartLink({ totalQuantity }: { totalQuantity: number }) {
   return (
     <Link
       to="/shop/cart"
-      className="relative p-2"
+      className={cn('relative p-2', HEADER_TEXT_TRANSITION_CLASS)}
       aria-label={`Bag, ${totalQuantity} item${totalQuantity === 1 ? '' : 's'}`}
     >
       <svg
