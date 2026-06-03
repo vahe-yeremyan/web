@@ -6,15 +6,8 @@ import type {
   ShopSortOption,
 } from '@/lib/shop-filters'
 
-import { Check } from 'lucide-react'
+import { Check, ChevronDown } from 'lucide-react'
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import {
   PRICE_FILTER_OPTIONS,
   SHOP_SORT_OPTIONS,
@@ -144,26 +137,28 @@ function SortFilter({ value, hasFilters, onChange }: SortFilterProps) {
       >
         Sort by
       </label>
-      <Select
-        value={value}
-        onValueChange={(nextValue) => onChange(nextValue as ShopSortOption)}
-      >
-        <SelectTrigger id="artwork-sort" className="mt-1 w-full">
-          <SelectValue placeholder="Select a sort option" />
-        </SelectTrigger>
-        <SelectContent>
+      <div className="relative mt-1">
+        <select
+          id="artwork-sort"
+          value={value}
+          onChange={(event) => onChange(event.target.value as ShopSortOption)}
+          className="border-input focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-full appearance-none items-center justify-between rounded-md border bg-transparent px-3 py-2 pr-9 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-2"
+        >
           {SHOP_SORT_OPTIONS.map((option) => (
-            <SelectItem
+            <option
               key={option.value}
               value={option.value}
               disabled={hasFilters && isTitleShopSort(option.value)}
-              className="data-disabled:pointer-events-auto data-disabled:cursor-not-allowed data-disabled:opacity-50"
             >
               {option.label}
-            </SelectItem>
+            </option>
           ))}
-        </SelectContent>
-      </Select>
+        </select>
+        <ChevronDown
+          aria-hidden
+          className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 opacity-50"
+        />
+      </div>
     </div>
   )
 }

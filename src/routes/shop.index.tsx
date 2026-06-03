@@ -3,10 +3,8 @@ import type { ShopSearchParams } from '@/lib/shop-filters'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
-import {
-  ProductListingPage,
-  ProductListingPending,
-} from '@/components/shop/product-listing-page'
+import { ProductListingPage } from '@/components/shop/product-listing-page'
+import { ProductListingPending } from '@/components/shop/product-listing-pending'
 import { SHOP_SEO } from '@/lib/legacy-seo'
 import {
   productFilterOptionsQueryOptions,

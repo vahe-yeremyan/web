@@ -11,7 +11,6 @@ import { useEffect, useState } from 'react'
 
 import { useQueryClient } from '@tanstack/react-query'
 
-import { PRODUCT_PAGE_SIZE } from '@/lib/product-page-constants'
 import { productListNextPageQueryOptions } from '@/lib/queries/shopify/product-list'
 import {
   getStableShopSearchKey,
@@ -22,7 +21,7 @@ import {
 } from '@/lib/shop-filters'
 
 import { ArtworkFiltersSidebar } from './artwork-filters-sidebar'
-import { ProductGrid, ProductGridSkeleton } from './product-grid'
+import { ProductGrid } from './product-grid'
 import { ProductListingLayout } from './product-listing-layout'
 import { ProductLoadMore } from './product-load-more'
 
@@ -35,10 +34,6 @@ type ProductListingPageProps = {
   lockedCategory?: string
   onSearchChange: (search: ShopSearchParams) => void
   onLockedCategoryToggle?: (category: string, search: ShopSearchParams) => void
-}
-
-type ProductListingPendingProps = {
-  title: string
 }
 
 type ProductListingState = {
@@ -258,15 +253,4 @@ function getRestoredListingState({
   }
 
   return restoredState
-}
-
-export function ProductListingPending({ title }: ProductListingPendingProps) {
-  return (
-    <ProductListingLayout
-      title={title}
-      sidebar={<div className="hidden lg:block" />}
-    >
-      <ProductGridSkeleton count={PRODUCT_PAGE_SIZE} showPrice />
-    </ProductListingLayout>
-  )
 }

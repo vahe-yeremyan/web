@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react'
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
-import * as v from 'valibot'
-
 import {
   ProductGrid,
   ProductGridSkeleton,
@@ -12,9 +10,15 @@ import {
 import { PRODUCT_PAGE_SIZE } from '@/lib/product-page-constants'
 import { searchProducts } from '@/server/shopify/catalog.functions'
 
-const SearchSchema = v.object({
-  q: v.optional(v.string(), ''),
-})
+type SearchRouteSearch = {
+  q: string
+}
+
+function validateSearch(search: Record<string, unknown>): SearchRouteSearch {
+  return {
+    q: typeof search.q === 'string' ? search.q : '',
+  }
+}
 
 function searchProductsQueryOptions(query: string) {
   const trimmedQuery = query.trim()
@@ -37,7 +41,7 @@ function searchProductsQueryOptions(query: string) {
 }
 
 export const Route = createFileRoute('/shop/search')({
-  validateSearch: (search) => v.parse(SearchSchema, search),
+  validateSearch,
   loaderDeps: ({ search }) => ({ q: search.q }),
   loader: async ({ context, deps }) => {
     const q = deps.q.trim()

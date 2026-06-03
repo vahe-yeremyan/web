@@ -3,7 +3,7 @@ import type {
   ProductDetailVariant,
 } from '@/lib/queries/shopify/queries'
 
-import { ShopPayIcon } from '@/components/icons/payment-icons'
+import { ShopPayIcon } from '@/components/icons/shop-pay-icon'
 
 import { AddToCartButton } from './add-to-cart-button'
 import { ProductMetadata } from './product-metadata'
