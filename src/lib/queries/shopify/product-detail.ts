@@ -13,6 +13,7 @@ import {
   PRODUCT_IMAGE_SRC_SET_WIDTHS,
   PRODUCT_IMAGE_WIDTH,
 } from '@/lib/queries/shopify/product-images'
+import { createSeoHead } from '@/lib/seo'
 import { getProduct } from '@/server/shopify/catalog.functions'
 
 export function productQueryOptions(handle: string) {
@@ -31,24 +32,16 @@ export function getProductHead(
     ? product.seo.description || productDescription(product)
     : 'Original artwork by Vahe Yeremyan.'
   const image = product?.images.nodes[0]?.url
-  const meta: Array<Record<string, string>> = [
-    { title },
-    { name: 'description', content: description },
-    { property: 'og:type', content: 'product' },
-    { property: 'og:title', content: title },
-    { property: 'og:description', content: description },
-  ]
+  const head = createSeoHead({
+    title,
+    description,
+    image,
+    type: 'product',
+    path: `/product/${handle}`,
+  })
 
   if (image) {
-    meta.push({ property: 'og:image', content: image })
-  }
-
-  const links: Array<Record<string, string>> = [
-    { rel: 'canonical', href: `/product/${handle}` },
-  ]
-
-  if (image) {
-    links.push({
+    head.links.push({
       rel: 'preload',
       as: 'image',
       href: shopifyImageUrl(image, {
@@ -63,7 +56,7 @@ export function getProductHead(
     })
   }
 
-  return { meta, links }
+  return head
 }
 
 export function getProductCategory(value?: string | null) {

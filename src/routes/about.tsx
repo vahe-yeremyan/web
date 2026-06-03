@@ -5,6 +5,8 @@ import { PageHeading } from '@/components/page-heading'
 import { CredentialSections } from '@/components/sanity/credential-sections'
 import { SanityPortableText } from '@/components/sanity/portable-text'
 import { SocialLinks } from '@/components/social-links'
+import { ABOUT_SEO } from '@/lib/legacy-seo'
+import { createSeoHead } from '@/lib/seo'
 import { getAbout } from '@/server/sanity/about.functions'
 
 function aboutQueryOptions() {
@@ -20,9 +22,7 @@ export const Route = createFileRoute('/about')({
     if (!about) throw notFound()
     return { about }
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData ? [{ title: loaderData.about.title }] : [],
-  }),
+  head: () => createSeoHead(ABOUT_SEO),
   component: AboutRoute,
 })
 
@@ -53,6 +53,30 @@ function AboutRoute() {
             <SocialLinks className="justify-center" />
           </div>
         </div>
+
+        <section
+          id="contact"
+          className="scroll-mt-28 pt-12 text-lg leading-8 text-neutral-700"
+        >
+          <h2 className="mb-5 text-2xl font-semibold tracking-tight">
+            Contact
+          </h2>
+          <div className="max-w-3xl space-y-5">
+            <p>
+              <a
+                href="mailto:fineart@vaheyeremyan.com"
+                className="hover:text-primary-accent font-semibold text-black transition-colors"
+              >
+                fineart@vaheyeremyan.com
+              </a>
+            </p>
+            <p className="font-medium text-pretty">
+              Thanks for your interest in my personal gallery.<br></br>
+              Please reach out if you have any questions and I will respond as
+              soon as possible.
+            </p>
+          </div>
+        </section>
 
         <CredentialSections sections={about.credentialSections} />
       </article>

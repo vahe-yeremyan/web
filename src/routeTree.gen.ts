@@ -9,25 +9,44 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StudioShowRouteImport } from './routes/studio-show'
 import { Route as SoldRouteImport } from './routes/sold'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as PrintsRouteImport } from './routes/prints'
+import { Route as ContactsRouteImport } from './routes/contacts'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BooksRouteImport } from './routes/books'
+import { Route as AboutMeRouteImport } from './routes/about-me'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ShopIndexRouteImport } from './routes/shop.index'
 import { Route as ShopSearchRouteImport } from './routes/shop.search'
 import { Route as ShopCartRouteImport } from './routes/shop.cart'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
+import { Route as ProductCategoryPrintsRouteImport } from './routes/product-category.prints'
+import { Route as ProductCategoryBooksRouteImport } from './routes/product-category.books'
 import { Route as ProductCategoryHandleRouteImport } from './routes/product-category.$handle'
 import { Route as LegalTermsOfServiceRouteImport } from './routes/legal.terms-of-service'
 import { Route as LegalPrivacyPolicyRouteImport } from './routes/legal.privacy-policy'
 import { Route as ShopPoliciesHandleRouteImport } from './routes/shop.policies.$handle'
 import { Route as ShopPagesHandleRouteImport } from './routes/shop.pages.$handle'
 import { Route as ShopCollectionsHandleRouteImport } from './routes/shop.collections.$handle'
+import { Route as ProductCategoryAbstractAbstractAbstractRouteImport } from './routes/product-category.abstract.abstract-abstract'
 
+const StudioShowRoute = StudioShowRouteImport.update({
+  id: '/studio-show',
+  path: '/studio-show',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SoldRoute = SoldRouteImport.update({
   id: '/sold',
   path: '/sold',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
@@ -35,9 +54,29 @@ const ShopRoute = ShopRouteImport.update({
   path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrintsRoute = PrintsRouteImport.update({
+  id: '/prints',
+  path: '/prints',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactsRoute = ContactsRouteImport.update({
+  id: '/contacts',
+  path: '/contacts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BooksRoute = BooksRouteImport.update({
   id: '/books',
   path: '/books',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutMeRoute = AboutMeRouteImport.update({
+  id: '/about-me',
+  path: '/about-me',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -70,6 +109,16 @@ const ProductHandleRoute = ProductHandleRouteImport.update({
   path: '/product/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProductCategoryPrintsRoute = ProductCategoryPrintsRouteImport.update({
+  id: '/product-category/prints',
+  path: '/product-category/prints',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductCategoryBooksRoute = ProductCategoryBooksRouteImport.update({
+  id: '/product-category/books',
+  path: '/product-category/books',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductCategoryHandleRoute = ProductCategoryHandleRouteImport.update({
   id: '/product-category/$handle',
   path: '/product-category/$handle',
@@ -100,20 +149,35 @@ const ShopCollectionsHandleRoute = ShopCollectionsHandleRouteImport.update({
   path: '/collections/$handle',
   getParentRoute: () => ShopRoute,
 } as any)
+const ProductCategoryAbstractAbstractAbstractRoute =
+  ProductCategoryAbstractAbstractAbstractRouteImport.update({
+    id: '/product-category/abstract/abstract-abstract',
+    path: '/product-category/abstract/abstract-abstract',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/about-me': typeof AboutMeRoute
   '/books': typeof BooksRoute
+  '/contact': typeof ContactRoute
+  '/contacts': typeof ContactsRoute
+  '/prints': typeof PrintsRoute
   '/shop': typeof ShopRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sold': typeof SoldRoute
+  '/studio-show': typeof StudioShowRoute
   '/legal/privacy-policy': typeof LegalPrivacyPolicyRoute
   '/legal/terms-of-service': typeof LegalTermsOfServiceRoute
   '/product-category/$handle': typeof ProductCategoryHandleRoute
+  '/product-category/books': typeof ProductCategoryBooksRoute
+  '/product-category/prints': typeof ProductCategoryPrintsRoute
   '/product/$handle': typeof ProductHandleRoute
   '/shop/cart': typeof ShopCartRoute
   '/shop/search': typeof ShopSearchRoute
   '/shop/': typeof ShopIndexRoute
+  '/product-category/abstract/abstract-abstract': typeof ProductCategoryAbstractAbstractAbstractRoute
   '/shop/collections/$handle': typeof ShopCollectionsHandleRoute
   '/shop/pages/$handle': typeof ShopPagesHandleRoute
   '/shop/policies/$handle': typeof ShopPoliciesHandleRoute
@@ -121,15 +185,24 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/about-me': typeof AboutMeRoute
   '/books': typeof BooksRoute
+  '/contact': typeof ContactRoute
+  '/contacts': typeof ContactsRoute
+  '/prints': typeof PrintsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sold': typeof SoldRoute
+  '/studio-show': typeof StudioShowRoute
   '/legal/privacy-policy': typeof LegalPrivacyPolicyRoute
   '/legal/terms-of-service': typeof LegalTermsOfServiceRoute
   '/product-category/$handle': typeof ProductCategoryHandleRoute
+  '/product-category/books': typeof ProductCategoryBooksRoute
+  '/product-category/prints': typeof ProductCategoryPrintsRoute
   '/product/$handle': typeof ProductHandleRoute
   '/shop/cart': typeof ShopCartRoute
   '/shop/search': typeof ShopSearchRoute
   '/shop': typeof ShopIndexRoute
+  '/product-category/abstract/abstract-abstract': typeof ProductCategoryAbstractAbstractAbstractRoute
   '/shop/collections/$handle': typeof ShopCollectionsHandleRoute
   '/shop/pages/$handle': typeof ShopPagesHandleRoute
   '/shop/policies/$handle': typeof ShopPoliciesHandleRoute
@@ -138,16 +211,25 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/about-me': typeof AboutMeRoute
   '/books': typeof BooksRoute
+  '/contact': typeof ContactRoute
+  '/contacts': typeof ContactsRoute
+  '/prints': typeof PrintsRoute
   '/shop': typeof ShopRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sold': typeof SoldRoute
+  '/studio-show': typeof StudioShowRoute
   '/legal/privacy-policy': typeof LegalPrivacyPolicyRoute
   '/legal/terms-of-service': typeof LegalTermsOfServiceRoute
   '/product-category/$handle': typeof ProductCategoryHandleRoute
+  '/product-category/books': typeof ProductCategoryBooksRoute
+  '/product-category/prints': typeof ProductCategoryPrintsRoute
   '/product/$handle': typeof ProductHandleRoute
   '/shop/cart': typeof ShopCartRoute
   '/shop/search': typeof ShopSearchRoute
   '/shop/': typeof ShopIndexRoute
+  '/product-category/abstract/abstract-abstract': typeof ProductCategoryAbstractAbstractAbstractRoute
   '/shop/collections/$handle': typeof ShopCollectionsHandleRoute
   '/shop/pages/$handle': typeof ShopPagesHandleRoute
   '/shop/policies/$handle': typeof ShopPoliciesHandleRoute
@@ -157,16 +239,25 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/about-me'
     | '/books'
+    | '/contact'
+    | '/contacts'
+    | '/prints'
     | '/shop'
+    | '/sitemap.xml'
     | '/sold'
+    | '/studio-show'
     | '/legal/privacy-policy'
     | '/legal/terms-of-service'
     | '/product-category/$handle'
+    | '/product-category/books'
+    | '/product-category/prints'
     | '/product/$handle'
     | '/shop/cart'
     | '/shop/search'
     | '/shop/'
+    | '/product-category/abstract/abstract-abstract'
     | '/shop/collections/$handle'
     | '/shop/pages/$handle'
     | '/shop/policies/$handle'
@@ -174,15 +265,24 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/about-me'
     | '/books'
+    | '/contact'
+    | '/contacts'
+    | '/prints'
+    | '/sitemap.xml'
     | '/sold'
+    | '/studio-show'
     | '/legal/privacy-policy'
     | '/legal/terms-of-service'
     | '/product-category/$handle'
+    | '/product-category/books'
+    | '/product-category/prints'
     | '/product/$handle'
     | '/shop/cart'
     | '/shop/search'
     | '/shop'
+    | '/product-category/abstract/abstract-abstract'
     | '/shop/collections/$handle'
     | '/shop/pages/$handle'
     | '/shop/policies/$handle'
@@ -190,16 +290,25 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/about-me'
     | '/books'
+    | '/contact'
+    | '/contacts'
+    | '/prints'
     | '/shop'
+    | '/sitemap.xml'
     | '/sold'
+    | '/studio-show'
     | '/legal/privacy-policy'
     | '/legal/terms-of-service'
     | '/product-category/$handle'
+    | '/product-category/books'
+    | '/product-category/prints'
     | '/product/$handle'
     | '/shop/cart'
     | '/shop/search'
     | '/shop/'
+    | '/product-category/abstract/abstract-abstract'
     | '/shop/collections/$handle'
     | '/shop/pages/$handle'
     | '/shop/policies/$handle'
@@ -208,22 +317,45 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AboutMeRoute: typeof AboutMeRoute
   BooksRoute: typeof BooksRoute
+  ContactRoute: typeof ContactRoute
+  ContactsRoute: typeof ContactsRoute
+  PrintsRoute: typeof PrintsRoute
   ShopRoute: typeof ShopRouteWithChildren
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SoldRoute: typeof SoldRoute
+  StudioShowRoute: typeof StudioShowRoute
   LegalPrivacyPolicyRoute: typeof LegalPrivacyPolicyRoute
   LegalTermsOfServiceRoute: typeof LegalTermsOfServiceRoute
   ProductCategoryHandleRoute: typeof ProductCategoryHandleRoute
+  ProductCategoryBooksRoute: typeof ProductCategoryBooksRoute
+  ProductCategoryPrintsRoute: typeof ProductCategoryPrintsRoute
   ProductHandleRoute: typeof ProductHandleRoute
+  ProductCategoryAbstractAbstractAbstractRoute: typeof ProductCategoryAbstractAbstractAbstractRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/studio-show': {
+      id: '/studio-show'
+      path: '/studio-show'
+      fullPath: '/studio-show'
+      preLoaderRoute: typeof StudioShowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sold': {
       id: '/sold'
       path: '/sold'
       fullPath: '/sold'
       preLoaderRoute: typeof SoldRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shop': {
@@ -233,11 +365,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/prints': {
+      id: '/prints'
+      path: '/prints'
+      fullPath: '/prints'
+      preLoaderRoute: typeof PrintsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contacts': {
+      id: '/contacts'
+      path: '/contacts'
+      fullPath: '/contacts'
+      preLoaderRoute: typeof ContactsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/books': {
       id: '/books'
       path: '/books'
       fullPath: '/books'
       preLoaderRoute: typeof BooksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about-me': {
+      id: '/about-me'
+      path: '/about-me'
+      fullPath: '/about-me'
+      preLoaderRoute: typeof AboutMeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -282,6 +442,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/product-category/prints': {
+      id: '/product-category/prints'
+      path: '/product-category/prints'
+      fullPath: '/product-category/prints'
+      preLoaderRoute: typeof ProductCategoryPrintsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product-category/books': {
+      id: '/product-category/books'
+      path: '/product-category/books'
+      fullPath: '/product-category/books'
+      preLoaderRoute: typeof ProductCategoryBooksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/product-category/$handle': {
       id: '/product-category/$handle'
       path: '/product-category/$handle'
@@ -324,6 +498,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopCollectionsHandleRouteImport
       parentRoute: typeof ShopRoute
     }
+    '/product-category/abstract/abstract-abstract': {
+      id: '/product-category/abstract/abstract-abstract'
+      path: '/product-category/abstract/abstract-abstract'
+      fullPath: '/product-category/abstract/abstract-abstract'
+      preLoaderRoute: typeof ProductCategoryAbstractAbstractAbstractRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -350,13 +531,23 @@ const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AboutMeRoute: AboutMeRoute,
   BooksRoute: BooksRoute,
+  ContactRoute: ContactRoute,
+  ContactsRoute: ContactsRoute,
+  PrintsRoute: PrintsRoute,
   ShopRoute: ShopRouteWithChildren,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SoldRoute: SoldRoute,
+  StudioShowRoute: StudioShowRoute,
   LegalPrivacyPolicyRoute: LegalPrivacyPolicyRoute,
   LegalTermsOfServiceRoute: LegalTermsOfServiceRoute,
   ProductCategoryHandleRoute: ProductCategoryHandleRoute,
+  ProductCategoryBooksRoute: ProductCategoryBooksRoute,
+  ProductCategoryPrintsRoute: ProductCategoryPrintsRoute,
   ProductHandleRoute: ProductHandleRoute,
+  ProductCategoryAbstractAbstractAbstractRoute:
+    ProductCategoryAbstractAbstractAbstractRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

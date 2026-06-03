@@ -17,7 +17,9 @@ import { ProductGrid } from '@/components/shop/product-grid'
 import { ProductListingLayout } from '@/components/shop/product-listing-layout'
 import { ProductListingPending } from '@/components/shop/product-listing-page'
 import { ProductLoadMore } from '@/components/shop/product-load-more'
+import { SOLD_SEO } from '@/lib/legacy-seo'
 import { PRODUCT_PAGE_SIZE } from '@/lib/product-page-constants'
+import { createSeoHead } from '@/lib/seo'
 import {
   getPriceFilterBounds,
   getStableShopSearchKey,
@@ -40,18 +42,7 @@ export const Route = createFileRoute('/sold')({
   loader: async ({ context }) => {
     await context.queryClient.ensureQueryData(soldProductsQueryOptions())
   },
-  head: () => ({
-    meta: [
-      {
-        title: 'Sold Artworks',
-      },
-      {
-        name: 'description',
-        content:
-          'Browse selected sold artworks by Vahe Yeremyan, limited to the top 100 highest-priced sold works.',
-      },
-    ],
-  }),
+  head: () => createSeoHead(SOLD_SEO),
   pendingComponent: SoldPending,
   component: SoldRoute,
 })

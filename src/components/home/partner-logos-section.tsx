@@ -7,7 +7,7 @@ const PARTNER_LOGOS = [
     className: 'h-9 w-auto md:h-10',
   },
   {
-    src: '/1st-dibs-logo.jpg',
+    src: '/1st-dibs-logo.webp',
     alt: '1stDibs',
     width: 1024,
     height: 512,

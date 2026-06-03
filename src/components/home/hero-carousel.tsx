@@ -21,19 +21,19 @@ type HeroImage = {
 
 export const HERO_IMAGES: Array<HeroImage> = [
   {
-    src: '/art.jpg',
+    src: '/art.webp',
     alt: 'Featured artwork by Vahe Yeremyan',
   },
   {
-    src: '/lilies1.jpg',
+    src: '/lilies1.webp',
     alt: 'Lilies artwork by Vahe Yeremyan',
   },
   {
-    src: '/lilies2.jpg',
+    src: '/lilies2.webp',
     alt: 'Lilies artwork by Vahe Yeremyan',
   },
   {
-    src: '/lilies3.jpg',
+    src: '/lilies3.webp',
     alt: 'Lilies artwork by Vahe Yeremyan',
   },
 ]

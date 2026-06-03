@@ -9,7 +9,9 @@ import { PartnerLogosSection } from '@/components/home/partner-logos-section'
 import { SecurePaymentOptionsSection } from '@/components/home/secure-payments-section'
 import { ThemesSection } from '@/components/home/themes-section'
 import { Divider } from '@/components/ui/divider'
+import { HOME_SEO } from '@/lib/legacy-seo'
 import { shopifyProductsToArtworkGridItems } from '@/lib/queries/shopify/artwork-grid'
+import { createSeoHead } from '@/lib/seo'
 import {
   getHighlightedArtworks,
   getRecentArtworks,
@@ -36,12 +38,7 @@ export const Route = createFileRoute('/')({
       context.queryClient.ensureQueryData(recentArtworksQueryOptions()),
     ])
   },
-  head: () => ({
-    meta: [
-      { property: 'og:image', content: '/art.jpg' },
-      { name: 'twitter:image', content: '/art.jpg' },
-    ],
-  }),
+  head: () => createSeoHead(HOME_SEO),
   component: Home,
 })
 
@@ -50,28 +47,28 @@ const ARTWORK_THEMES: Array<ArtworkTheme> = [
     id: 'abstract',
     title: 'Abstract',
     categoryHandle: 'abstract',
-    imageSrc: '/abstract.jpg',
+    imageSrc: '/abstract.webp',
     imageAlt: 'Abstract painting by Vahe Yeremyan',
   },
   {
     id: 'seascape',
     title: 'Seascape',
     categoryHandle: 'seascape',
-    imageSrc: '/seascape.jpg',
+    imageSrc: '/seascape.webp',
     imageAlt: 'Seascape painting by Vahe Yeremyan',
   },
   {
     id: 'flowers',
     title: 'Flowers',
     categoryHandle: 'flowers',
-    imageSrc: '/flowers.jpg',
+    imageSrc: '/flowers.webp',
     imageAlt: 'Floral painting by Vahe Yeremyan',
   },
   {
     id: 'landscape',
     title: 'Landscape',
     categoryHandle: 'landscape',
-    imageSrc: '/landscape.jpg',
+    imageSrc: '/landscape.webp',
     imageAlt: 'Landscape painting by Vahe Yeremyan',
   },
 ]

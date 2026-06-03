@@ -4,8 +4,10 @@ import { createFileRoute, notFound } from '@tanstack/react-router'
 import { ArtworkGridSection } from '@/components/home/artwork-grid-section'
 import { PageHeading } from '@/components/page-heading'
 import { ProductGridSkeleton } from '@/components/shop/product-grid'
+import { BOOKS_SEO } from '@/lib/legacy-seo'
 import { PRODUCT_PAGE_SIZE } from '@/lib/product-page-constants'
 import { shopifyProductListItemsToArtworkGridItems } from '@/lib/queries/shopify/artwork-grid'
+import { createSeoHead } from '@/lib/seo'
 import { getCollection } from '@/server/shopify/catalog.functions'
 
 function booksQueryOptions() {
@@ -34,22 +36,7 @@ export const Route = createFileRoute('/books')({
     if (!collection) throw notFound()
     return { collection }
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          {
-            title:
-              loaderData.collection.seo.title ?? loaderData.collection.title,
-          },
-          {
-            name: 'description',
-            content:
-              loaderData.collection.seo.description ||
-              loaderData.collection.description,
-          },
-        ]
-      : [],
-  }),
+  head: () => createSeoHead(BOOKS_SEO),
   pendingComponent: BooksPending,
   component: BooksRoute,
 })

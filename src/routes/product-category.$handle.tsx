@@ -11,12 +11,14 @@ import {
   ARTWORK_CATEGORIES,
   isArtworkCategoryHandle,
 } from '@/lib/artwork-categories'
+import { CATEGORY_SEO } from '@/lib/legacy-seo'
 import {
   collectionMetadataQueryOptions,
   getCategoryProductSearch,
   productFilterOptionsQueryOptions,
   productListQueryOptions,
 } from '@/lib/queries/shopify/product-list'
+import { createSeoHead } from '@/lib/seo'
 import { normalizeShopSearchParams } from '@/lib/shop-filters'
 
 export const Route = createFileRoute('/product-category/$handle')({
@@ -46,24 +48,28 @@ export const Route = createFileRoute('/product-category/$handle')({
     if (!collection) throw notFound()
 
     return {
+      handle: params.handle,
       title: category.label,
       description: collection.description,
       seo: collection.seo,
     }
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          {
-            title: loaderData.seo.title ?? loaderData.title,
-          },
-          {
-            name: 'description',
-            content: loaderData.seo.description || loaderData.description,
-          },
-        ]
-      : [],
-  }),
+  head: ({ loaderData }) => {
+    if (!loaderData) return {}
+
+    const legacySeo = CATEGORY_SEO[loaderData.handle]
+    const description =
+      legacySeo?.description ??
+      loaderData.seo.description ??
+      loaderData.description
+
+    return createSeoHead({
+      title: legacySeo?.title ?? loaderData.seo.title ?? loaderData.title,
+      description,
+      ogDescription: legacySeo?.ogDescription ?? description,
+      path: `/product-category/${loaderData.handle}`,
+    })
+  },
   pendingComponent: ProductCategoryRoutePending,
   component: ProductCategoryRoute,
 })

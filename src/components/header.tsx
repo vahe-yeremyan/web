@@ -25,6 +25,7 @@ const NAV_ITEMS = [
   { type: 'route', label: 'Books', to: '/books' },
   { type: 'route', label: 'Sold', to: '/sold' },
   { type: 'route', label: 'About', to: '/about' },
+  { type: 'route', label: 'Studio & Show', to: '/studio-show' },
 ] as const
 
 const MEDIUM_FILTERS = [

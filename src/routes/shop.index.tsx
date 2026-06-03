@@ -7,10 +7,12 @@ import {
   ProductListingPage,
   ProductListingPending,
 } from '@/components/shop/product-listing-page'
+import { SHOP_SEO } from '@/lib/legacy-seo'
 import {
   productFilterOptionsQueryOptions,
   productListQueryOptions,
 } from '@/lib/queries/shopify/product-list'
+import { createSeoHead } from '@/lib/seo'
 import { normalizeShopSearchParams } from '@/lib/shop-filters'
 
 export const Route = createFileRoute('/shop/')({
@@ -24,6 +26,7 @@ export const Route = createFileRoute('/shop/')({
       context.queryClient.ensureQueryData(productListQueryOptions(search)),
     ])
   },
+  head: () => createSeoHead(SHOP_SEO),
   pendingComponent: ShopIndexPending,
   component: ShopIndex,
 })
