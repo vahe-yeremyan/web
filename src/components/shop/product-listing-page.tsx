@@ -61,11 +61,9 @@ export function ProductListingPage({
 }: ProductListingPageProps) {
   const routeSearchKey = getStableShopSearchKey(routeSearch)
   const productSearchKey = getStableShopSearchKey(productSearch)
-  const { pageInfo, products } = page
   const queryClient = useQueryClient()
   const restoredListingState = getRestoredListingState({
     page,
-    productSearch,
     productSearchKey,
     queryClient,
   })
@@ -91,7 +89,6 @@ export function ProductListingPage({
   useEffect(() => {
     const restoredState = getRestoredListingState({
       page,
-      productSearch,
       productSearchKey,
       queryClient,
     })
@@ -105,7 +102,7 @@ export function ProductListingPage({
     )
     setHasBrowseIntent(restoredState.loadedPageCursors.length > 0)
     setIsLoadingMore(false)
-  }, [page, pageInfo, productSearch, productSearchKey, products, queryClient])
+  }, [page, productSearchKey, queryClient])
 
   useEffect(() => {
     const cursor = currentPageInfo.endCursor
@@ -232,20 +229,21 @@ export function ProductListingPage({
 
 function getRestoredListingState({
   page,
-  productSearch,
   productSearchKey,
   queryClient,
 }: {
   page: ProductListQueryResult
-  productSearch: ShopSearchParams
   productSearchKey: string
   queryClient: ReturnType<typeof useQueryClient>
 }): ProductListingState {
+  const productSearch = JSON.parse(productSearchKey) as ShopSearchParams
   const storedCursors = loadedPageCursorsBySearchKey.get(productSearchKey) ?? []
+  const displayedProducts = [...page.products]
+  const loadedPageCursors: string[] = []
   const restoredState: ProductListingState = {
     currentPageInfo: page.pageInfo,
-    displayedProducts: page.products,
-    loadedPageCursors: [],
+    displayedProducts,
+    loadedPageCursors,
   }
 
   for (const cursor of storedCursors) {
@@ -254,15 +252,9 @@ function getRestoredListingState({
     )
     if (!nextPage) break
 
-    restoredState.displayedProducts = [
-      ...restoredState.displayedProducts,
-      ...nextPage.products,
-    ]
+    displayedProducts.push(...nextPage.products)
     restoredState.currentPageInfo = nextPage.pageInfo
-    restoredState.loadedPageCursors = [
-      ...restoredState.loadedPageCursors,
-      cursor,
-    ]
+    loadedPageCursors.push(cursor)
   }
 
   return restoredState

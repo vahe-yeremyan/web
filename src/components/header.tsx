@@ -104,6 +104,7 @@ function useHomeHeroThreshold(pathname: string) {
       const hero = document.querySelector<HTMLElement>('[data-home-hero]')
       if (!hero) {
         setHasPassedThreshold(false)
+        queueHeaderStateUpdate()
         return
       }
 
@@ -116,15 +117,12 @@ function useHomeHeroThreshold(pathname: string) {
     }
 
     queueHeaderStateUpdate()
-    const observer = new MutationObserver(queueHeaderStateUpdate)
-    observer.observe(document.body, { childList: true, subtree: true })
     window.addEventListener('scroll', queueHeaderStateUpdate, { passive: true })
     window.addEventListener('resize', queueHeaderStateUpdate)
 
     return () => {
       isDisposed = true
       if (frameId !== undefined) window.cancelAnimationFrame(frameId)
-      observer.disconnect()
       window.removeEventListener('scroll', queueHeaderStateUpdate)
       window.removeEventListener('resize', queueHeaderStateUpdate)
     }

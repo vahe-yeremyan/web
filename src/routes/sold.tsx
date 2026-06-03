@@ -36,6 +36,8 @@ function soldProductsQueryOptions() {
   })
 }
 
+const soldVisibleCountBySearchKey = new Map<string, number>()
+
 export const Route = createFileRoute('/sold')({
   validateSearch: (search): Partial<ShopSearchParams> =>
     normalizeShopSearchParams(search),
@@ -126,23 +128,31 @@ function SoldRoute() {
   const { data: products } = useSuspenseQuery(soldProductsQueryOptions())
   const routeSearch = normalizeShopSearchParams(Route.useSearch())
   const routeSearchKey = getStableShopSearchKey(routeSearch)
-  const [search, setSearch] = useState(routeSearch)
-  const [visibleCount, setVisibleCount] = useState(PRODUCT_PAGE_SIZE)
+  const stableRouteSearch = useMemo(
+    () => JSON.parse(routeSearchKey) as ShopSearchParams,
+    [routeSearchKey],
+  )
+  const [search, setSearch] = useState(stableRouteSearch)
+  const [visibleCount, setVisibleCount] = useState(
+    () => soldVisibleCountBySearchKey.get(routeSearchKey) ?? PRODUCT_PAGE_SIZE,
+  )
   const navigate = useNavigate({ from: Route.fullPath })
 
   useEffect(() => {
-    setSearch(JSON.parse(routeSearchKey) as ShopSearchParams)
-    setVisibleCount(PRODUCT_PAGE_SIZE)
-  }, [routeSearchKey])
+    setSearch(stableRouteSearch)
+    setVisibleCount(
+      soldVisibleCountBySearchKey.get(routeSearchKey) ?? PRODUCT_PAGE_SIZE,
+    )
+  }, [routeSearchKey, stableRouteSearch])
 
   const filterOptions = useMemo(() => soldFilterOptions(products), [products])
   const filteredProducts = useMemo(
-    () => filterSoldProducts(products, routeSearch),
-    [products, routeSearch],
+    () => filterSoldProducts(products, stableRouteSearch),
+    [products, stableRouteSearch],
   )
   const sortedProducts = useMemo(
-    () => sortSoldProducts(filteredProducts, routeSearch.sort),
-    [filteredProducts, routeSearch.sort],
+    () => sortSoldProducts(filteredProducts, stableRouteSearch.sort),
+    [filteredProducts, stableRouteSearch.sort],
   )
   const visibleProducts = sortedProducts.slice(0, visibleCount)
 
@@ -208,9 +218,14 @@ function SoldRoute() {
           hasPreviousPage: false,
         }}
         onLoadMore={() => {
-          setVisibleCount((count) =>
-            Math.min(count + PRODUCT_PAGE_SIZE, sortedProducts.length),
-          )
+          setVisibleCount((count) => {
+            const nextCount = Math.min(
+              count + PRODUCT_PAGE_SIZE,
+              sortedProducts.length,
+            )
+            soldVisibleCountBySearchKey.set(routeSearchKey, nextCount)
+            return nextCount
+          })
         }}
       />
     </ProductListingLayout>
