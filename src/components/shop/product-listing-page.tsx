@@ -41,6 +41,14 @@ type ProductListingPendingProps = {
   title: string
 }
 
+type ProductListingState = {
+  currentPageInfo: ProductListQueryResult['pageInfo']
+  displayedProducts: ProductListQueryResult['products']
+  loadedPageCursors: string[]
+}
+
+const loadedPageCursorsBySearchKey = new Map<string, string[]>()
+
 export function ProductListingPage({
   title,
   routeSearch,
@@ -54,22 +62,50 @@ export function ProductListingPage({
   const routeSearchKey = getStableShopSearchKey(routeSearch)
   const productSearchKey = getStableShopSearchKey(productSearch)
   const { pageInfo, products } = page
-  const [search, setSearch] = useState(routeSearch)
-  const [displayedProducts, setDisplayedProducts] = useState(products)
-  const [currentPageInfo, setCurrentPageInfo] = useState(pageInfo)
-  const [isLoadingMore, setIsLoadingMore] = useState(false)
-  const [hasBrowseIntent, setHasBrowseIntent] = useState(false)
   const queryClient = useQueryClient()
+  const restoredListingState = getRestoredListingState({
+    page,
+    productSearch,
+    productSearchKey,
+    queryClient,
+  })
+  const [search, setSearch] = useState(routeSearch)
+  const [displayedProducts, setDisplayedProducts] = useState(
+    restoredListingState.displayedProducts,
+  )
+  const [currentPageInfo, setCurrentPageInfo] = useState(
+    restoredListingState.currentPageInfo,
+  )
+  const [loadedPageCursors, setLoadedPageCursors] = useState(
+    restoredListingState.loadedPageCursors,
+  )
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [hasBrowseIntent, setHasBrowseIntent] = useState(
+    restoredListingState.loadedPageCursors.length > 0,
+  )
 
   useEffect(() => {
     setSearch(JSON.parse(routeSearchKey) as ShopSearchParams)
   }, [routeSearchKey])
 
   useEffect(() => {
-    setDisplayedProducts(products)
-    setCurrentPageInfo(pageInfo)
+    const restoredState = getRestoredListingState({
+      page,
+      productSearch,
+      productSearchKey,
+      queryClient,
+    })
+
+    setDisplayedProducts(restoredState.displayedProducts)
+    setCurrentPageInfo(restoredState.currentPageInfo)
+    setLoadedPageCursors(restoredState.loadedPageCursors)
+    loadedPageCursorsBySearchKey.set(
+      productSearchKey,
+      restoredState.loadedPageCursors,
+    )
+    setHasBrowseIntent(restoredState.loadedPageCursors.length > 0)
     setIsLoadingMore(false)
-  }, [pageInfo, products])
+  }, [page, pageInfo, productSearch, productSearchKey, products, queryClient])
 
   useEffect(() => {
     const cursor = currentPageInfo.endCursor
@@ -151,15 +187,16 @@ export function ProductListingPage({
     setIsLoadingMore(true)
     setHasBrowseIntent(true)
     try {
+      const nextPageCursor = currentPageInfo.endCursor
       const nextPage = await queryClient.fetchQuery(
-        productListNextPageQueryOptions(
-          productSearch,
-          currentPageInfo.endCursor,
-        ),
+        productListNextPageQueryOptions(productSearch, nextPageCursor),
       )
+      const nextLoadedPageCursors = [...loadedPageCursors, nextPageCursor]
 
       setDisplayedProducts((current) => [...current, ...nextPage.products])
       setCurrentPageInfo(nextPage.pageInfo)
+      setLoadedPageCursors(nextLoadedPageCursors)
+      loadedPageCursorsBySearchKey.set(productSearchKey, nextLoadedPageCursors)
     } finally {
       setIsLoadingMore(false)
     }
@@ -191,6 +228,44 @@ export function ProductListingPage({
       />
     </ProductListingLayout>
   )
+}
+
+function getRestoredListingState({
+  page,
+  productSearch,
+  productSearchKey,
+  queryClient,
+}: {
+  page: ProductListQueryResult
+  productSearch: ShopSearchParams
+  productSearchKey: string
+  queryClient: ReturnType<typeof useQueryClient>
+}): ProductListingState {
+  const storedCursors = loadedPageCursorsBySearchKey.get(productSearchKey) ?? []
+  const restoredState: ProductListingState = {
+    currentPageInfo: page.pageInfo,
+    displayedProducts: page.products,
+    loadedPageCursors: [],
+  }
+
+  for (const cursor of storedCursors) {
+    const nextPage = queryClient.getQueryData<ProductListQueryResult>(
+      productListNextPageQueryOptions(productSearch, cursor).queryKey,
+    )
+    if (!nextPage) break
+
+    restoredState.displayedProducts = [
+      ...restoredState.displayedProducts,
+      ...nextPage.products,
+    ]
+    restoredState.currentPageInfo = nextPage.pageInfo
+    restoredState.loadedPageCursors = [
+      ...restoredState.loadedPageCursors,
+      cursor,
+    ]
+  }
+
+  return restoredState
 }
 
 export function ProductListingPending({ title }: ProductListingPendingProps) {
