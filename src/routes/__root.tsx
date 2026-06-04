@@ -10,6 +10,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 
 import { Footer } from '@/components/footer'
 import Header from '@/components/header'
+import { Toaster } from '@/components/ui/sonner'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import appCss from '../styles.css?url'
@@ -71,6 +72,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Header />
         <div className="site-content flex flex-1 flex-col">{children}</div>
         <Footer />
+        <Toaster position="bottom-right" />
         {import.meta.env.DEV && <Devtools />}
         <Scripts />
       </body>

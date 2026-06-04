@@ -22,7 +22,6 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ShopIndexRouteImport } from './routes/shop.index'
 import { Route as ShopSearchRouteImport } from './routes/shop.search'
-import { Route as ShopCartRouteImport } from './routes/shop.cart'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
 import { Route as ProductCategoryPrintsRouteImport } from './routes/product-category.prints'
 import { Route as ProductCategoryBooksRouteImport } from './routes/product-category.books'
@@ -99,11 +98,6 @@ const ShopSearchRoute = ShopSearchRouteImport.update({
   path: '/search',
   getParentRoute: () => ShopRoute,
 } as any)
-const ShopCartRoute = ShopCartRouteImport.update({
-  id: '/cart',
-  path: '/cart',
-  getParentRoute: () => ShopRoute,
-} as any)
 const ProductHandleRoute = ProductHandleRouteImport.update({
   id: '/product/$handle',
   path: '/product/$handle',
@@ -174,7 +168,6 @@ export interface FileRoutesByFullPath {
   '/product-category/books': typeof ProductCategoryBooksRoute
   '/product-category/prints': typeof ProductCategoryPrintsRoute
   '/product/$handle': typeof ProductHandleRoute
-  '/shop/cart': typeof ShopCartRoute
   '/shop/search': typeof ShopSearchRoute
   '/shop/': typeof ShopIndexRoute
   '/product-category/abstract/abstract-abstract': typeof ProductCategoryAbstractAbstractAbstractRoute
@@ -199,7 +192,6 @@ export interface FileRoutesByTo {
   '/product-category/books': typeof ProductCategoryBooksRoute
   '/product-category/prints': typeof ProductCategoryPrintsRoute
   '/product/$handle': typeof ProductHandleRoute
-  '/shop/cart': typeof ShopCartRoute
   '/shop/search': typeof ShopSearchRoute
   '/shop': typeof ShopIndexRoute
   '/product-category/abstract/abstract-abstract': typeof ProductCategoryAbstractAbstractAbstractRoute
@@ -226,7 +218,6 @@ export interface FileRoutesById {
   '/product-category/books': typeof ProductCategoryBooksRoute
   '/product-category/prints': typeof ProductCategoryPrintsRoute
   '/product/$handle': typeof ProductHandleRoute
-  '/shop/cart': typeof ShopCartRoute
   '/shop/search': typeof ShopSearchRoute
   '/shop/': typeof ShopIndexRoute
   '/product-category/abstract/abstract-abstract': typeof ProductCategoryAbstractAbstractAbstractRoute
@@ -254,7 +245,6 @@ export interface FileRouteTypes {
     | '/product-category/books'
     | '/product-category/prints'
     | '/product/$handle'
-    | '/shop/cart'
     | '/shop/search'
     | '/shop/'
     | '/product-category/abstract/abstract-abstract'
@@ -279,7 +269,6 @@ export interface FileRouteTypes {
     | '/product-category/books'
     | '/product-category/prints'
     | '/product/$handle'
-    | '/shop/cart'
     | '/shop/search'
     | '/shop'
     | '/product-category/abstract/abstract-abstract'
@@ -305,7 +294,6 @@ export interface FileRouteTypes {
     | '/product-category/books'
     | '/product-category/prints'
     | '/product/$handle'
-    | '/shop/cart'
     | '/shop/search'
     | '/shop/'
     | '/product-category/abstract/abstract-abstract'
@@ -428,13 +416,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopSearchRouteImport
       parentRoute: typeof ShopRoute
     }
-    '/shop/cart': {
-      id: '/shop/cart'
-      path: '/cart'
-      fullPath: '/shop/cart'
-      preLoaderRoute: typeof ShopCartRouteImport
-      parentRoute: typeof ShopRoute
-    }
     '/product/$handle': {
       id: '/product/$handle'
       path: '/product/$handle'
@@ -509,7 +490,6 @@ declare module '@tanstack/react-router' {
 }
 
 interface ShopRouteChildren {
-  ShopCartRoute: typeof ShopCartRoute
   ShopSearchRoute: typeof ShopSearchRoute
   ShopIndexRoute: typeof ShopIndexRoute
   ShopCollectionsHandleRoute: typeof ShopCollectionsHandleRoute
@@ -518,7 +498,6 @@ interface ShopRouteChildren {
 }
 
 const ShopRouteChildren: ShopRouteChildren = {
-  ShopCartRoute: ShopCartRoute,
   ShopSearchRoute: ShopSearchRoute,
   ShopIndexRoute: ShopIndexRoute,
   ShopCollectionsHandleRoute: ShopCollectionsHandleRoute,

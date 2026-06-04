@@ -13,11 +13,9 @@ import {
 
 import {
   addToCart,
-  applyDiscountCode,
+  clearCart,
   getCart,
   removeCartLine,
-  removeDiscountCode,
-  updateCartLine,
 } from '@/server/shopify/cart.functions'
 
 /**
@@ -174,42 +172,6 @@ export function useAddToCart() {
   })
 }
 
-export function useUpdateCartLine() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationKey: CART_MUTATION_KEY,
-    mutationFn: (input: { lineId: string; quantity: number }) =>
-      updateCartLine({ data: input }),
-
-    onMutate: async (input) => {
-      trackMutationStart()
-      await qc.cancelQueries({ queryKey: CART_QUERY_KEY })
-      const previous = qc.getQueryData<CartDetail | null>(CART_QUERY_KEY)
-      if (previous) {
-        const nextLines = previous.lines.nodes.map((line) =>
-          line.id === input.lineId
-            ? { ...line, quantity: input.quantity }
-            : line,
-        )
-        const nextQty = nextLines.reduce((sum, line) => sum + line.quantity, 0)
-        qc.setQueryData<CartDetail | null>(CART_QUERY_KEY, {
-          ...previous,
-          totalQuantity: nextQty,
-          lines: { ...previous.lines, nodes: nextLines },
-        })
-      }
-      return { previous }
-    },
-
-    onError: (_err, _input, ctx) => {
-      if (ctx?.previous !== undefined)
-        qc.setQueryData(CART_QUERY_KEY, ctx.previous)
-    },
-
-    onSettled: () => settleWhenIdle(qc),
-  })
-}
-
 export function useRemoveCartLine() {
   const qc = useQueryClient()
   return useMutation({
@@ -243,28 +205,12 @@ export function useRemoveCartLine() {
   })
 }
 
-export function useApplyDiscountCode() {
+export function useClearCart() {
   const qc = useQueryClient()
   return useMutation({
     mutationKey: CART_MUTATION_KEY,
-    mutationFn: (input: { code: string }) =>
-      applyDiscountCode({ data: { code: input.code } }),
-    onMutate: async () => {
-      trackMutationStart()
-      await qc.cancelQueries({ queryKey: CART_QUERY_KEY })
-    },
-    onSuccess: (cart) => {
-      qc.setQueryData(CART_QUERY_KEY, cart)
-    },
-    onSettled: () => settleWhenIdle(qc),
-  })
-}
+    mutationFn: () => clearCart(),
 
-export function useRemoveDiscountCode() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationKey: CART_MUTATION_KEY,
-    mutationFn: () => removeDiscountCode(),
     onMutate: async () => {
       trackMutationStart()
       await qc.cancelQueries({ queryKey: CART_QUERY_KEY })
@@ -272,15 +218,22 @@ export function useRemoveDiscountCode() {
       if (previous) {
         qc.setQueryData<CartDetail | null>(CART_QUERY_KEY, {
           ...previous,
-          discountCodes: [],
+          totalQuantity: 0,
+          lines: { ...previous.lines, nodes: [] },
         })
       }
       return { previous }
     },
+
     onError: (_err, _input, ctx) => {
       if (ctx?.previous !== undefined)
         qc.setQueryData(CART_QUERY_KEY, ctx.previous)
     },
+
+    onSuccess: (cart) => {
+      qc.setQueryData(CART_QUERY_KEY, cart)
+    },
+
     onSettled: () => settleWhenIdle(qc),
   })
 }

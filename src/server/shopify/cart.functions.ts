@@ -1,10 +1,8 @@
 import type {
   CartCreateResult,
   CartDetail,
-  CartDiscountCodesUpdateResult,
   CartLinesAddResult,
   CartLinesRemoveResult,
-  CartLinesUpdateResult,
   CartQueryResult,
   CartUserError,
 } from '@/lib/queries/shopify/queries'
@@ -16,10 +14,8 @@ import * as v from 'valibot'
 
 import {
   CART_CREATE_MUTATION,
-  CART_DISCOUNT_CODES_UPDATE_MUTATION,
   CART_LINES_ADD_MUTATION,
   CART_LINES_REMOVE_MUTATION,
-  CART_LINES_UPDATE_MUTATION,
   CART_QUERY,
 } from '@/lib/queries/shopify/queries'
 import { clearCartId, getCartId, setCartId } from '@/server/shopify/cookies'
@@ -121,31 +117,6 @@ export const addToCart = createServerFn({ method: 'POST' })
     return cart
   })
 
-export const updateCartLine = createServerFn({ method: 'POST' })
-  .inputValidator(
-    v.object({
-      lineId: v.string(),
-      quantity: v.pipe(v.number(), v.integer(), v.minValue(0)),
-    }),
-  )
-  .handler(async ({ data }): Promise<CartDetail> => {
-    setCartResponseHeaders()
-    const cartId = getCartId()
-    if (!cartId) throw new Error('No cart exists to update.')
-
-    const result = await shopifyServerFetch<CartLinesUpdateResult>({
-      query: CART_LINES_UPDATE_MUTATION,
-      variables: {
-        cartId,
-        lines: [{ id: data.lineId, quantity: data.quantity }],
-      },
-    })
-    throwIfUserErrors(result.cartLinesUpdate.userErrors)
-    const cart = result.cartLinesUpdate.cart
-    if (!cart) throw new Error('Shopify returned no cart after update.')
-    return cart
-  })
-
 export const removeCartLine = createServerFn({ method: 'POST' })
   .inputValidator(v.object({ lineId: v.string() }))
   .handler(async ({ data }): Promise<CartDetail> => {
@@ -163,47 +134,28 @@ export const removeCartLine = createServerFn({ method: 'POST' })
     return cart
   })
 
-export const applyDiscountCode = createServerFn({ method: 'POST' })
-  .inputValidator(v.object({ code: v.pipe(v.string(), v.minLength(1)) }))
-  .handler(async ({ data }): Promise<CartDetail> => {
+export const clearCart = createServerFn({ method: 'POST' }).handler(
+  async (): Promise<CartDetail | null> => {
     setCartResponseHeaders()
     const cartId = getCartId()
-    if (!cartId) throw new Error('No cart exists to apply a discount to.')
-    const result = await shopifyServerFetch<CartDiscountCodesUpdateResult>({
-      query: CART_DISCOUNT_CODES_UPDATE_MUTATION,
-      variables: { cartId, discountCodes: [data.code] },
-    })
-    throwIfUserErrors(result.cartDiscountCodesUpdate.userErrors)
-    const cart = result.cartDiscountCodesUpdate.cart
-    if (!cart)
-      throw new Error('Shopify returned no cart after discount update.')
-    // Shopify silently drops invalid codes — surface that to the UI.
-    const applied = cart.discountCodes.find(
-      (c) => c.code.toLowerCase() === data.code.toLowerCase(),
-    )
-    if (!applied || !applied.applicable) {
-      throw new CartUserErrorsError([
-        {
-          field: null,
-          message: `Discount code "${data.code}" is not valid or not applicable to this cart.`,
-        },
-      ])
-    }
-    return cart
-  })
+    if (!cartId) return null
 
-export const removeDiscountCode = createServerFn({ method: 'POST' }).handler(
-  async (): Promise<CartDetail> => {
-    setCartResponseHeaders()
-    const cartId = getCartId()
-    if (!cartId) throw new Error('No cart exists.')
-    const result = await shopifyServerFetch<CartDiscountCodesUpdateResult>({
-      query: CART_DISCOUNT_CODES_UPDATE_MUTATION,
-      variables: { cartId, discountCodes: [] },
+    const cart = await fetchCartById(cartId)
+    if (!cart) {
+      clearCartId()
+      return null
+    }
+
+    const lineIds = cart.lines.nodes.map((line) => line.id)
+    if (lineIds.length === 0) return cart
+
+    const result = await shopifyServerFetch<CartLinesRemoveResult>({
+      query: CART_LINES_REMOVE_MUTATION,
+      variables: { cartId, lineIds },
     })
-    throwIfUserErrors(result.cartDiscountCodesUpdate.userErrors)
-    const cart = result.cartDiscountCodesUpdate.cart
-    if (!cart) throw new Error('Shopify returned no cart after discount clear.')
-    return cart
+    throwIfUserErrors(result.cartLinesRemove.userErrors)
+    const updated = result.cartLinesRemove.cart
+    if (!updated) throw new Error('Shopify returned no cart after clear.')
+    return updated
   },
 )

@@ -33,7 +33,7 @@ export function ShopImage({
         aria-hidden
         className={className}
         style={{
-          background: 'var(--storefront-line)',
+          background: 'var(--border)',
           aspectRatio: height ? `${width} / ${height}` : '1',
         }}
       />

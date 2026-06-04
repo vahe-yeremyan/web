@@ -1,9 +1,7 @@
 import type {
   CartCreateMutation,
-  CartDiscountCodesUpdateMutation,
   CartLinesAddMutation,
   CartLinesRemoveMutation,
-  CartLinesUpdateMutation,
   CartQuery,
   CollectionQuery,
   CollectionsQuery,
@@ -573,40 +571,10 @@ export const CART_LINES_ADD_MUTATION = /* GraphQL */ `
   }
 `
 
-export const CART_LINES_UPDATE_MUTATION = /* GraphQL */ `
-  ${CART_FRAGMENT}
-  mutation CartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
-    cartLinesUpdate(cartId: $cartId, lines: $lines) {
-      cart {
-        ...CartFields
-      }
-      userErrors {
-        field
-        message
-      }
-    }
-  }
-`
-
 export const CART_LINES_REMOVE_MUTATION = /* GraphQL */ `
   ${CART_FRAGMENT}
   mutation CartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
     cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
-      cart {
-        ...CartFields
-      }
-      userErrors {
-        field
-        message
-      }
-    }
-  }
-`
-
-export const CART_DISCOUNT_CODES_UPDATE_MUTATION = /* GraphQL */ `
-  ${CART_FRAGMENT}
-  mutation CartDiscountCodesUpdate($cartId: ID!, $discountCodes: [String!]!) {
-    cartDiscountCodesUpdate(cartId: $cartId, discountCodes: $discountCodes) {
       cart {
         ...CartFields
       }
@@ -633,16 +601,8 @@ export type CartCreateResult = {
 export type CartLinesAddResult = {
   cartLinesAdd: NonNullable<CartLinesAddMutation['cartLinesAdd']>
 }
-export type CartLinesUpdateResult = {
-  cartLinesUpdate: NonNullable<CartLinesUpdateMutation['cartLinesUpdate']>
-}
 export type CartLinesRemoveResult = {
   cartLinesRemove: NonNullable<CartLinesRemoveMutation['cartLinesRemove']>
-}
-export type CartDiscountCodesUpdateResult = {
-  cartDiscountCodesUpdate: NonNullable<
-    CartDiscountCodesUpdateMutation['cartDiscountCodesUpdate']
-  >
 }
 
 /* ─── Sort options ──────────────────────────────────────────────────────── */
