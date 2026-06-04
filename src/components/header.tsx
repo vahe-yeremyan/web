@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 
 import { Link, useLocation } from '@tanstack/react-router'
 
-import { ChevronsUpDown, Search } from 'lucide-react'
+import { ChevronsUpDown } from 'lucide-react'
 
 import { BagSheet } from '@/components/shop/bag-sheet'
+import { SearchDialog } from '@/components/shop/search-dialog'
 import { ARTWORK_CATEGORIES } from '@/lib/artwork-categories'
 import { cn } from '@/lib/utils'
 
@@ -376,15 +377,13 @@ function DropdownSection({
 function HeaderActions() {
   return (
     <div className="flex items-center">
-      <div className="ml-10 flex items-center gap-4">
-        <Link
-          to="/shop/search"
-          search={{ q: '' }}
-          aria-label="Search"
-          className={cn('p-2', HEADER_TEXT_TRANSITION_CLASS)}
-        >
-          <Search className="size-5" />
-        </Link>
+      <div
+        className={cn(
+          'ml-10 flex items-center gap-4',
+          HEADER_TEXT_TRANSITION_CLASS,
+        )}
+      >
+        <SearchDialog />
 
         <BagSheet />
       </div>

@@ -80,7 +80,7 @@ export function AddToCartButton({
           },
           {
             onSuccess: () => {
-              toast.success(`${product.title} added to your bag`)
+              toast.success('Added to bag')
             },
             onError: () => {
               toast.error("We couldn't add this to your bag. Please try again.")

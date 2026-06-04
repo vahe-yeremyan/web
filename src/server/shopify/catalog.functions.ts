@@ -209,6 +209,7 @@ export const getShopProducts = createServerFn({ method: 'POST' })
       pageSize: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1)), 24),
       cursor: v.optional(v.string()),
       direction: v.optional(v.picklist(['next', 'prev'])),
+      q: v.optional(v.string()),
       sort: v.optional(v.picklist(shopSortOptions), 'default'),
       category: v.optional(v.array(v.string()), []),
       medium: v.optional(v.array(v.string()), []),
@@ -227,8 +228,13 @@ export const getShopProducts = createServerFn({ method: 'POST' })
       setBrowseCacheHeaders()
 
       const search: ShopSearchParams = data
+      const searchTerm = search.q?.trim() ? search.q.trim() : null
       const pagination = getPaginationVariables(search, data.pageSize)
-      if (!hasActiveShopFilters(search) && isTitleSort(search.sort)) {
+      if (
+        !searchTerm &&
+        !hasActiveShopFilters(search) &&
+        isTitleSort(search.sort)
+      ) {
         const result = await shopifyServerFetch<
           ProductsQueryResult,
           ProductsQueryVariables
@@ -269,7 +275,7 @@ export const getShopProducts = createServerFn({ method: 'POST' })
       >({
         query: SEARCH_QUERY,
         variables: {
-          query: '*',
+          query: searchTerm ?? '*',
           first: pagination.first,
           after: pagination.after,
           last: pagination.last,
@@ -486,51 +492,5 @@ export const getShopPolicy = createServerFn({ method: 'POST' })
         result.shop.shippingPolicy,
       ].filter((p): p is NonNullable<ShopPolicy> => p !== null)
       return all.find((p) => p.handle === data.handle) ?? null
-    },
-  )
-
-export const searchProducts = createServerFn({ method: 'POST' })
-  .inputValidator(
-    v.object({
-      query: v.pipe(v.string(), v.minLength(1)),
-      first: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1)), 24),
-      after: v.optional(v.nullable(v.string())),
-    }),
-  )
-  .handler(
-    async ({
-      data,
-    }): Promise<{
-      totalCount: number
-      pageInfo: { hasNextPage: boolean; endCursor: string | null }
-      products: ProductListPage['nodes']
-    }> => {
-      setBrowseCacheHeaders()
-      const result = await shopifyServerFetch<
-        SearchQueryResult,
-        SearchQueryVariables
-      >({
-        query: SEARCH_QUERY,
-        variables: {
-          query: data.query,
-          first: data.first,
-          after: data.after ?? null,
-          last: null,
-          before: null,
-          sortKey: 'RELEVANCE',
-          reverse: false,
-          productFilters: [{ available: true }],
-        },
-      })
-      const products = availableProducts(result.search.nodes)
-
-      return {
-        totalCount: result.search.totalCount,
-        pageInfo: {
-          hasNextPage: result.search.pageInfo.hasNextPage,
-          endCursor: result.search.pageInfo.endCursor ?? null,
-        },
-        products,
-      }
     },
   )

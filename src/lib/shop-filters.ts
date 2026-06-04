@@ -1,3 +1,5 @@
+import { SEARCH_QUERY_MAX_LENGTH } from '@/lib/search'
+
 export const SHOP_SORT_OPTIONS = [
   { label: 'Default', value: 'default' },
   { label: 'Title (A to Z)', value: 'title-asc' },
@@ -26,6 +28,7 @@ export type ShopFilterOptions = {
 }
 
 export type ShopSearchParams = {
+  q?: string
   sort: ShopSortOption
   category: string[]
   medium: string[]
@@ -77,10 +80,17 @@ function readDirection(value: unknown): ShopSearchParams['direction'] {
   return value === 'next' || value === 'prev' ? value : undefined
 }
 
+function readSearchQuery(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined
+  const trimmed = value.trim().slice(0, SEARCH_QUERY_MAX_LENGTH)
+  return trimmed || undefined
+}
+
 export function normalizeShopSearchParams(
   search: Record<string, unknown>,
 ): ShopSearchParams {
   return {
+    q: readSearchQuery(search.q),
     sort: readSortOption(search.sort),
     category: readStringArray(search.category),
     medium: readStringArray(search.medium),

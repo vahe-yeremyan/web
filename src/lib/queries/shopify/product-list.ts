@@ -13,6 +13,7 @@ export type ProductListQueryResult = Awaited<ReturnType<typeof getShopProducts>>
 
 export function getProductListSearchKey(search: ShopSearchParams) {
   return {
+    q: search.q,
     sort: search.sort,
     category: search.category,
     medium: search.medium,
@@ -59,6 +60,7 @@ export function productListQueryOptions(search: ShopSearchParams) {
       getShopProducts({
         data: {
           pageSize: PRODUCT_PAGE_SIZE,
+          q: search.q,
           sort: search.sort,
           category: search.category,
           medium: search.medium,
@@ -87,6 +89,7 @@ export function productListNextPageQueryOptions(
           pageSize: PRODUCT_PAGE_SIZE,
           cursor,
           direction: 'next',
+          q: search.q,
           sort: search.sort,
           category: search.category,
           medium: search.medium,

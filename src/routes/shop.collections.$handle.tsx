@@ -78,7 +78,7 @@ function CollectionRoute() {
             {collection.title}
           </h1>
           {collection.description && (
-            <p className="max-w-2xl text-[--storefront-fg-muted]">
+            <p className="text-muted-foreground max-w-2xl">
               {collection.description}
             </p>
           )}

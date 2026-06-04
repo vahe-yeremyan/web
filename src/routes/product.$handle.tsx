@@ -7,7 +7,6 @@ import { ProductDetailSkeleton } from '@/components/shop/product-detail-skeleton
 import { ProductImageCarousel } from '@/components/shop/product-image-carousel'
 import { ProductPurchasePanel } from '@/components/shop/product-purchase-panel'
 import { ZoomedProductGallery } from '@/components/shop/product-zoom-gallery'
-import '@/components/shop/shop.css'
 import {
   getProductHead,
   productQueryOptions,

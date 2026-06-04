@@ -19,11 +19,11 @@ export function ProductGrid({
   showPrice = false,
   showSoldStatus = false,
   priorityCount = PRODUCT_GRID_PRIORITY_COUNT,
-  emptyMessage = 'No artworks yet.',
+  emptyMessage = 'No artworks found.',
 }: ProductGridProps) {
   if (products.length === 0) {
     return (
-      <p className="py-16 text-center text-[--storefront-fg-muted]">
+      <p className="text-muted-foreground py-16 text-center font-medium">
         {emptyMessage}
       </p>
     )

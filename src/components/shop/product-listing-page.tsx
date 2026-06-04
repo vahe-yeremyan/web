@@ -27,6 +27,7 @@ import { ProductLoadMore } from './product-load-more'
 
 type ProductListingPageProps = {
   title: string
+  titleActions?: React.ReactNode
   routeSearch: ShopSearchParams
   productSearch: ShopSearchParams
   filterOptions: ShopFilterOptions
@@ -46,6 +47,7 @@ const loadedPageCursorsBySearchKey = new Map<string, string[]>()
 
 export function ProductListingPage({
   title,
+  titleActions,
   routeSearch,
   productSearch,
   filterOptions,
@@ -197,6 +199,7 @@ export function ProductListingPage({
   return (
     <ProductListingLayout
       title={title}
+      titleActions={titleActions}
       onMainScrollIntent={() => {
         setHasBrowseIntent(true)
       }}

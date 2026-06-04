@@ -13,6 +13,7 @@ import { Route as StudioShowRouteImport } from './routes/studio-show'
 import { Route as SoldRouteImport } from './routes/sold'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as PrintsRouteImport } from './routes/prints'
 import { Route as ContactsRouteImport } from './routes/contacts'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -21,7 +22,6 @@ import { Route as AboutMeRouteImport } from './routes/about-me'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ShopIndexRouteImport } from './routes/shop.index'
-import { Route as ShopSearchRouteImport } from './routes/shop.search'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
 import { Route as ProductCategoryPrintsRouteImport } from './routes/product-category.prints'
 import { Route as ProductCategoryBooksRouteImport } from './routes/product-category.books'
@@ -51,6 +51,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrintsRoute = PrintsRouteImport.update({
@@ -91,11 +96,6 @@ const IndexRoute = IndexRouteImport.update({
 const ShopIndexRoute = ShopIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => ShopRoute,
-} as any)
-const ShopSearchRoute = ShopSearchRouteImport.update({
-  id: '/search',
-  path: '/search',
   getParentRoute: () => ShopRoute,
 } as any)
 const ProductHandleRoute = ProductHandleRouteImport.update({
@@ -158,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/contacts': typeof ContactsRoute
   '/prints': typeof PrintsRoute
+  '/search': typeof SearchRoute
   '/shop': typeof ShopRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sold': typeof SoldRoute
@@ -168,7 +169,6 @@ export interface FileRoutesByFullPath {
   '/product-category/books': typeof ProductCategoryBooksRoute
   '/product-category/prints': typeof ProductCategoryPrintsRoute
   '/product/$handle': typeof ProductHandleRoute
-  '/shop/search': typeof ShopSearchRoute
   '/shop/': typeof ShopIndexRoute
   '/product-category/abstract/abstract-abstract': typeof ProductCategoryAbstractAbstractAbstractRoute
   '/shop/collections/$handle': typeof ShopCollectionsHandleRoute
@@ -183,6 +183,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/contacts': typeof ContactsRoute
   '/prints': typeof PrintsRoute
+  '/search': typeof SearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sold': typeof SoldRoute
   '/studio-show': typeof StudioShowRoute
@@ -192,7 +193,6 @@ export interface FileRoutesByTo {
   '/product-category/books': typeof ProductCategoryBooksRoute
   '/product-category/prints': typeof ProductCategoryPrintsRoute
   '/product/$handle': typeof ProductHandleRoute
-  '/shop/search': typeof ShopSearchRoute
   '/shop': typeof ShopIndexRoute
   '/product-category/abstract/abstract-abstract': typeof ProductCategoryAbstractAbstractAbstractRoute
   '/shop/collections/$handle': typeof ShopCollectionsHandleRoute
@@ -208,6 +208,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/contacts': typeof ContactsRoute
   '/prints': typeof PrintsRoute
+  '/search': typeof SearchRoute
   '/shop': typeof ShopRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sold': typeof SoldRoute
@@ -218,7 +219,6 @@ export interface FileRoutesById {
   '/product-category/books': typeof ProductCategoryBooksRoute
   '/product-category/prints': typeof ProductCategoryPrintsRoute
   '/product/$handle': typeof ProductHandleRoute
-  '/shop/search': typeof ShopSearchRoute
   '/shop/': typeof ShopIndexRoute
   '/product-category/abstract/abstract-abstract': typeof ProductCategoryAbstractAbstractAbstractRoute
   '/shop/collections/$handle': typeof ShopCollectionsHandleRoute
@@ -235,6 +235,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/contacts'
     | '/prints'
+    | '/search'
     | '/shop'
     | '/sitemap.xml'
     | '/sold'
@@ -245,7 +246,6 @@ export interface FileRouteTypes {
     | '/product-category/books'
     | '/product-category/prints'
     | '/product/$handle'
-    | '/shop/search'
     | '/shop/'
     | '/product-category/abstract/abstract-abstract'
     | '/shop/collections/$handle'
@@ -260,6 +260,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/contacts'
     | '/prints'
+    | '/search'
     | '/sitemap.xml'
     | '/sold'
     | '/studio-show'
@@ -269,7 +270,6 @@ export interface FileRouteTypes {
     | '/product-category/books'
     | '/product-category/prints'
     | '/product/$handle'
-    | '/shop/search'
     | '/shop'
     | '/product-category/abstract/abstract-abstract'
     | '/shop/collections/$handle'
@@ -284,6 +284,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/contacts'
     | '/prints'
+    | '/search'
     | '/shop'
     | '/sitemap.xml'
     | '/sold'
@@ -294,7 +295,6 @@ export interface FileRouteTypes {
     | '/product-category/books'
     | '/product-category/prints'
     | '/product/$handle'
-    | '/shop/search'
     | '/shop/'
     | '/product-category/abstract/abstract-abstract'
     | '/shop/collections/$handle'
@@ -310,6 +310,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   ContactsRoute: typeof ContactsRoute
   PrintsRoute: typeof PrintsRoute
+  SearchRoute: typeof SearchRoute
   ShopRoute: typeof ShopRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SoldRoute: typeof SoldRoute
@@ -351,6 +352,13 @@ declare module '@tanstack/react-router' {
       path: '/shop'
       fullPath: '/shop'
       preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/prints': {
@@ -407,13 +415,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/shop/'
       preLoaderRoute: typeof ShopIndexRouteImport
-      parentRoute: typeof ShopRoute
-    }
-    '/shop/search': {
-      id: '/shop/search'
-      path: '/search'
-      fullPath: '/shop/search'
-      preLoaderRoute: typeof ShopSearchRouteImport
       parentRoute: typeof ShopRoute
     }
     '/product/$handle': {
@@ -490,7 +491,6 @@ declare module '@tanstack/react-router' {
 }
 
 interface ShopRouteChildren {
-  ShopSearchRoute: typeof ShopSearchRoute
   ShopIndexRoute: typeof ShopIndexRoute
   ShopCollectionsHandleRoute: typeof ShopCollectionsHandleRoute
   ShopPagesHandleRoute: typeof ShopPagesHandleRoute
@@ -498,7 +498,6 @@ interface ShopRouteChildren {
 }
 
 const ShopRouteChildren: ShopRouteChildren = {
-  ShopSearchRoute: ShopSearchRoute,
   ShopIndexRoute: ShopIndexRoute,
   ShopCollectionsHandleRoute: ShopCollectionsHandleRoute,
   ShopPagesHandleRoute: ShopPagesHandleRoute,
@@ -515,6 +514,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   ContactsRoute: ContactsRoute,
   PrintsRoute: PrintsRoute,
+  SearchRoute: SearchRoute,
   ShopRoute: ShopRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SoldRoute: SoldRoute,
