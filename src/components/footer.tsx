@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 
 import { FooterSection } from '@/components/footer-section'
+import { NewsletterSignup } from '@/components/newsletter-signup'
 import { SocialLinks } from '@/components/social-links'
 
 const FOOTER_NAV_LINKS = [
@@ -49,7 +50,9 @@ export function Footer() {
           </FooterSection>
         </div>
 
-        <p className="mt-auto pt-10 pb-4 text-center text-sm text-neutral-500">
+        <NewsletterSignup />
+
+        <p className="font-manrope mt-auto pt-10 pb-4 text-center text-sm font-medium text-neutral-500">
           Copyright © 2026 Vahe Yeremyan. All Rights Reserved.
         </p>
       </div>

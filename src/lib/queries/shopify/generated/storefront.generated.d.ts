@@ -206,29 +206,6 @@ export type CartLinesAddMutation = { cartLinesAdd?: StorefrontTypes.Maybe<{ cart
         )> }, discountCodes: Array<Pick<StorefrontTypes.CartDiscountCode, 'code' | 'applicable'>> }
     )>, userErrors: Array<Pick<StorefrontTypes.CartUserError, 'field' | 'message'>> }> };
 
-export type CartLinesUpdateMutationVariables = StorefrontTypes.Exact<{
-  cartId: StorefrontTypes.Scalars['ID']['input'];
-  lines: Array<StorefrontTypes.CartLineUpdateInput> | StorefrontTypes.CartLineUpdateInput;
-}>;
-
-
-export type CartLinesUpdateMutation = { cartLinesUpdate?: StorefrontTypes.Maybe<{ cart?: StorefrontTypes.Maybe<(
-      Pick<StorefrontTypes.Cart, 'id' | 'checkoutUrl' | 'totalQuantity'>
-      & { cost: { totalAmount: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'>, subtotalAmount: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'>, totalTaxAmount?: StorefrontTypes.Maybe<Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'>> }, lines: { nodes: Array<(
-          Pick<StorefrontTypes.CartLine, 'id' | 'quantity'>
-          & { merchandise: (
-            Pick<StorefrontTypes.ProductVariant, 'id' | 'title' | 'availableForSale'>
-            & { selectedOptions: Array<Pick<StorefrontTypes.SelectedOption, 'name' | 'value'>>, price: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'>, image?: StorefrontTypes.Maybe<Pick<StorefrontTypes.Image, 'url' | 'altText' | 'width' | 'height'>>, product: Pick<StorefrontTypes.Product, 'handle' | 'title'> }
-          ), cost: { totalAmount: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'> } }
-        ) | (
-          Pick<StorefrontTypes.ComponentizableCartLine, 'id' | 'quantity'>
-          & { merchandise: (
-            Pick<StorefrontTypes.ProductVariant, 'id' | 'title' | 'availableForSale'>
-            & { selectedOptions: Array<Pick<StorefrontTypes.SelectedOption, 'name' | 'value'>>, price: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'>, image?: StorefrontTypes.Maybe<Pick<StorefrontTypes.Image, 'url' | 'altText' | 'width' | 'height'>>, product: Pick<StorefrontTypes.Product, 'handle' | 'title'> }
-          ), cost: { totalAmount: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'> } }
-        )> }, discountCodes: Array<Pick<StorefrontTypes.CartDiscountCode, 'code' | 'applicable'>> }
-    )>, userErrors: Array<Pick<StorefrontTypes.CartUserError, 'field' | 'message'>> }> };
-
 export type CartLinesRemoveMutationVariables = StorefrontTypes.Exact<{
   cartId: StorefrontTypes.Scalars['ID']['input'];
   lineIds: Array<StorefrontTypes.Scalars['ID']['input']> | StorefrontTypes.Scalars['ID']['input'];
@@ -236,29 +213,6 @@ export type CartLinesRemoveMutationVariables = StorefrontTypes.Exact<{
 
 
 export type CartLinesRemoveMutation = { cartLinesRemove?: StorefrontTypes.Maybe<{ cart?: StorefrontTypes.Maybe<(
-      Pick<StorefrontTypes.Cart, 'id' | 'checkoutUrl' | 'totalQuantity'>
-      & { cost: { totalAmount: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'>, subtotalAmount: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'>, totalTaxAmount?: StorefrontTypes.Maybe<Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'>> }, lines: { nodes: Array<(
-          Pick<StorefrontTypes.CartLine, 'id' | 'quantity'>
-          & { merchandise: (
-            Pick<StorefrontTypes.ProductVariant, 'id' | 'title' | 'availableForSale'>
-            & { selectedOptions: Array<Pick<StorefrontTypes.SelectedOption, 'name' | 'value'>>, price: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'>, image?: StorefrontTypes.Maybe<Pick<StorefrontTypes.Image, 'url' | 'altText' | 'width' | 'height'>>, product: Pick<StorefrontTypes.Product, 'handle' | 'title'> }
-          ), cost: { totalAmount: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'> } }
-        ) | (
-          Pick<StorefrontTypes.ComponentizableCartLine, 'id' | 'quantity'>
-          & { merchandise: (
-            Pick<StorefrontTypes.ProductVariant, 'id' | 'title' | 'availableForSale'>
-            & { selectedOptions: Array<Pick<StorefrontTypes.SelectedOption, 'name' | 'value'>>, price: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'>, image?: StorefrontTypes.Maybe<Pick<StorefrontTypes.Image, 'url' | 'altText' | 'width' | 'height'>>, product: Pick<StorefrontTypes.Product, 'handle' | 'title'> }
-          ), cost: { totalAmount: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'> } }
-        )> }, discountCodes: Array<Pick<StorefrontTypes.CartDiscountCode, 'code' | 'applicable'>> }
-    )>, userErrors: Array<Pick<StorefrontTypes.CartUserError, 'field' | 'message'>> }> };
-
-export type CartDiscountCodesUpdateMutationVariables = StorefrontTypes.Exact<{
-  cartId: StorefrontTypes.Scalars['ID']['input'];
-  discountCodes: Array<StorefrontTypes.Scalars['String']['input']> | StorefrontTypes.Scalars['String']['input'];
-}>;
-
-
-export type CartDiscountCodesUpdateMutation = { cartDiscountCodesUpdate?: StorefrontTypes.Maybe<{ cart?: StorefrontTypes.Maybe<(
       Pick<StorefrontTypes.Cart, 'id' | 'checkoutUrl' | 'totalQuantity'>
       & { cost: { totalAmount: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'>, subtotalAmount: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'>, totalTaxAmount?: StorefrontTypes.Maybe<Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'>> }, lines: { nodes: Array<(
           Pick<StorefrontTypes.CartLine, 'id' | 'quantity'>
@@ -338,9 +292,7 @@ interface GeneratedQueryTypes {
 interface GeneratedMutationTypes {
   "\n  \n  fragment CartFields on Cart {\n    id\n    checkoutUrl\n    totalQuantity\n    cost {\n      totalAmount {\n        amount\n        currencyCode\n      }\n      subtotalAmount {\n        amount\n        currencyCode\n      }\n      totalTaxAmount {\n        amount\n        currencyCode\n      }\n    }\n    lines(first: 100) {\n      nodes {\n        id\n        quantity\n        merchandise {\n          ... on ProductVariant {\n            id\n            title\n            availableForSale\n            selectedOptions {\n              name\n              value\n            }\n            price {\n              amount\n              currencyCode\n            }\n            image {\n              url\n              altText\n              width\n              height\n            }\n            product {\n              handle\n              title\n            }\n          }\n        }\n        cost {\n          totalAmount {\n            amount\n            currencyCode\n          }\n        }\n      }\n    }\n    discountCodes {\n      code\n      applicable\n    }\n  }\n\n  mutation CartCreate($input: CartInput!) {\n    cartCreate(input: $input) {\n      cart {\n        ...CartFields\n      }\n      userErrors {\n        field\n        message\n      }\n    }\n  }\n": {return: CartCreateMutation, variables: CartCreateMutationVariables},
   "\n  \n  fragment CartFields on Cart {\n    id\n    checkoutUrl\n    totalQuantity\n    cost {\n      totalAmount {\n        amount\n        currencyCode\n      }\n      subtotalAmount {\n        amount\n        currencyCode\n      }\n      totalTaxAmount {\n        amount\n        currencyCode\n      }\n    }\n    lines(first: 100) {\n      nodes {\n        id\n        quantity\n        merchandise {\n          ... on ProductVariant {\n            id\n            title\n            availableForSale\n            selectedOptions {\n              name\n              value\n            }\n            price {\n              amount\n              currencyCode\n            }\n            image {\n              url\n              altText\n              width\n              height\n            }\n            product {\n              handle\n              title\n            }\n          }\n        }\n        cost {\n          totalAmount {\n            amount\n            currencyCode\n          }\n        }\n      }\n    }\n    discountCodes {\n      code\n      applicable\n    }\n  }\n\n  mutation CartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {\n    cartLinesAdd(cartId: $cartId, lines: $lines) {\n      cart {\n        ...CartFields\n      }\n      userErrors {\n        field\n        message\n      }\n    }\n  }\n": {return: CartLinesAddMutation, variables: CartLinesAddMutationVariables},
-  "\n  \n  fragment CartFields on Cart {\n    id\n    checkoutUrl\n    totalQuantity\n    cost {\n      totalAmount {\n        amount\n        currencyCode\n      }\n      subtotalAmount {\n        amount\n        currencyCode\n      }\n      totalTaxAmount {\n        amount\n        currencyCode\n      }\n    }\n    lines(first: 100) {\n      nodes {\n        id\n        quantity\n        merchandise {\n          ... on ProductVariant {\n            id\n            title\n            availableForSale\n            selectedOptions {\n              name\n              value\n            }\n            price {\n              amount\n              currencyCode\n            }\n            image {\n              url\n              altText\n              width\n              height\n            }\n            product {\n              handle\n              title\n            }\n          }\n        }\n        cost {\n          totalAmount {\n            amount\n            currencyCode\n          }\n        }\n      }\n    }\n    discountCodes {\n      code\n      applicable\n    }\n  }\n\n  mutation CartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {\n    cartLinesUpdate(cartId: $cartId, lines: $lines) {\n      cart {\n        ...CartFields\n      }\n      userErrors {\n        field\n        message\n      }\n    }\n  }\n": {return: CartLinesUpdateMutation, variables: CartLinesUpdateMutationVariables},
   "\n  \n  fragment CartFields on Cart {\n    id\n    checkoutUrl\n    totalQuantity\n    cost {\n      totalAmount {\n        amount\n        currencyCode\n      }\n      subtotalAmount {\n        amount\n        currencyCode\n      }\n      totalTaxAmount {\n        amount\n        currencyCode\n      }\n    }\n    lines(first: 100) {\n      nodes {\n        id\n        quantity\n        merchandise {\n          ... on ProductVariant {\n            id\n            title\n            availableForSale\n            selectedOptions {\n              name\n              value\n            }\n            price {\n              amount\n              currencyCode\n            }\n            image {\n              url\n              altText\n              width\n              height\n            }\n            product {\n              handle\n              title\n            }\n          }\n        }\n        cost {\n          totalAmount {\n            amount\n            currencyCode\n          }\n        }\n      }\n    }\n    discountCodes {\n      code\n      applicable\n    }\n  }\n\n  mutation CartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {\n    cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {\n      cart {\n        ...CartFields\n      }\n      userErrors {\n        field\n        message\n      }\n    }\n  }\n": {return: CartLinesRemoveMutation, variables: CartLinesRemoveMutationVariables},
-  "\n  \n  fragment CartFields on Cart {\n    id\n    checkoutUrl\n    totalQuantity\n    cost {\n      totalAmount {\n        amount\n        currencyCode\n      }\n      subtotalAmount {\n        amount\n        currencyCode\n      }\n      totalTaxAmount {\n        amount\n        currencyCode\n      }\n    }\n    lines(first: 100) {\n      nodes {\n        id\n        quantity\n        merchandise {\n          ... on ProductVariant {\n            id\n            title\n            availableForSale\n            selectedOptions {\n              name\n              value\n            }\n            price {\n              amount\n              currencyCode\n            }\n            image {\n              url\n              altText\n              width\n              height\n            }\n            product {\n              handle\n              title\n            }\n          }\n        }\n        cost {\n          totalAmount {\n            amount\n            currencyCode\n          }\n        }\n      }\n    }\n    discountCodes {\n      code\n      applicable\n    }\n  }\n\n  mutation CartDiscountCodesUpdate($cartId: ID!, $discountCodes: [String!]!) {\n    cartDiscountCodesUpdate(cartId: $cartId, discountCodes: $discountCodes) {\n      cart {\n        ...CartFields\n      }\n      userErrors {\n        field\n        message\n      }\n    }\n  }\n": {return: CartDiscountCodesUpdateMutation, variables: CartDiscountCodesUpdateMutationVariables},
 }
 declare module '@shopify/storefront-api-client' {
   type InputMaybe<T> = StorefrontTypes.InputMaybe<T>;
