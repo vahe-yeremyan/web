@@ -33,8 +33,8 @@ const NAV_ITEMS = [
   { type: 'artworks', label: 'Artworks' },
   { type: 'route', label: 'Books', to: '/books' },
   { type: 'route', label: 'Sold', to: '/sold' },
-  { type: 'route', label: 'Studio & Show', to: '/studio-show' },
   { type: 'route', label: 'About', to: '/about' },
+  // { type: 'route', label: 'Studio & Show', to: '/studio-show' },
 ] as const
 
 const MEDIUM_FILTERS = [
