@@ -12,6 +12,7 @@ import { Divider } from '@/components/ui/divider'
 import { HOME_SEO } from '@/lib/legacy-seo'
 import { shopifyProductsToArtworkGridItems } from '@/lib/queries/shopify/artwork-grid'
 import { createSeoHead } from '@/lib/seo'
+import { getHomeCarouselImages } from '@/server/sanity/home-carousel.functions'
 import {
   getHighlightedArtworks,
   getRecentArtworks,
@@ -31,14 +32,24 @@ function recentArtworksQueryOptions() {
   })
 }
 
+function homeCarouselQueryOptions() {
+  return queryOptions({
+    queryKey: ['sanity', 'home', 'carousel'] as const,
+    queryFn: () => getHomeCarouselImages(),
+  })
+}
+
 export const Route = createFileRoute('/')({
   loader: async ({ context }) => {
-    await Promise.all([
+    const [, , heroImages] = await Promise.all([
       context.queryClient.ensureQueryData(highlightedArtworksQueryOptions()),
       context.queryClient.ensureQueryData(recentArtworksQueryOptions()),
+      context.queryClient.ensureQueryData(homeCarouselQueryOptions()),
     ])
+    return { ogImage: heroImages[0]?.src }
   },
-  head: () => createSeoHead(HOME_SEO),
+  head: ({ loaderData }) =>
+    createSeoHead({ ...HOME_SEO, image: loaderData?.ogImage }),
   component: Home,
 })
 
@@ -80,6 +91,7 @@ function Home() {
   const { data: recentArtworkProducts } = useSuspenseQuery(
     recentArtworksQueryOptions(),
   )
+  const { data: heroImages } = useSuspenseQuery(homeCarouselQueryOptions())
   const highlightedArtworks = shopifyProductsToArtworkGridItems(
     highlightedArtworkProducts,
   )
@@ -89,7 +101,7 @@ function Home() {
 
   return (
     <main className="-mt-(--header-height) pb-2">
-      <HomeHero />
+      <HomeHero images={heroImages} />
 
       {highlightedArtworks.length > 0 && (
         <>

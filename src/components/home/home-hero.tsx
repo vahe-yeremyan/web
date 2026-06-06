@@ -1,9 +1,11 @@
+import type { HeroImage } from './hero-carousel'
+
 import { HeroCarousel } from './hero-carousel'
 
-export function HomeHero() {
+export function HomeHero({ images }: { images: Array<HeroImage> }) {
   return (
     <div data-home-hero className="relative left-1/2 ml-[-50vw] w-screen">
-      <HeroCarousel className="h-dvh rounded-none 2xl:mt-0" />
+      <HeroCarousel images={images} className="h-dvh rounded-none 2xl:mt-0" />
 
       <div
         aria-hidden="true"

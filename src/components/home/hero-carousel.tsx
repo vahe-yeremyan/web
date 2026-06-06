@@ -12,43 +12,28 @@ import {
 } from '@/components/ui/carousel'
 import { cn } from '@/lib/utils'
 
-type HeroImage = {
+export type HeroImage = {
   src: string
   srcSet?: string
   alt: string
   sizes?: string
 }
 
-export const HERO_IMAGES: Array<HeroImage> = [
-  {
-    src: '/art.webp',
-    alt: 'Featured artwork by Vahe Yeremyan',
-  },
-  {
-    src: '/lilies1.webp',
-    alt: 'Lilies artwork by Vahe Yeremyan',
-  },
-  {
-    src: '/lilies2.webp',
-    alt: 'Lilies artwork by Vahe Yeremyan',
-  },
-  {
-    src: '/lilies3.webp',
-    alt: 'Lilies artwork by Vahe Yeremyan',
-  },
-]
-
 const AUTO_PLAY_INTERVAL_MS = 4000
-const HERO_IMAGE_SIZES =
-  '(min-width: 1536px) 1500px, (min-width: 1280px) 1400px, (min-width: 1024px) 1200px, (min-width: 768px) 900px, (min-width: 640px) 700px, calc(100vw - 2rem)'
 
-export function HeroCarousel({ className }: { className?: string }) {
+export function HeroCarousel({
+  className,
+  images,
+}: {
+  className?: string
+  images: Array<HeroImage>
+}) {
   const [api, setApi] = useState<CarouselApi>()
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(true)
   const [autoPlayResetKey, setAutoPlayResetKey] = useState(0)
 
-  const canMove = HERO_IMAGES.length > 1
+  const canMove = images.length > 1
 
   function scrollPrev() {
     api?.scrollPrev()
@@ -108,7 +93,7 @@ export function HeroCarousel({ className }: { className?: string }) {
       )}
     >
       <CarouselContent viewportClassName="h-full" className="ml-0 h-full">
-        {HERO_IMAGES.map((image, index) => (
+        {images.map((image, index) => (
           <CarouselItem key={image.src} className="h-full pl-0">
             <img
               src={image.src}
@@ -117,7 +102,7 @@ export function HeroCarousel({ className }: { className?: string }) {
               decoding="async"
               fetchPriority={index === 0 ? 'high' : 'low'}
               loading={index === 0 ? 'eager' : 'lazy'}
-              sizes={image.sizes ?? HERO_IMAGE_SIZES}
+              sizes={image.sizes}
               className="h-full w-full object-cover"
             />
           </CarouselItem>
@@ -157,7 +142,7 @@ export function HeroCarousel({ className }: { className?: string }) {
           )}
         </button>
 
-        {HERO_IMAGES.map((image, index) => (
+        {images.map((image, index) => (
           <button
             key={image.src}
             type="button"

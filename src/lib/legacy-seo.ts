@@ -5,7 +5,6 @@ export const HOME_SEO = {
   description:
     'Looking for the best artist and paintings for near you? Visit Vahe Yeremyan’s Personal Gallery for our collection of original paintings!',
   path: '/',
-  image: '/art.webp',
 } as const
 
 export const ABOUT_SEO = {
