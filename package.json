@@ -13,7 +13,7 @@
     "test": "vitest run --passWithNoTests",
     "lint": "prettier --check . && eslint",
     "format": "prettier --write . && eslint --fix",
-    "verify": "bun run lint && bun run test",
+    "verify": "node scripts/verify.mjs",
     "deploy": "bun run build && wrangler deploy"
   },
   "dependencies": {
