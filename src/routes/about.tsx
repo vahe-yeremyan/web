@@ -56,7 +56,7 @@ function AboutRoute() {
 
         <section
           id="contact"
-          className="scroll-mt-28 pt-12 text-lg leading-8 text-neutral-700"
+          className="scroll-mt-28 pt-12 text-base leading-8 text-neutral-700"
         >
           <h2 className="mb-5 text-2xl font-semibold tracking-tight">
             Contact

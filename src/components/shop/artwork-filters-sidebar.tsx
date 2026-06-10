@@ -142,7 +142,7 @@ function SortFilter({ value, hasFilters, onChange }: SortFilterProps) {
           id="artwork-sort"
           value={value}
           onChange={(event) => onChange(event.target.value as ShopSortOption)}
-          className="border-input focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-full appearance-none items-center justify-between rounded-md border bg-transparent px-3 pr-9 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-2"
+          className="border-input flex h-9 w-full appearance-none items-center justify-between rounded-md border bg-transparent px-3 pr-9 text-sm whitespace-nowrap shadow-xs outline-none focus:outline-none focus-visible:outline-none"
         >
           {SHOP_SORT_OPTIONS.map((option) => (
             <option

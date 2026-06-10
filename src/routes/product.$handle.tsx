@@ -39,8 +39,8 @@ function ProductRoute() {
   const isSold = !product.availableForSale || !variant.availableForSale
 
   return (
-    <main className="site-frame pb-20">
-      <article className="grid gap-8 py-6 md:py-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,0.85fr)] lg:gap-12 xl:gap-16">
+    <main className="pb-20">
+      <article className="grid grid-cols-1 gap-8 py-6 md:py-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,0.85fr)] lg:gap-12 xl:gap-16">
         <ProductImageCarousel
           images={product.images.nodes}
           title={product.title}

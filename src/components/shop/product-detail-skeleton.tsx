@@ -2,11 +2,11 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export function ProductDetailSkeleton() {
   return (
-    <main className="site-frame pb-20">
+    <main className="pb-20">
       <article
         role="status"
         aria-busy="true"
-        className="grid gap-8 py-6 md:py-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,0.85fr)] lg:gap-12 xl:gap-16"
+        className="grid grid-cols-1 gap-8 py-6 md:py-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,0.85fr)] lg:gap-12 xl:gap-16"
       >
         <span className="sr-only">Loading product</span>
         <Skeleton className="aspect-5/4 w-full rounded-md bg-neutral-200/70" />

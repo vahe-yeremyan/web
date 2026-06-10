@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react'
+
 import { shopifyImageUrl } from '@/lib/queries/shopify/format'
 
 type ShopImageProps = {
@@ -10,6 +12,8 @@ type ShopImageProps = {
   loading?: 'eager' | 'lazy'
   fetchPriority?: 'high' | 'low' | 'auto'
   srcSetWidths?: ReadonlyArray<number>
+  onLoad?: () => void
+  onError?: () => void
 }
 
 const DEFAULT_SRC_SET_WIDTHS = [
@@ -26,7 +30,20 @@ export function ShopImage({
   loading = 'lazy',
   fetchPriority = 'auto',
   srcSetWidths = DEFAULT_SRC_SET_WIDTHS,
+  onLoad,
+  onError,
 }: ShopImageProps) {
+  const imgRef = useRef<HTMLImageElement>(null)
+  const onLoadRef = useRef(onLoad)
+
+  onLoadRef.current = onLoad
+
+  useEffect(() => {
+    // `load` can fire before React attaches its handler for cached/preloaded
+    // images, so report completeness on mount/src change as a fallback.
+    if (imgRef.current?.complete) onLoadRef.current?.()
+  }, [src])
+
   if (!src) {
     return (
       <div
@@ -59,6 +76,7 @@ export function ShopImage({
 
   return (
     <img
+      ref={imgRef}
       src={transformed}
       srcSet={srcSet}
       sizes={sizes ?? `${width}px`}
@@ -69,6 +87,8 @@ export function ShopImage({
       decoding="async"
       fetchPriority={fetchPriority}
       className={className}
+      onLoad={onLoad}
+      onError={onError}
     />
   )
 }

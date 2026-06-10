@@ -56,7 +56,7 @@ export function Footer() {
   return (
     <footer className="bg-neutral-100/70 pt-7 md:pt-14">
       <div className="site-frame flex min-h-80 flex-col">
-        <div className="mx-auto grid w-2xl grid-cols-3 gap-9 md:gap-8">
+        <div className="mx-auto grid w-full max-w-2xl grid-cols-1 gap-9 sm:grid-cols-3 md:gap-8">
           <FooterSection title="The Gallery">
             {FOOTER_NAV_LINKS.map((link) => (
               <li key={link.to}>
@@ -100,7 +100,7 @@ export function Footer() {
 
         <NewsletterSignup />
 
-        <p className="font-manrope mt-auto pt-10 pb-4 text-center text-sm font-medium text-neutral-500">
+        <p className="font-manrope mt-auto pt-10 pb-4 text-left text-sm font-medium text-neutral-500 sm:text-center">
           Copyright © 2026 Vahe Yeremyan. All Rights Reserved.
         </p>
       </div>

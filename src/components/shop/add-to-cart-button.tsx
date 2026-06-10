@@ -89,7 +89,7 @@ export function AddToCartButton({
         )
       }}
       className={cn(
-        'w-full cursor-pointer rounded-full px-6 py-3 font-semibold tracking-wide transition-all duration-200 ease-in-out active:scale-[0.99] md:w-fit md:px-12',
+        'w-full cursor-pointer rounded-md px-6 py-3 font-semibold tracking-wide transition-all duration-200 ease-in-out active:scale-[0.99] lg:rounded-full lg:px-12',
         disabled &&
           'cursor-not-allowed bg-white text-gray-600 ring ring-gray-300 active:scale-100',
         !disabled && 'hover:bg-primary-accent bg-black text-white',

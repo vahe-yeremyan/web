@@ -25,22 +25,20 @@ export function ArtworkGridSection({
     <section className={hideTitle ? undefined : 'my-6 md:my-10'}>
       {!hideTitle && <HomeSectionTitle>{title}</HomeSectionTitle>}
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
         {artworks.map((artwork, index) => (
           <article key={artwork.id} className="min-w-0">
             <ArtworkLink
               artwork={artwork}
-              className="block aspect-9/8 overflow-hidden rounded-md border border-neutral-200/60 bg-neutral-50/75 p-3"
+              className="relative block aspect-9/8 overflow-hidden rounded-md border border-neutral-200/60 bg-neutral-50/75"
             >
-              <div className="flex h-full w-full items-center justify-center">
-                <ArtworkImage
-                  artwork={artwork}
-                  priority={index < priorityCount}
-                />
-              </div>
+              <ArtworkImage
+                artwork={artwork}
+                priority={index < priorityCount}
+              />
             </ArtworkLink>
 
-            <div className="mt-4 space-y-1.5 text-left">
+            <div className="mt-2 space-y-1.5 text-left md:mt-4">
               <h3 className="text-base font-semibold">
                 {artwork.productHandle ? (
                   <Link

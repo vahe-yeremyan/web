@@ -84,7 +84,7 @@ export function SearchDialog() {
         <div
           role="dialog"
           aria-label="Search"
-          className="fixed top-[calc(var(--header-height,0)+0.25rem)] right-3 z-50 w-[min(32rem,calc(100vw-1.5rem))] rounded-2xl border border-neutral-300 bg-white p-1.5 px-2 text-black shadow-sm shadow-neutral-300/80 md:top-[calc(var(--header-height,0)-1.5rem)] md:right-10"
+          className="fixed top-[calc(var(--header-height,0)+0.75rem)] right-3 z-50 w-[min(32rem,calc(100vw-1.5rem))] rounded-2xl border border-neutral-300 bg-white p-1.5 px-2 text-black shadow-sm shadow-neutral-300/80 md:top-[calc(var(--header-height,0)-1.5rem)] md:right-10"
         >
           <SearchForm
             value={searchTerm}

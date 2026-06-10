@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 
 const ARTWORK_GRID_IMAGE_SIZES =
-  '(min-width: 1536px) 360px, (min-width: 1280px) 335px, (min-width: 1024px) 25vw, (min-width: 640px) 50vw, calc(100vw - 2rem)'
+  '(min-width: 1536px) 360px, (min-width: 1280px) 335px, (min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw'
 
 type ArtworkImageProps = {
   artwork: ArtworkGridItem
@@ -28,12 +28,15 @@ export function ArtworkImage({ artwork, priority }: ArtworkImageProps) {
 
   if (!artwork.imageSrc) {
     return (
-      <div aria-hidden className="h-full w-full rounded-[2px] bg-neutral-100" />
+      <div
+        aria-hidden
+        className="absolute inset-3 rounded-[2px] bg-neutral-100"
+      />
     )
   }
 
   return (
-    <div className="relative flex h-full w-full items-center justify-center">
+    <div className="absolute inset-3">
       <Skeleton
         aria-hidden
         className={cn(
@@ -57,7 +60,7 @@ export function ArtworkImage({ artwork, priority }: ArtworkImageProps) {
           setIsLoaded(true)
         }}
         className={cn(
-          'relative z-10 block max-h-full max-w-full rounded-[2px] object-contain transition-opacity duration-200',
+          'absolute inset-0 z-10 h-full w-full rounded-[2px] object-contain transition-opacity duration-200',
           isLoaded ? 'opacity-100' : 'opacity-0',
         )}
       />

@@ -6,7 +6,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --header-height: 92px;
+  --header-height: 64px;
   --content-max: 100%;
   --content-px: 1rem;
   --sea-ink: #173a40;
@@ -79,6 +79,7 @@
 
 @media (min-width: 768px) {
   :root {
+    --header-height: 80px;
     --content-px: 2rem;
     --content-max: 900px;
   }
@@ -86,6 +87,7 @@
 
 @media (min-width: 1024px) {
   :root {
+    --header-height: 92px;
     --content-px: 2.5rem;
     --content-max: 1200px;
   }

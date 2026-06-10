@@ -57,7 +57,7 @@ export function ProductGridSkeleton({
     <div role="status" aria-busy="true">
       <span className="sr-only">Loading products</span>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-5 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5 lg:grid-cols-4">
         {items.map((item) => (
           <article key={item} className="min-w-0">
             <div className="aspect-square overflow-hidden rounded-md border border-neutral-200/60 bg-neutral-50/75 p-4 sm:p-5">
