@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react'
+
 import {
   Sheet,
   SheetClose,
@@ -29,9 +31,30 @@ export function ProductListingLayout({
   children,
   onMainScrollIntent,
 }: ProductListingLayoutProps) {
+  const onMainScrollIntentRef = useRef(onMainScrollIntent)
+
+  useEffect(() => {
+    onMainScrollIntentRef.current = onMainScrollIntent
+  }, [onMainScrollIntent])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY >= MAIN_SCROLL_INTENT_OFFSET) {
+        onMainScrollIntentRef.current?.()
+      }
+    }
+
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
   return (
-    <section className="md:flex md:h-[calc(100dvh-var(--header-height))] md:flex-col md:overflow-hidden">
-      <div className="mt-8 mb-6 flex flex-wrap items-center gap-4 md:shrink-0 md:gap-6">
+    <section>
+      <div className="mt-8 mb-6 flex flex-wrap items-center gap-4 md:gap-6">
         {title && (
           <h1 className="shrink-0 text-2xl leading-tight font-semibold tracking-tight text-black md:text-3xl">
             {title}
@@ -43,11 +66,11 @@ export function ProductListingLayout({
         {titleActions}
       </div>
 
-      <div className="grid gap-5 md:min-h-0 md:flex-1 md:grid-cols-[16rem_minmax(0,1fr)] md:items-stretch md:overflow-hidden">
+      <div className="grid gap-5 md:grid-cols-[16rem_minmax(0,1fr)] md:items-start">
         <div
           className={cn(
             HIDDEN_SCROLLBAR_CLASS_NAME,
-            'hidden md:block md:min-h-0 md:overflow-y-auto md:overscroll-contain md:pr-1 md:pb-5',
+            'hidden md:sticky md:top-[calc(var(--header-height)+1.5rem)] md:block md:max-h-[calc(100dvh-var(--header-height)-3rem)] md:overflow-y-auto md:overscroll-contain md:pr-1 md:pb-5',
           )}
         >
           {sidebar}
@@ -55,13 +78,8 @@ export function ProductListingLayout({
         <div
           className={cn(
             HIDDEN_SCROLLBAR_CLASS_NAME,
-            'min-w-0 pb-10 md:h-full md:min-h-0 md:overflow-y-auto md:overscroll-contain md:pr-2 md:pb-5',
+            'min-w-0 pb-10 md:pr-2 md:pb-12',
           )}
-          onScroll={(event) => {
-            if (event.currentTarget.scrollTop >= MAIN_SCROLL_INTENT_OFFSET) {
-              onMainScrollIntent?.()
-            }
-          }}
         >
           {children}
         </div>
