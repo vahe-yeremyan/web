@@ -73,15 +73,15 @@ function Logo({ isSolid }: { isSolid: boolean }) {
     <Link
       to="/"
       aria-label="Home"
-      className="relative block aspect-20/11 w-28 md:w-32 lg:w-40"
+      className="relative block aspect-3/2 w-28 md:w-32 lg:w-40"
     >
       <img
         src="/logo-black.png"
         alt="Vahe Yeremyan Art"
         width="160"
-        height="88"
+        height="80"
         className={cn(
-          'absolute inset-0 h-full w-full object-cover',
+          'absolute inset-0 size-full w-fit object-contain py-2',
           LOGO_TRANSITION_CLASS,
           getLogoVisibilityClassName(isSolid),
         )}
@@ -90,10 +90,10 @@ function Logo({ isSolid }: { isSolid: boolean }) {
         src="/logo-white.png"
         alt=""
         width="160"
-        height="88"
+        height="80"
         aria-hidden="true"
         className={cn(
-          'absolute inset-0 h-full w-full object-cover',
+          'absolute inset-0 size-full w-fit object-contain py-2',
           LOGO_TRANSITION_CLASS,
           getLogoVisibilityClassName(!isSolid),
         )}

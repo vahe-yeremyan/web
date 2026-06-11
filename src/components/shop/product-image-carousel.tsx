@@ -127,7 +127,7 @@ export function ProductImageCarousel({
         setApi={setApi}
         opts={{ loop: images.length > 1, startIndex: safeInitialIndex }}
         className={cn(
-          'group mx-auto w-full max-w-3xl',
+          'group w-full max-w-3xl',
           zoomed &&
             'flex min-h-0 w-full max-w-5xl min-w-0 flex-1 flex-col justify-center',
         )}
