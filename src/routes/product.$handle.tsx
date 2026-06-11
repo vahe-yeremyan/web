@@ -40,7 +40,7 @@ function ProductRoute() {
 
   return (
     <main className="pb-20">
-      <article className="grid grid-cols-1 gap-8 py-6 md:py-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,0.85fr)] lg:gap-12 xl:gap-16">
+      <article className="grid grid-cols-1 gap-8 py-6 md:py-10 lg:grid-cols-[minmax(0,42rem)_minmax(22rem,1fr)] lg:gap-12 xl:grid-cols-[minmax(0,48rem)_minmax(22rem,1fr)] xl:gap-16">
         <ProductImageCarousel
           images={product.images.nodes}
           title={product.title}

@@ -2,6 +2,7 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
+  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -86,9 +87,14 @@ function MobileFilters({ sidebar }: { sidebar: React.ReactNode }) {
         className="w-full gap-0 border-l-0 bg-white text-black sm:max-w-none md:hidden"
       >
         <SheetHeader className="h-16 flex-row items-center border-b border-neutral-100 px-(--content-px)">
-          <SheetTitle className="font-manrope text-lg font-semibold">
-            Filters
-          </SheetTitle>
+          <div>
+            <SheetTitle className="font-manrope text-lg font-semibold">
+              Filters
+            </SheetTitle>
+            <SheetDescription className="sr-only">
+              Product listing filters for narrowing artwork results.
+            </SheetDescription>
+          </div>
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto px-(--content-px) py-5">

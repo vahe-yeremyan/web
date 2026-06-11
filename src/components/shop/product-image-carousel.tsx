@@ -114,9 +114,7 @@ export function ProductImageCarousel({
   }, [selectedIndex])
 
   if (images.length === 0) {
-    return (
-      <div className="aspect-5/4 rounded-md border border-neutral-200 bg-neutral-50" />
-    )
+    return <div className="aspect-4/3 bg-neutral-50" />
   }
 
   return (
@@ -129,12 +127,11 @@ export function ProductImageCarousel({
         className={cn(
           'group w-full max-w-3xl',
           zoomed &&
-            'flex min-h-0 w-full max-w-5xl min-w-0 flex-1 flex-col justify-center',
+            'mx-auto flex min-h-0 w-full max-w-5xl min-w-0 flex-1 flex-col justify-center lg:max-w-[min(64rem,calc(100vw-8rem))]',
         )}
       >
         <CarouselContent
           viewportClassName={cn(
-            'rounded-md',
             zoomed && 'bg-black',
             !zoomed && 'bg-neutral-50',
           )}
@@ -153,8 +150,8 @@ export function ProductImageCarousel({
                   onImageClick?.(index)
                 }}
                 className={cn(
-                  'relative flex w-full items-center justify-center rounded-md border border-neutral-200 bg-neutral-50',
-                  !zoomed && 'aspect-5/4',
+                  'relative flex w-full items-center justify-center bg-neutral-50',
+                  !zoomed && 'aspect-4/3',
                   onImageClick && 'cursor-zoom-in',
                   zoomed && 'h-[min(80vh,760px)] border-0 bg-black p-0',
                 )}
@@ -166,7 +163,8 @@ export function ProductImageCarousel({
                       alt=""
                       src={blankImageSrc(image.width, image.height)}
                       className={cn(
-                        'max-h-full max-w-full rounded-[2px]',
+                        'max-h-full max-w-full',
+                        zoomed && 'rounded-[2px]',
                         zoomed ? 'animate-pulse bg-zinc-900' : 'bg-neutral-100',
                       )}
                     />
@@ -182,7 +180,10 @@ export function ProductImageCarousel({
                       }
                       sizes={imageSettings.sizes}
                       srcSetWidths={imageSettings.srcSetWidths}
-                      className="absolute inset-0 h-full w-full rounded-[2px] object-contain"
+                      className={cn(
+                        'absolute inset-0 h-full w-full object-contain',
+                        zoomed && 'rounded-[2px]',
+                      )}
                       onLoad={() => markImageLoaded(index)}
                       onError={() => markImageLoaded(index)}
                     />
@@ -198,13 +199,13 @@ export function ProductImageCarousel({
             <CarouselPrevious
               className={cn(
                 'left-3 hidden border-neutral-200 bg-white/85 text-black shadow-sm backdrop-blur transition-opacity hover:bg-white hover:text-black md:inline-flex md:opacity-100 lg:opacity-0 lg:group-hover:opacity-100',
-                zoomed && 'left-4 bg-white/10 text-white',
+                zoomed && 'left-4 bg-white/10 text-white lg:-left-12',
               )}
             />
             <CarouselNext
               className={cn(
                 'right-3 hidden border-neutral-200 bg-white/85 text-black shadow-sm backdrop-blur transition-opacity hover:bg-white hover:text-black md:inline-flex md:opacity-100 lg:opacity-0 lg:group-hover:opacity-100',
-                zoomed && 'right-4 bg-white/10 text-white',
+                zoomed && 'right-4 bg-white/10 text-white lg:-right-12',
               )}
             />
           </>
@@ -214,8 +215,8 @@ export function ProductImageCarousel({
       {images.length > 1 && (
         <div
           className={cn(
-            'mx-auto mt-3 w-full max-w-3xl scrollbar-none overflow-x-auto px-1 pb-1 [&::-webkit-scrollbar]:hidden',
-            zoomed && 'pb-6',
+            'mt-3 w-full max-w-3xl scrollbar-none overflow-x-auto px-1 pb-1 [&::-webkit-scrollbar]:hidden',
+            zoomed && 'mx-auto pb-6',
           )}
         >
           <div className="flex w-max min-w-full justify-center gap-2">

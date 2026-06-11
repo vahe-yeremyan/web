@@ -10,6 +10,7 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -255,9 +256,14 @@ export function MobileNav() {
         className="w-full gap-0 border-l-0 bg-white text-black sm:max-w-none md:hidden"
       >
         <SheetHeader className="h-23 flex-row items-center px-(--content-px)">
-          <SheetTitle className="font-manrope text-lg font-semibold">
-            Menu
-          </SheetTitle>
+          <div>
+            <SheetTitle className="font-manrope text-lg font-semibold">
+              Menu
+            </SheetTitle>
+            <SheetDescription className="sr-only">
+              Site navigation and artwork category links.
+            </SheetDescription>
+          </div>
         </SheetHeader>
 
         <nav
