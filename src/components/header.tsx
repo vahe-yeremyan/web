@@ -30,7 +30,7 @@ export default function Header() {
       <div
         aria-hidden="true"
         className={cn(
-          'pointer-events-none absolute inset-x-0 top-0 h-40 bg-linear-to-b from-black/35 via-black/15 to-transparent',
+          'pointer-events-none absolute inset-x-0 top-0 h-40 bg-linear-to-b from-black/45 via-black/20 to-transparent',
           HEADER_GRADIENT_TRANSITION_CLASS,
           getHeaderGradientVisibilityClassName(isSolid),
         )}

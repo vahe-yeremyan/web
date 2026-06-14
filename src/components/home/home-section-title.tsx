@@ -14,7 +14,7 @@ export function HomeSectionTitle({
   return (
     <div
       className={cn(
-        'mb-4 flex items-baseline justify-between gap-4 md:mb-6',
+        'mb-6 flex items-baseline justify-between gap-4 md:mb-8',
         className,
       )}
     >
