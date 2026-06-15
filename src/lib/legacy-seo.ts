@@ -16,6 +16,8 @@ export const ABOUT_SEO = {
 
 export const STUDIO_SHOW_SEO = {
   title: 'Studio & Show - Vahe Yeremyan’s Personal Gallery',
+  description:
+    'Videos from Vahe Yeremyan’s studio, exhibitions, and art shows.',
   ogDescription: 'Studio & Show',
   path: '/studio-show',
 } as const

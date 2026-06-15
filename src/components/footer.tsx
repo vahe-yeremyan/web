@@ -14,6 +14,7 @@ const FOOTER_NAV_LINKS = [
   { label: 'Books', to: '/books' },
   { label: 'Sold', to: '/sold' },
   { label: 'About', to: '/about' },
+  { label: 'Studio & Show', to: '/studio-show' },
 ] as const
 
 const LEGAL_LINKS = [

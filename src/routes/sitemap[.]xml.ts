@@ -10,6 +10,7 @@ const STATIC_SITEMAP_PATHS = [
   '/books',
   '/sold',
   '/about',
+  '/studio-show',
 ] as const
 
 const PRODUCT_SITEMAP_QUERY = /* GraphQL */ `
