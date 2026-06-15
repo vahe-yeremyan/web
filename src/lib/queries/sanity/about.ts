@@ -1,3 +1,5 @@
+import type { SanityImageSource } from '@sanity/image-url'
+
 export type JsonValue =
   | string
   | number
@@ -16,7 +18,26 @@ export type AboutPage = {
   title: string
   slug: string
   body: Array<PortableTextJsonBlock>
+  artistImages?: Array<AboutArtistImage>
   credentialSections?: Array<AboutCredentialSection>
+}
+
+export type AboutPageDocument = Omit<AboutPage, 'artistImages'> & {
+  artistImages?: Array<AboutArtistImageDocument>
+}
+
+export type AboutArtistImageDocument = {
+  image: SanityImageSource
+  alt: string
+  aspectRatio?: number
+}
+
+export type AboutArtistImage = {
+  src: string
+  srcSet: string
+  sizes: string
+  alt: string
+  aspectRatio?: number
 }
 
 export type AboutCredentialSection = {
@@ -34,6 +55,11 @@ export const ABOUT_QUERY = `
     title,
     "slug": slug.current,
     body,
+    artistImages[]{
+      image,
+      alt,
+      "aspectRatio": image.asset->metadata.dimensions.aspectRatio
+    },
     credentialSections[]{
       title,
       items[]{
