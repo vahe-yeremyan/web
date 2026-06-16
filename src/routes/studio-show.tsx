@@ -30,7 +30,7 @@ function StudioShowRoute() {
   return (
     <main className="pb-20">
       <PageHeading title="Studio & Show" />
-      <div className="grid grid-cols-2 gap-3 sm:gap-5">
+      <div className="grid gap-3 sm:grid-cols-2 sm:gap-5">
         {STUDIO_SHOW_VIDEOS.map((video) => (
           <iframe
             key={video.id}
