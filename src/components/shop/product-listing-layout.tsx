@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react'
+
 import { useEffect, useRef } from 'react'
 
 import {
@@ -21,8 +23,12 @@ type ProductListingLayoutProps = {
 }
 
 const MAIN_SCROLL_INTENT_OFFSET = 320
+const SIDEBAR_VIEWPORT_PADDING = 24
 const HIDDEN_SCROLLBAR_CLASS_NAME =
   '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+const INITIAL_SIDEBAR_SCROLL_STYLE = {
+  '--sidebar-scroll-max-height': 'calc(100dvh - var(--header-height) - 8rem)',
+} as CSSProperties
 
 export function ProductListingLayout({
   title,
@@ -32,6 +38,7 @@ export function ProductListingLayout({
   onMainScrollIntent,
 }: ProductListingLayoutProps) {
   const onMainScrollIntentRef = useRef(onMainScrollIntent)
+  const sidebarScrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     onMainScrollIntentRef.current = onMainScrollIntent
@@ -52,6 +59,43 @@ export function ProductListingLayout({
     }
   }, [])
 
+  useEffect(() => {
+    const sidebarScrollElement = sidebarScrollRef.current
+    if (!sidebarScrollElement) return
+
+    let frame = 0
+
+    const setSidebarMaxHeight = () => {
+      const top = sidebarScrollElement.getBoundingClientRect().top
+      const maxHeight = Math.max(
+        320,
+        window.innerHeight - top - SIDEBAR_VIEWPORT_PADDING,
+      )
+
+      sidebarScrollElement.style.setProperty(
+        '--sidebar-scroll-max-height',
+        `${Math.round(maxHeight)}px`,
+      )
+    }
+
+    const updateSidebarMaxHeight = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(setSidebarMaxHeight)
+    }
+
+    setSidebarMaxHeight()
+    window.addEventListener('scroll', updateSidebarMaxHeight, {
+      passive: true,
+    })
+    window.addEventListener('resize', updateSidebarMaxHeight)
+
+    return () => {
+      cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', updateSidebarMaxHeight)
+      window.removeEventListener('resize', updateSidebarMaxHeight)
+    }
+  }, [])
+
   return (
     <section>
       <div className="mt-8 mb-6 flex flex-wrap items-center gap-4 md:gap-6">
@@ -68,9 +112,11 @@ export function ProductListingLayout({
 
       <div className="grid gap-5 md:grid-cols-[16rem_minmax(0,1fr)] md:items-start">
         <div
+          ref={sidebarScrollRef}
+          style={INITIAL_SIDEBAR_SCROLL_STYLE}
           className={cn(
             HIDDEN_SCROLLBAR_CLASS_NAME,
-            'hidden md:sticky md:top-[calc(var(--header-height)+1.5rem)] md:block md:max-h-[calc(100dvh-var(--header-height)-3rem)] md:overflow-y-auto md:overscroll-contain md:pr-1 md:pb-5',
+            'hidden md:sticky md:top-[calc(var(--header-height)+1.5rem)] md:block md:max-h-(--sidebar-scroll-max-height) md:overflow-y-auto md:overscroll-contain md:pr-1 md:pb-8',
           )}
         >
           {sidebar}

@@ -31,6 +31,7 @@ type FilterSectionProps = {
   name: ShopFilterKey
   options: string[]
   selected: string[]
+  selectionMode?: 'multiple' | 'single'
   onToggle: (key: ShopFilterKey, value: string) => void
 }
 
@@ -59,6 +60,7 @@ function FilterSection({
   name,
   options,
   selected,
+  selectionMode = 'multiple',
   onToggle,
 }: FilterSectionProps) {
   if (options.length === 0) return null
@@ -75,6 +77,34 @@ function FilterSection({
       <ul className="space-y-2">
         {options.map((option) => {
           const id = optionId(name, option)
+          const isSelected = selected.includes(option)
+
+          if (selectionMode === 'single') {
+            return (
+              <li key={option}>
+                <button
+                  type="button"
+                  className="flex w-full cursor-pointer items-center gap-2 text-left"
+                  aria-pressed={isSelected}
+                  onClick={() => onToggle(name, option)}
+                >
+                  <span
+                    className={cn(
+                      'flex size-4 shrink-0 items-center justify-center rounded-full border transition-colors',
+                      isSelected && 'border-neutral-900',
+                      !isSelected && 'border-neutral-300',
+                    )}
+                    aria-hidden
+                  >
+                    {isSelected && (
+                      <span className="size-2 rounded-full bg-neutral-900" />
+                    )}
+                  </span>
+                  <span className="text-sm text-neutral-700">{option}</span>
+                </button>
+              </li>
+            )
+          }
 
           return (
             <li key={option} className="flex items-center gap-2">
@@ -82,7 +112,7 @@ function FilterSection({
                 <input
                   id={id}
                   type="checkbox"
-                  checked={selected.includes(option)}
+                  checked={isSelected}
                   onChange={() => onToggle(name, option)}
                   className="peer size-4 cursor-pointer appearance-none rounded-[3px] border border-neutral-300 bg-white checked:border-neutral-900 checked:bg-neutral-900 focus-visible:ring-2 focus-visible:ring-neutral-900/20 focus-visible:outline-none"
                 />
@@ -243,6 +273,7 @@ export function ArtworkFiltersSidebar({
         name="category"
         options={filterOptions.categories}
         selected={displayedSearch.category}
+        selectionMode="single"
         onToggle={onFilterToggle}
       />
       <FilterSection

@@ -92,10 +92,10 @@ function ProductCategoryRoute() {
       filterOptions={filterOptions}
       page={page}
       lockedCategory={title}
-      onSearchChange={(search) => {
+      onSearchChange={(search, options) => {
         void navigate({
           replace: true,
-          resetScroll: false,
+          resetScroll: options?.resetScroll ?? false,
           search: { ...search, category: [] },
         })
       }}
@@ -108,7 +108,7 @@ function ProductCategoryRoute() {
         if (category === title) {
           void navigate({
             to: '/shop',
-            resetScroll: false,
+            resetScroll: true,
             search,
           })
           return
@@ -117,7 +117,7 @@ function ProductCategoryRoute() {
         void navigate({
           to: '/product-category/$handle',
           params: { handle: nextCategory.handle },
-          resetScroll: false,
+          resetScroll: true,
           search,
         })
       }}

@@ -33,7 +33,10 @@ type ProductListingPageProps = {
   filterOptions: ShopFilterOptions
   page: ProductListQueryResult
   lockedCategory?: string
-  onSearchChange: (search: ShopSearchParams) => void
+  onSearchChange: (
+    search: ShopSearchParams,
+    options?: { resetScroll?: boolean },
+  ) => void
   onLockedCategoryToggle?: (category: string, search: ShopSearchParams) => void
 }
 
@@ -118,7 +121,10 @@ export function ProductListingPage({
     queryClient,
   ])
 
-  const updateSearch = (next: ShopSearchParams) => {
+  const updateSearch = (
+    next: ShopSearchParams,
+    options?: { resetScroll?: boolean },
+  ) => {
     const searchWithoutPagination = resetShopSearchPagination(next)
     const filterSearch = lockedCategory
       ? { ...searchWithoutPagination, category: [lockedCategory] }
@@ -130,7 +136,7 @@ export function ProductListingPage({
         : searchWithoutPagination
 
     setSearch(resolvedSearch)
-    onSearchChange(resolvedSearch)
+    onSearchChange(resolvedSearch, options)
   }
 
   const handleSortChange = (sort: ShopSortOption) => {
@@ -146,6 +152,17 @@ export function ProductListingPage({
       })
       setSearch(nextSearch)
       onLockedCategoryToggle(value, nextSearch)
+      return
+    }
+
+    if (key === 'category') {
+      updateSearch(
+        {
+          ...search,
+          category: search.category.includes(value) ? [] : [value],
+        },
+        { resetScroll: true },
+      )
       return
     }
 

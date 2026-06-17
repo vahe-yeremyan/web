@@ -44,10 +44,10 @@ function ShopIndex() {
       productSearch={routeSearch}
       filterOptions={filterOptions}
       page={page}
-      onSearchChange={(search) => {
+      onSearchChange={(search, options) => {
         void navigate({
           replace: true,
-          resetScroll: false,
+          resetScroll: options?.resetScroll ?? false,
           search,
         })
       }}
