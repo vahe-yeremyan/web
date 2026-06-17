@@ -1,5 +1,3 @@
-import type { ArtworkTheme } from '@/components/home/themes-section'
-
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 
@@ -13,6 +11,7 @@ import { HOME_SEO } from '@/lib/legacy-seo'
 import { shopifyProductsToArtworkGridItems } from '@/lib/queries/shopify/artwork-grid'
 import { createSeoHead } from '@/lib/seo'
 import { getHomeCarouselImages } from '@/server/sanity/home-carousel.functions'
+import { getHomeThemes } from '@/server/sanity/home-themes.functions'
 import {
   getHighlightedArtworks,
   getRecentArtworks,
@@ -39,12 +38,20 @@ function homeCarouselQueryOptions() {
   })
 }
 
+function homeThemesQueryOptions() {
+  return queryOptions({
+    queryKey: ['sanity', 'home', 'themes'] as const,
+    queryFn: () => getHomeThemes(),
+  })
+}
+
 export const Route = createFileRoute('/')({
   loader: async ({ context }) => {
     const [, , heroImages] = await Promise.all([
       context.queryClient.ensureQueryData(highlightedArtworksQueryOptions()),
       context.queryClient.ensureQueryData(recentArtworksQueryOptions()),
       context.queryClient.ensureQueryData(homeCarouselQueryOptions()),
+      context.queryClient.ensureQueryData(homeThemesQueryOptions()),
     ])
     return { ogImage: heroImages[0]?.src }
   },
@@ -52,37 +59,6 @@ export const Route = createFileRoute('/')({
     createSeoHead({ ...HOME_SEO, image: loaderData?.ogImage }),
   component: Home,
 })
-
-const ARTWORK_THEMES: Array<ArtworkTheme> = [
-  {
-    id: 'abstract',
-    title: 'Abstract',
-    categoryHandle: 'abstract',
-    imageSrc: '/abstract.webp',
-    imageAlt: 'Abstract painting by Vahe Yeremyan',
-  },
-  {
-    id: 'seascape',
-    title: 'Seascape',
-    categoryHandle: 'seascape',
-    imageSrc: '/seascape.webp',
-    imageAlt: 'Seascape painting by Vahe Yeremyan',
-  },
-  {
-    id: 'flowers',
-    title: 'Flowers',
-    categoryHandle: 'flowers',
-    imageSrc: '/flowers.webp',
-    imageAlt: 'Floral painting by Vahe Yeremyan',
-  },
-  {
-    id: 'landscape',
-    title: 'Landscape',
-    categoryHandle: 'landscape',
-    imageSrc: '/landscape.webp',
-    imageAlt: 'Landscape painting by Vahe Yeremyan',
-  },
-]
 
 function Home() {
   const { data: highlightedArtworkProducts } = useSuspenseQuery(
@@ -92,6 +68,7 @@ function Home() {
     recentArtworksQueryOptions(),
   )
   const { data: heroImages } = useSuspenseQuery(homeCarouselQueryOptions())
+  const { data: themes } = useSuspenseQuery(homeThemesQueryOptions())
   const highlightedArtworks = shopifyProductsToArtworkGridItems(
     highlightedArtworkProducts,
   )
@@ -123,9 +100,12 @@ function Home() {
         </>
       )}
 
-      <ThemesSection themes={ARTWORK_THEMES} />
-
-      <Divider className="my-6 md:my-10" />
+      {themes.length > 0 && (
+        <>
+          <ThemesSection themes={themes} />
+          <Divider className="my-6 md:my-10" />
+        </>
+      )}
 
       <PartnerLogosSection />
 
