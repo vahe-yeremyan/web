@@ -17,6 +17,8 @@ export type HeroImage = {
   srcSet?: string
   alt: string
   sizes?: string
+  width?: number
+  height?: number
 }
 
 const AUTO_PLAY_INTERVAL_MS = 4000
@@ -103,6 +105,8 @@ export function HeroCarousel({
               fetchPriority={index === 0 ? 'high' : 'low'}
               loading={index === 0 ? 'eager' : 'lazy'}
               sizes={image.sizes}
+              width={image.width}
+              height={image.height}
               className="h-full w-full object-cover"
             />
           </CarouselItem>

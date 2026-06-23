@@ -5,9 +5,6 @@ import { useEffect, useRef, useState } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 
-const ARTWORK_GRID_IMAGE_SIZES =
-  '(min-width: 1536px) 360px, (min-width: 1280px) 335px, (min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw'
-
 type ArtworkImageProps = {
   artwork: ArtworkGridItem
   priority: boolean
@@ -52,7 +49,7 @@ export function ArtworkImage({ artwork, priority }: ArtworkImageProps) {
         loading={priority ? 'eager' : 'lazy'}
         decoding="async"
         fetchPriority={priority ? 'high' : 'auto'}
-        sizes={artwork.imageSizes ?? ARTWORK_GRID_IMAGE_SIZES}
+        sizes={artwork.imageSizes}
         onLoad={() => {
           setIsLoaded(true)
         }}

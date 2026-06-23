@@ -8,6 +8,6 @@ export type ArtworkGridItem = {
   productHandle?: string
   imageSrc?: string
   imageSrcSet?: string
-  imageSizes?: string
+  imageSizes: string
   imageAlt: string
 }

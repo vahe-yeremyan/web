@@ -76,7 +76,7 @@ function Logo({ isSolid }: { isSolid: boolean }) {
       className="relative block aspect-3/2 w-28 md:w-32 lg:w-40"
     >
       <img
-        src="/logo-black.png"
+        src="/logo-black.webp"
         alt="Vahe Yeremyan Art"
         width="160"
         height="80"
@@ -87,7 +87,7 @@ function Logo({ isSolid }: { isSolid: boolean }) {
         )}
       />
       <img
-        src="/logo-white.png"
+        src="/logo-white.webp"
         alt=""
         width="160"
         height="80"

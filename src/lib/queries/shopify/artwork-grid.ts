@@ -4,14 +4,14 @@ import type { ProductListItem } from '@/lib/queries/shopify/queries'
 
 import { formatMoney, shopifyImageUrl } from './format'
 
-const SHOPIFY_ARTWORK_IMAGE_WIDTHS = [320, 480, 640, 800, 1000]
+const SHOPIFY_ARTWORK_IMAGE_WIDTHS = [320, 400, 480, 560, 640, 680, 800, 1000]
 
 const ARTWORK_GRID_IMAGE_SIZES =
-  '(min-width: 1536px) 360px, (min-width: 1280px) 335px, (min-width: 1024px) 25vw, (min-width: 640px) 50vw, calc(100vw - 2rem)'
+  '(min-width: 1536px) 340px, (min-width: 1024px) calc(25vw - 56px), (min-width: 768px) calc(33.333vw - 56px), (min-width: 640px) calc(50vw - 56px), calc(50vw - 48px)'
 
 function getShopifyImageSrcSet(src: string) {
   return SHOPIFY_ARTWORK_IMAGE_WIDTHS.map(
-    (width) => `${shopifyImageUrl(src, { width })} ${width}w`,
+    (width) => `${shopifyImageUrl(src, { width, format: 'webp' })} ${width}w`,
   ).join(', ')
 }
 
@@ -27,7 +27,9 @@ export function shopifyProductToArtworkGridItem(
     productHandle: product.handle,
     medium: product.medium?.value ?? '',
     dimensions: product.dimensionsImperial?.value ?? '',
-    imageSrc: imageUrl ? shopifyImageUrl(imageUrl, { width: 800 }) : '',
+    imageSrc: imageUrl
+      ? shopifyImageUrl(imageUrl, { width: 800, format: 'webp' })
+      : '',
     imageSrcSet: imageUrl ? getShopifyImageSrcSet(imageUrl) : undefined,
     imageSizes: ARTWORK_GRID_IMAGE_SIZES,
     imageAlt: image?.altText ?? product.title,
@@ -61,7 +63,9 @@ function shopifyProductListItemToArtworkGridItem(
     productHandle: product.handle,
     medium: product.medium?.value ?? '',
     dimensions: product.dimensions?.value ?? '',
-    imageSrc: imageUrl ? shopifyImageUrl(imageUrl, { width: 800 }) : '',
+    imageSrc: imageUrl
+      ? shopifyImageUrl(imageUrl, { width: 800, format: 'webp' })
+      : '',
     imageSrcSet: imageUrl ? getShopifyImageSrcSet(imageUrl) : undefined,
     imageSizes: ARTWORK_GRID_IMAGE_SIZES,
     imageAlt: product.featuredImage?.altText ?? product.title,

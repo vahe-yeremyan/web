@@ -11,12 +11,10 @@ import { sanityClient } from '@/server/sanity/client'
 import { getSanityImageSrcSet, getSanityImageUrl } from '@/server/sanity/image'
 
 const CAROUSEL_IMAGE_WIDTHS = [
-  640, 960, 1280, 1600, 1920, 2400, 2880, 3840,
+  640, 960, 1280, 1600, 1920, 2400, 2880, 3200, 3840,
 ] as const
 const CAROUSEL_DEFAULT_WIDTH = 1600
-// The hero is full-bleed (100vw). Advertising 125vw makes the browser fetch
-// ~1.25x the displayed size for extra sharpness (DPR is still applied on top).
-const CAROUSEL_SIZES = '125vw'
+const CAROUSEL_SIZES = '100vw'
 
 export const getHomeCarouselImages = createServerFn({ method: 'GET' }).handler(
   async (): Promise<Array<HomeCarouselImage>> => {
@@ -35,11 +33,29 @@ export const getHomeCarouselImages = createServerFn({ method: 'GET' }).handler(
 
     return slides
       .filter((slide) => Boolean(slide.image))
-      .map((slide) => ({
-        src: getSanityImageUrl(slide.image, CAROUSEL_DEFAULT_WIDTH),
-        srcSet: getSanityImageSrcSet(slide.image, CAROUSEL_IMAGE_WIDTHS),
-        sizes: CAROUSEL_SIZES,
-        alt: slide.alt,
-      }))
+      .map((slide) => {
+        const imageWidths = getCarouselImageWidths(slide.width)
+        const defaultWidth = slide.width
+          ? Math.min(slide.width, CAROUSEL_DEFAULT_WIDTH)
+          : CAROUSEL_DEFAULT_WIDTH
+
+        return {
+          src: getSanityImageUrl(slide.image, defaultWidth),
+          srcSet: getSanityImageSrcSet(slide.image, imageWidths),
+          sizes: CAROUSEL_SIZES,
+          alt: slide.alt?.trim() ?? '',
+          width: slide.width,
+          height: slide.height,
+        }
+      })
   },
 )
+
+function getCarouselImageWidths(sourceWidth?: number) {
+  if (!sourceWidth) return CAROUSEL_IMAGE_WIDTHS
+
+  return [
+    ...CAROUSEL_IMAGE_WIDTHS.filter((width) => width < sourceWidth),
+    sourceWidth,
+  ]
+}

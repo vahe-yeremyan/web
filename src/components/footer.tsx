@@ -59,13 +59,15 @@ export function Footer() {
       <div className="site-frame flex min-h-80 flex-col">
         <div className="mx-auto grid w-full max-w-2xl grid-cols-1 gap-9 sm:grid-cols-3 md:gap-8">
           <FooterSection title="The Gallery">
-            {FOOTER_NAV_LINKS.map((link) => (
-              <li key={link.to}>
-                <Link to={link.to} className={FOOTER_LINK_CLASS_NAME}>
-                  {link.label}
-                </Link>
-              </li>
-            ))}
+            <ul className="space-y-2 font-medium">
+              {FOOTER_NAV_LINKS.map((link) => (
+                <li key={link.to}>
+                  <Link to={link.to} className={FOOTER_LINK_CLASS_NAME}>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </FooterSection>
 
           <FooterSection title="Social Media">
@@ -73,35 +75,37 @@ export function Footer() {
           </FooterSection>
 
           <FooterSection title="Legal">
-            {LEGAL_LINKS.map((link) => (
-              <li key={link.to}>
-                <Link to={link.to} className={FOOTER_LINK_CLASS_NAME}>
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-            <li>
-              <button
-                type="button"
-                className={FOOTER_LINK_CLASS_NAME}
-                onClick={openCookiePreferences}
-              >
-                Cookie Preferences
-              </button>
-            </li>
-            {dataSharingUrl && (
+            <ul className="space-y-2 font-medium">
+              {LEGAL_LINKS.map((link) => (
+                <li key={link.to}>
+                  <Link to={link.to} className={FOOTER_LINK_CLASS_NAME}>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
               <li>
-                <a href={dataSharingUrl} className={FOOTER_LINK_CLASS_NAME}>
-                  Data Sharing
-                </a>
+                <button
+                  type="button"
+                  className={FOOTER_LINK_CLASS_NAME}
+                  onClick={openCookiePreferences}
+                >
+                  Cookie Preferences
+                </button>
               </li>
-            )}
+              {dataSharingUrl && (
+                <li>
+                  <a href={dataSharingUrl} className={FOOTER_LINK_CLASS_NAME}>
+                    Data Sharing
+                  </a>
+                </li>
+              )}
+            </ul>
           </FooterSection>
         </div>
 
         <NewsletterSignup />
 
-        <p className="font-manrope mt-auto pt-10 pb-4 text-left text-sm font-medium text-neutral-500 sm:text-center">
+        <p className="font-manrope mt-auto pt-10 pb-4 text-left text-sm font-medium text-neutral-600 sm:text-center">
           Copyright © 2026 Vahe Yeremyan. All Rights Reserved.
         </p>
       </div>
