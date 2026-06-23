@@ -14,7 +14,7 @@ const CAROUSEL_IMAGE_WIDTHS = [
   640, 960, 1280, 1600, 1920, 2400, 2880, 3200, 3840,
 ] as const
 const CAROUSEL_DEFAULT_WIDTH = 1600
-const CAROUSEL_SIZES = '100vw'
+const CAROUSEL_FALLBACK_SIZES = '100vw'
 
 export const getHomeCarouselImages = createServerFn({ method: 'GET' }).handler(
   async (): Promise<Array<HomeCarouselImage>> => {
@@ -42,7 +42,7 @@ export const getHomeCarouselImages = createServerFn({ method: 'GET' }).handler(
         return {
           src: getSanityImageUrl(slide.image, defaultWidth),
           srcSet: getSanityImageSrcSet(slide.image, imageWidths),
-          sizes: CAROUSEL_SIZES,
+          sizes: getCarouselSizes(slide.width, slide.height),
           alt: slide.alt?.trim() ?? '',
           width: slide.width,
           height: slide.height,
@@ -50,6 +50,19 @@ export const getHomeCarouselImages = createServerFn({ method: 'GET' }).handler(
       })
   },
 )
+
+/**
+ * The hero renders full-bleed (100vw) with `object-cover` in a full-height box.
+ * When the box is taller than the image's aspect ratio (e.g. portrait phones),
+ * cover scales by height, so the rendered width exceeds 100vw. Account for that
+ * so the browser requests a candidate large enough to stay sharp.
+ */
+function getCarouselSizes(width?: number, height?: number) {
+  if (!width || !height) return CAROUSEL_FALLBACK_SIZES
+
+  const aspectRatio = (width / height).toFixed(3)
+  return `max(100vw, calc(100svh * ${aspectRatio}))`
+}
 
 function getCarouselImageWidths(sourceWidth?: number) {
   if (!sourceWidth) return CAROUSEL_IMAGE_WIDTHS

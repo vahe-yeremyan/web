@@ -2,18 +2,11 @@ import type { HighlightedArtworkProduct, RecentArtworkProduct } from './queries'
 import type { ArtworkGridItem } from '@/components/home/artwork-grid-item'
 import type { ProductListItem } from '@/lib/queries/shopify/queries'
 
+import {
+  ARTWORK_GRID_IMAGE_SIZES,
+  getArtworkGridImageSrcSet,
+} from './artwork-grid-image'
 import { formatMoney, shopifyImageUrl } from './format'
-
-const SHOPIFY_ARTWORK_IMAGE_WIDTHS = [320, 400, 480, 560, 640, 680, 800, 1000]
-
-const ARTWORK_GRID_IMAGE_SIZES =
-  '(min-width: 1536px) 340px, (min-width: 1024px) calc(25vw - 56px), (min-width: 768px) calc(33.333vw - 56px), (min-width: 640px) calc(50vw - 56px), calc(50vw - 48px)'
-
-function getShopifyImageSrcSet(src: string) {
-  return SHOPIFY_ARTWORK_IMAGE_WIDTHS.map(
-    (width) => `${shopifyImageUrl(src, { width, format: 'webp' })} ${width}w`,
-  ).join(', ')
-}
 
 export function shopifyProductToArtworkGridItem(
   product: HighlightedArtworkProduct | RecentArtworkProduct,
@@ -30,7 +23,7 @@ export function shopifyProductToArtworkGridItem(
     imageSrc: imageUrl
       ? shopifyImageUrl(imageUrl, { width: 800, format: 'webp' })
       : '',
-    imageSrcSet: imageUrl ? getShopifyImageSrcSet(imageUrl) : undefined,
+    imageSrcSet: imageUrl ? getArtworkGridImageSrcSet(imageUrl) : undefined,
     imageSizes: ARTWORK_GRID_IMAGE_SIZES,
     imageAlt: image?.altText ?? product.title,
   }
@@ -66,7 +59,7 @@ function shopifyProductListItemToArtworkGridItem(
     imageSrc: imageUrl
       ? shopifyImageUrl(imageUrl, { width: 800, format: 'webp' })
       : '',
-    imageSrcSet: imageUrl ? getShopifyImageSrcSet(imageUrl) : undefined,
+    imageSrcSet: imageUrl ? getArtworkGridImageSrcSet(imageUrl) : undefined,
     imageSizes: ARTWORK_GRID_IMAGE_SIZES,
     imageAlt: product.featuredImage?.altText ?? product.title,
     price: options.showPrice ? formatProductListItemPrice(product) : undefined,

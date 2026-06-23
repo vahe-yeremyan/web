@@ -12,6 +12,7 @@ const HEADER_GRADIENT_TRANSITION_CLASS =
   'transition-opacity duration-300 ease-in-out'
 const HEADER_TEXT_TRANSITION_CLASS =
   'transition-colors duration-100 ease-in-out'
+const LOGO_SIZES = '(min-width: 1024px) 136px, (min-width: 768px) 104px, 88px'
 
 export default function Header() {
   const location = useLocation()
@@ -77,6 +78,8 @@ function Logo({ isSolid }: { isSolid: boolean }) {
     >
       <img
         src="/logo-black.webp"
+        srcSet="/logo-black-273.webp 273w, /logo-black.webp 360w"
+        sizes={LOGO_SIZES}
         alt="Vahe Yeremyan Art"
         width="160"
         height="80"
@@ -88,6 +91,8 @@ function Logo({ isSolid }: { isSolid: boolean }) {
       />
       <img
         src="/logo-white.webp"
+        srcSet="/logo-white-273.webp 273w, /logo-white.webp 360w"
+        sizes={LOGO_SIZES}
         alt=""
         width="160"
         height="80"
